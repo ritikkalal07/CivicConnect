@@ -740,26 +740,12 @@ function CivicConnectApp() {
               label={t("navOfficers", activeLang)}
               compact
             />
-            <NavItem
-              active={screen === "harvesters"}
-              onClick={() => setScreen("harvesters")}
-              icon={<Radio />}
-              label={t("navHarvesters", activeLang)}
-              compact
-            />
-            <NavItem
-              active={screen === "agents"}
-              onClick={() => setScreen("agents")}
-              icon={<Bot />}
-              label={t("navWorkers", activeLang)}
-              compact
-            />
             <Button
               onClick={() => setScreen("report")}
               size="sm"
               variant={screen === "report" ? "default" : "outline"}
               aria-current={screen === "report" ? "page" : undefined}
-              className="ml-1 shadow-sm whitespace-nowrap"
+              className="ml-2 shadow-sm whitespace-nowrap"
             >
               <Send className="size-3.5" />
               {t("navReport", activeLang)}
@@ -896,6 +882,7 @@ function CivicConnectApp() {
       {/* Floating Assistant Button for Mobile / Tablet */}
       <button
         onClick={() => setIsChatOpen(!isChatOpen)}
+        className="fixed bottom-20 right-4 z-30 flex size-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform hover:scale-105 sm:bottom-6 sm:right-6 lg:hidden"
         className="fixed bottom-20 right-4 z-30 flex size-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-xl transition-transform hover:scale-105 lg:hidden"
         aria-label="Open Citizen Assistant"
       >
@@ -1035,8 +1022,8 @@ function HomeScreen({
               </p>
               <h2 className="text-lg font-semibold">{t("liveFeedTitle", lang)}</h2>
             </div>
-            <Button variant="ghost" size="sm" onClick={() => onNavigate("harvesters")}>
-              {t("harvesterDetails", lang)} <ArrowUpRight className="size-4" />
+            <Button variant="ghost" size="sm" onClick={() => onNavigate("e2e")}>
+              View Live E2E Flow <ArrowUpRight className="size-4" />
             </Button>
           </div>
           <div className="mt-4 space-y-3">
