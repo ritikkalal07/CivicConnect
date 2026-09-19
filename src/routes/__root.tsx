@@ -84,7 +84,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content: "Detect civic issues, coordinate action, and keep communities informed.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://civic-con-nect.vercel.app/" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "CivicConnect Autonomous | Civic Intelligence" },
+      {
+        name: "twitter:description",
+        content: "A transparent, supervised civic issue reporting and triage platform.",
+      },
+      {
+        name: "keywords",
+        content: "civic issues, public safety, community reporting, civic intelligence, India",
+      },
       { name: "theme-color", content: "#0F6B6B" },
     ],
     links: [
@@ -94,6 +104,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { rel: "manifest", href: "/manifest.webmanifest" },
       { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
+      { rel: "canonical", href: "https://civic-con-nect.vercel.app/" },
     ],
   }),
   shellComponent: RootShell,
@@ -107,6 +118,10 @@ function RootShell({ children }: { children: ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
       </head>
       <body>
         {children}
@@ -115,6 +130,62 @@ function RootShell({ children }: { children: ReactNode }) {
     </html>
   );
 }
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      name: "CivicConnect Autonomous",
+      url: "https://civic-con-nect.vercel.app/",
+      applicationCategory: "CivicApplication",
+      operatingSystem: "Web",
+      description:
+        "A supervised civic intelligence platform for reporting community issues, sharing evidence, and triaging priority signals.",
+      featureList: [
+        "Civic issue reporting",
+        "Location-aware map",
+        "Photo evidence",
+        "Offline synchronization",
+        "Explainable supervised triage",
+      ],
+    },
+    {
+      "@type": "Organization",
+      name: "CivicConnect Autonomous",
+      url: "https://civic-con-nect.vercel.app/",
+    },
+    {
+      "@type": "FAQPage",
+      mainEntity: [
+        {
+          "@type": "Question",
+          name: "What is CivicConnect Autonomous?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "It is a public civic issue reporting platform that helps communities submit evidence, locate issues, and triage priority cases with explainable supervised automation.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "Does CivicConnect automatically contact officials?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "No. The current public deployment uses supervised triage and human review. Outbound actions require separately configured, authenticated services and approval controls.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "How is public feedback handled?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Feedback is stored for moderation review before it can be published, helping protect the public from spam and unsafe content.",
+          },
+        },
+      ],
+    },
+  ],
+};
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();

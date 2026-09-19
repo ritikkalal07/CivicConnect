@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiAgentRouteImport } from './routes/api/agent'
+import { Route as ApiFeedbackRouteImport } from './routes/api/feedback'
 import { Route as ApiReportsRouteImport } from './routes/api/reports'
 
 const IndexRoute = IndexRouteImport.update({
@@ -23,6 +24,11 @@ const ApiAgentRoute = ApiAgentRouteImport.update({
   path: '/api/agent',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiFeedbackRoute = ApiFeedbackRouteImport.update({
+  id: '/api/feedback',
+  path: '/api/feedback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiReportsRoute = ApiReportsRouteImport.update({
   id: '/api/reports',
   path: '/api/reports',
@@ -32,30 +38,34 @@ const ApiReportsRoute = ApiReportsRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/api/agent': typeof ApiAgentRoute
+  '/api/feedback': typeof ApiFeedbackRoute
   '/api/reports': typeof ApiReportsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/api/agent': typeof ApiAgentRoute
+  '/api/feedback': typeof ApiFeedbackRoute
   '/api/reports': typeof ApiReportsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/api/agent': typeof ApiAgentRoute
+  '/api/feedback': typeof ApiFeedbackRoute
   '/api/reports': typeof ApiReportsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/api/agent' | '/api/reports'
+  fullPaths: '/' | '/api/agent' | '/api/feedback' | '/api/reports'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api/agent' | '/api/reports'
-  id: '__root__' | '/' | '/api/agent' | '/api/reports'
+  to: '/' | '/api/agent' | '/api/feedback' | '/api/reports'
+  id: '__root__' | '/' | '/api/agent' | '/api/feedback' | '/api/reports'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ApiAgentRoute: typeof ApiAgentRoute
+  ApiFeedbackRoute: typeof ApiFeedbackRoute
   ApiReportsRoute: typeof ApiReportsRoute
 }
 
@@ -75,6 +85,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAgentRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/feedback': {
+      id: '/api/feedback'
+      path: '/api/feedback'
+      fullPath: '/api/feedback'
+      preLoaderRoute: typeof ApiFeedbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/reports': {
       id: '/api/reports'
       path: '/api/reports'
@@ -88,6 +105,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ApiAgentRoute: ApiAgentRoute,
+  ApiFeedbackRoute: ApiFeedbackRoute,
   ApiReportsRoute: ApiReportsRoute,
 }
 export const routeTree = rootRouteImport

@@ -29,7 +29,7 @@ CivicConnect addresses a real-world civic safety problem: public issues are ofte
 
 **Repository:** This GitHub repository contains the complete project source code, setup instructions, deployment configuration, and validation scenarios.
 
-**Live deployment:** [CivicConnect on Vercel](https://jal-d-arpan.vercel.app/)
+**Live deployment:** [CivicConnect on Vercel](https://civic-con-nect.vercel.app/)
 
 ### Submission requirements
 

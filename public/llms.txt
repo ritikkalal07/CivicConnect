@@ -1,0 +1,23 @@
+# CivicConnect Autonomous
+
+CivicConnect Autonomous is a supervised civic intelligence web application for public issue reporting, evidence collection, location-aware mapping, risk triage, offline synchronization, and community alerts.
+
+## What it does
+
+- Lets residents submit civic issue observations with location and photo evidence.
+- Validates report fields and assigns explainable risk priorities.
+- Detects related high-risk reports within a geographic and time window.
+- Provides a public map, alerts, offline queue, and moderated feedback form.
+- Publishes transparent information about its current supervised operating mode.
+
+## Safety boundary
+
+The current deployment does not automatically contact officials, send messages, scrape public websites, or file government complaints. Outbound autonomous actions require separately authenticated worker services, audit logs, confidence thresholds, source permissions, and human approval.
+
+## Public URL
+
+https://civic-con-nect.vercel.app/
+
+## Technical documentation
+
+https://github.com/ritikkalal07/water-map-now

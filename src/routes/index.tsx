@@ -23,6 +23,7 @@ import {
   ShieldAlert,
   LocateFixed,
   Map,
+  MessageSquare,
   RefreshCw,
   Send,
   ShieldCheck,
@@ -364,8 +365,115 @@ function HomeScreen({
           <EmptyState text="No priority issues need review." />
         )}
       </section>
+      <TrustPanel />
     </section>
   );
+}
+
+function TrustPanel() {
+  const [rating, setRating] = useState(5);
+  const [name, setName] = useState("");
+  const [comment, setComment] = useState("");
+  const [status, setStatus] = useState<string>();
+  const [submitting, setSubmitting] = useState(false);
+
+  async function submitFeedback(event: FormEvent) {
+    event.preventDefault();
+    setSubmitting(true);
+    setStatus(undefined);
+    try {
+      const response = await fetch("/api/feedback", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ name, rating, comment, website: "" }),
+      });
+      const result = (await response.json()) as { message?: string; error?: string };
+      if (!response.ok) throw new Error(result.error ?? "Feedback could not be submitted");
+      setComment("");
+      setStatus(result.message ?? "Thanks. Your feedback is pending review.");
+    } catch (error) {
+      setStatus(error instanceof Error ? error.message : "Feedback could not be submitted");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <section className="grid gap-6 rounded-lg border border-primary/20 bg-primary/5 p-5 sm:p-6 lg:grid-cols-[0.8fr_1.2fr]">
+      <div>
+        <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-primary">
+          <ShieldCheck className="size-4" /> Public trust
+        </p>
+        <h2 className="mt-2 text-xl font-semibold">Built for accountable civic action.</h2>
+        <p className="mt-2 text-sm leading-6 text-text-secondary">
+          Reports are validated, triaged with explainable rules, and kept behind human review before
+          any future outbound action. Share what would make this platform more useful to your
+          community.
+        </p>
+        <div className="mt-4 flex flex-wrap gap-2 text-xs text-text-secondary">
+          <TrustBadge text="Explainable triage" />
+          <TrustBadge text="Moderated feedback" />
+          <TrustBadge text="Offline-ready" />
+        </div>
+      </div>
+      <form onSubmit={submitFeedback} className="rounded-md border border-border bg-card p-4">
+        <div className="flex items-center gap-2">
+          <MessageSquare className="size-4 text-primary" />
+          <h3 className="font-semibold">Leave a public review</h3>
+        </div>
+        <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto]">
+          <input
+            value={name}
+            onChange={(event) => setName(event.target.value)}
+            maxLength={80}
+            placeholder="Name (optional)"
+            aria-label="Name (optional)"
+            className="h-10 rounded-md border border-border bg-card px-3 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-ring"
+          />
+          <label className="flex h-10 items-center gap-2 rounded-md border border-border px-3 text-sm">
+            <span className="text-text-secondary">Rating</span>
+            <select
+              value={rating}
+              onChange={(event) => setRating(Number(event.target.value))}
+              aria-label="Rating"
+              className="bg-transparent font-medium outline-none"
+            >
+              {[5, 4, 3, 2, 1].map((value) => (
+                <option key={value} value={value}>
+                  {value} stars
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+        <textarea
+          value={comment}
+          onChange={(event) => setComment(event.target.value)}
+          maxLength={500}
+          minLength={10}
+          required
+          rows={3}
+          placeholder="What worked well or should improve?"
+          className="mt-3 w-full resize-none rounded-md border border-border bg-card px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-ring"
+        />
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+          <p className="text-xs text-text-secondary">Reviews are moderated before publication.</p>
+          <Button type="submit" size="sm" disabled={submitting}>
+            {submitting ? "Sending..." : "Submit review"}
+          </Button>
+        </div>
+        {status && (
+          <p role="status" className="mt-3 text-sm text-primary">
+            {status}
+          </p>
+        )}
+      </form>
+    </section>
+  );
+}
+
+function TrustBadge({ text }: { text: string }) {
+  return <span className="rounded-full border border-primary/20 bg-card px-2.5 py-1">{text}</span>;
 }
 
 function MetricCard({
