@@ -175,6 +175,6 @@ describe("autonomous civic agent suite", () => {
 
     const fileResp = handleChatbotQuery("There is a broken streetlight and garbage overflow in Jayanagar");
     expect(fileResp.autoFiledComplaint).toBe(true);
-    expect(fileResp.response).toContain("Complaint registered successfully");
+    expect(fileResp.response).toContain("registered your civic complaint");
   });
 });

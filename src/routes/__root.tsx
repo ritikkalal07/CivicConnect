@@ -148,10 +148,8 @@ const structuredData = {
       featureList: [
         "24/7 Autonomous Harvesters",
         "Self-building Knowledge Graph",
-        "9 Autonomous Agents (Router, Escalator, Verifier, Detector, Anomaly, Dedup, Chatbot, Sentiment, Self-Heal)",
         "9 Autonomous Workers (Router, Escalator, Verifier, Detector, Anomaly, Dedup, Assistant, Sentiment, SelfHeal)",
         "5 Continuous Self-Learning Loops",
-        "Bhashini Multilingual AI Chatbot",
         "Bhashini Multilingual Assistant",
         "Government Officer Portal & E2E Lifecycle Verification",
       ],
@@ -174,21 +172,17 @@ const structuredData = {
         },
         {
           "@type": "Question",
-          name: "How does the autonomous agent system work?",
           name: "How does the autonomous worker system work?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "CivicConnect Autonomous uses 10 harvester scrapers, a self-building Knowledge Graph, and 9 specialized agents (Router, Escalator, Verifier, Detector, Anomaly, Dedup, Chatbot, Sentiment, Self-Heal) to act on civic issues.",
             text: "CivicConnect Autonomous uses 10 harvester scrapers, a self-building Knowledge Graph, and 9 specialized workers (Router, Escalator, Verifier, Detector, Anomaly, Dedup, Assistant, Sentiment, SelfHeal) to resolve civic issues.",
           },
         },
         {
           "@type": "Question",
-          name: "What languages does the AI chatbot support?",
           name: "What languages does the assistant support?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "The chatbot supports 22 Indian languages including English, Hindi, Kannada, Tamil, Telugu, Marathi, Bengali, and Bodo powered by Bhashini AI.",
             text: "The assistant supports 22 Indian languages including English, Hindi, Kannada, Tamil, Telugu, Marathi, Bengali, and Bodo powered by Bhashini NMT.",
           },
         },
