@@ -97,6 +97,7 @@ export function addReport(input: Omit<WaterReport, "id" | "createdAt" | "status"
   const online = typeof navigator === "undefined" ? true : navigator.onLine;
   const report: WaterReport = {
     ...input,
+    ...(input.photo ? { photo: input.photo } : {}),
     id: `r-${Date.now()}`,
     createdAt: Date.now(),
     status: online ? "synced" : "pending",
