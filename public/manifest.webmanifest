@@ -6,5 +6,5 @@
   "background_color": "#F7F9FA",
   "theme_color": "#0F6B6B",
   "description": "Report water quality concerns and view community safety alerts.",
-  "icons": [{ "src": "/favicon.ico", "sizes": "48x48", "type": "image/x-icon" }]
+  "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
 }
