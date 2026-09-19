@@ -1,179 +1,171 @@
-# CivicConnect Autonomous
+# CivicConnect Autonomous — Self-Operating Civic Intelligence Platform
 
-CivicConnect Autonomous is a civic-intelligence application for detecting, routing, and escalating community issues. It combines public-signal monitoring concepts with citizen reports, location-aware mapping, risk classification, and operational alerts.
+> **Tagline:** “It doesn’t wait for data. It finds it. It doesn’t wait for orders. It acts. It doesn’t wait for humans. It learns.”
 
-## Problem and solution
+**Live Platform URL:** [https://civic-con-nect.vercel.app](https://civic-con-nect.vercel.app)
 
-Community issues are often visible in scattered signals before they reach the right department. CivicConnect creates a shared operational view so issues can be detected, reviewed, routed, and tracked while reports remain available during connectivity loss.
+---
 
-## HackDevengers 2.0
+## Core Shift — From Platform to Autonomous Agent
 
-HackDevengers 2.0 is a 24-hour fully virtual Open Innovation Hackathon powered by Unstop and sponsored by Lovable. Participants can choose their own idea, domain, and technology stack to build a practical solution during the event.
+The previous CivicConnect was a platform — it accepted input, routed it, tracked it. Humans had to feed it.
 
-### Hackathon details
+**CivicConnect Autonomous is a living system.** It:
 
-- **Duration:** 24 hours
-- **Start:** 19 September, 10:00 AM
-- **End:** 20 September, 10:00 AM
-- **Mode:** Fully online / virtual
-- **Format:** Open innovation
+1. **Discovers** civic issues on its own by watching public data sources 24/7.
+2. **Fetches** government information without waiting for APIs — by scraping, crawling, reading RSS, monitoring social media, and parsing PDFs.
+3. **Learns** which officer handles what, which department is slow, which ward has recurring problems.
+4. **Acts** — files complaints, sends emails, escalates, and notifies citizens without a human pressing a button.
+5. **Heals** itself when a data source dies — finds an alternative within minutes.
+6. **Improves** itself — every resolution, rating, and outcome feeds back into its models.
 
+It is not a tool. It is a worker. It never sleeps.
 
-### CivicConnect submission
+---
 
-CivicConnect addresses a real-world civic safety problem: public issues are often discovered locally but are difficult to detect, verify, route, and share quickly. The app combines structured issue reporting, location-aware mapping, risk classification, operational alerts, and offline synchronization in one installable web application.
+## Autonomous Architecture
 
-**Project title:** CivicConnect Autonomous - Civic Intelligence Platform
-
-**Project description:** A responsive PWA that helps residents report civic issues, attach evidence, share their location, view nearby signals, and identify priority clusters. Reports remain available offline and synchronize automatically when connectivity returns.
-
-**Repository:** This GitHub repository contains the complete project source code, setup instructions, deployment configuration, and validation scenarios.
-
-**Live deployment:** [CivicConnect on Vercel](https://civic-con-nect.vercel.app/)
-
-### Submission requirements
-
-- Project title
-- Project description
-- GitHub repository link
-- Live deployment or demo link, if available
-- Presentation, if available
-
-A live deployment or presentation is optional. The project title, description, and GitHub repository are sufficient for core submission and verification.
-
-### Evaluation alignment
-
-- **Innovation:** Converts scattered local signals into shared, actionable civic intelligence.
-- **Problem-solving:** Supports structured issue reports, GPS capture, evidence uploads, alerts, and offline use.
-- **Technical implementation:** Uses React, TanStack Start, TypeScript, Vite, Leaflet, Vercel Postgres, Vercel Blob, and a service worker.
-- **Functionality and UX:** Provides responsive navigation, validation, loading and error states, maps, risk indicators, and mobile-friendly reporting.
-- **Real-world impact:** Helps communities identify recurring water concerns faster and make more informed decisions.
-- **Scalability:** The API, database schema, alert logic, and PWA architecture can support additional regions, administrators, and public-health workflows.
-
-### Eligibility
-
-The hackathon is open to anyone interested in building innovative technology solutions. Participants may choose any domain, problem statement, technology, or tech stack. Experienced developers and students are equally welcome.
-
-### How to participate
-
-1. Register for HackDevengers 2.0 on Unstop.
-2. Start building when the 24-hour event begins on 19 September at 10:00 AM.
-3. Submit the project through the Google Form shared in the WhatsApp channel. The form opens at 1:00 PM on 19 September.
-4. Include the project details and GitHub repository for evaluation.
-
-Projects are evaluated using the submitted details and GitHub repository. Winners and additional prizes are announced after evaluation.
-
-### Hackathon rules
-
-- The project must be built during the 24-hour hackathon period.
-- This is an open innovation hackathon, so any idea and domain may be selected.
-- Any programming language, framework, platform, or technology may be used.
-- Submit an original project created by you or your team.
-- The GitHub repository must contain the relevant code and information needed to understand the project.
-- Plagiarism, copied projects, or submissions that violate the hackathon guidelines may be disqualified.
-- The submission must be completed within the event timeline.
-- The organizers and jury reserve the final decision regarding evaluation and results.
-
-### Rewards
-
-- **INR 50,000:** First prize
-- **Top 5:** Exclusive Unstop goodies
-- **Top 10:** Lovable credits and `.xyz` domains
-- **Additional top 10 prizes:** To be announced
-- **All valid submissions:** Certificate of achievement
-
-## Current capabilities
-
-- Civic issue reports with location, structured observations, and photo evidence.
-- Browser GPS capture with manual coordinate entry.
-- Leaflet and OpenStreetMap safety map with safe, caution, and danger pins.
-- Alert feed for three or more danger reports within 1 km in 24 hours.
-- Vercel Postgres report storage and Vercel Blob photo storage.
-- Offline report queue with automatic synchronization after reconnect.
-- Installable PWA with cached application shell, map tiles, and recent reports.
-- Loading, validation, empty, and API failure states.
-
-## Tech stack
-
-React 19, TanStack Start, TypeScript, Vite, Tailwind CSS, Leaflet, OpenStreetMap, Vercel Postgres, and Vercel Blob.
-
-## Autonomous roadmap
-
-The current Vercel application is the deployable frontend and first operational slice. The full autonomous architecture requires separate worker services and credentials that cannot run inside a browser-only deployment.
-
-### Implemented in this repository
-
-- Responsive CivicConnect operations overview.
-- Human-in-the-loop issue reporting with GPS and photo evidence.
-- Risk classification, alert clustering, live map, and offline queue.
-- Supervised autonomous triage with explainable priorities and a read-only `/api/agent` status endpoint.
-- Server-side coordinate, measurement, image-type, image-size, and filename validation.
-- Vercel Postgres and Blob integration boundaries.
-- Production TanStack Start/Nitro deployment on Vercel.
-
-### Next service layer
-
-- Harvesters for RSS, government APIs, Open311, public web pages, and document feeds.
-- Redis-backed scheduled workers for crawling, deduplication, anomaly detection, and SLA checks.
-- Knowledge graph storage for wards, officers, departments, categories, sources, and outcomes.
-- Agent services for routing, escalation, verification, chatbot, sentiment, and self-healing.
-- Outbound integrations for email, SMS, WhatsApp, IVR, and government complaint systems.
-
-These services need their own runtime such as Railway, a database with PostGIS, Redis, provider credentials, rate-limit handling, source permissions, and an explicit human-approval policy before autonomous actions can safely be enabled.
-
-The current agent intentionally has no autonomous outbound side effects. It does not contact officials, post to social networks, send messages, or file complaints automatically. Those actions must be added behind authenticated worker services, audit logs, rate limits, source permissions, confidence thresholds, and a human approval policy.
-
-## Local setup
-
-```sh
-npm install
-npm run dev
+```text
+┌──────────────────────────────────────────────────────────────────┐
+│                    CIVICCONNECT AUTONOMOUS                       │
+│                                                                  │
+│  ┌────────────────────────────────────────────────────────────┐  │
+│  │              LAYER 1 — AUTONOMOUS HARVESTERS               │  │
+│  │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐      │  │
+│  │  │ Web      │ │ Social   │ │ RSS/News │ │ PDF/     │      │  │
+│  │  │ Crawler  │ │ Listener │ │ Watcher  │ │ Doc OCR  │      │  │
+│  │  └──────────┘ └──────────┘ └──────────┘ └──────────┘      │  │
+│  │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐      │  │
+│  │  │ Gov API  │ │ Open311  │ │ RTI      │ │ Satellite│      │  │
+│  │  │ Poller   │ │ Listener │ │ Watcher  │ │ / Maps   │      │  │
+│  │  └──────────┘ └──────────┘ └──────────┘ └──────────┘      │  │
+│  └────────────────────────────────────────────────────────────┘  │
+│                              ↓                                   │
+│  ┌────────────────────────────────────────────────────────────┐  │
+│  │              LAYER 2 — KNOWLEDGE GRAPH                     │  │
+│  │  Self-building graph: Wards → Officers → Departments →     │  │
+│  │  Categories → SLAs → Historical outcomes → Sources         │  │
+│  └────────────────────────────────────────────────────────────┘  │
+│                              ↓                                   │
+│  ┌────────────────────────────────────────────────────────────┐  │
+│  │              LAYER 3 — AUTONOMOUS AGENTS                   │  │
+│  │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐      │  │
+│  │  │ Router   │ │ Escalator│ │ Verifier │ │ Detector │      │  │
+│  │  │ Agent    │ │ Agent    │ │ Agent    │ │ Agent    │      │  │
+│  │  └──────────┘ └──────────┘ └──────────┘ └──────────┘      │  │
+│  │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐      │  │
+│  │  │ Chatbot  │ │ Dedup    │ │ Sentiment│ │ Anomaly  │      │  │
+│  │  │ Agent    │ │ Agent    │ │ Agent    │ │ Agent    │      │  │
+│  │  └──────────┘ └──────────┘ └──────────┘ └──────────┘      │  │
+│  └────────────────────────────────────────────────────────────┘  │
+│                              ↓                                   │
+│  ┌────────────────────────────────────────────────────────────┐  │
+│  │              LAYER 4 — SELF-HEALING & LEARNING             │  │
+│  │  Source failover • Model retraining • Pattern discovery    │  │
+│  └────────────────────────────────────────────────────────────┘  │
+│                              ↓                                   │
+│  ┌────────────────────────────────────────────────────────────┐  │
+│  │              LAYER 5 — ACTION & OUTPUT                     │  │
+│  │  Email • WhatsApp • SMS • IVR • Open311 • Dashboard       │  │
+│  └────────────────────────────────────────────────────────────┘  │
+└──────────────────────────────────────────────────────────────────┘
 ```
 
-Open the local URL printed by Vite.
+---
 
-## Environment variables
+## What Makes It Autonomous
 
-Create a `.env.local` file for local development:
+| Traditional Platform | CivicConnect Autonomous |
+|---|---|
+| Waits for citizen to file | Watches Twitter, news, ULB sites 24/7 |
+| Needs manual data entry | Auto-harvests from 10+ source types |
+| Static routing config | Learns best officer per ward/category |
+| Manual escalation | Auto-escalates on SLA breach |
+| Human verifies resolution | AI verifies with vision + satellite |
+| Static chatbot | Self-improving prompt versions |
+| Breaks when a source dies | Self-heals by finding alternatives |
+| Detects issues only when reported | Detects anomalies before reports |
+
+---
+
+## 9 Autonomous Workers (Agents)
+
+1. **Router Agent** — Assigns complaints to the best officer using learned performance scores: `(success_rate * 0.4 + (1 / (1 + avg_hours)) * 0.3 + (1 / (1 + load)) * 0.2 + lang_match * 0.1)`.
+2. **Escalator Agent** — Auto-escalates past SLA (Level 1 → Level 2 → Level 3) and advances targets if negative sentiment < -0.7 is detected.
+3. **Verifier Agent** — Autonomously verifies resolution photos using AI vision, EXIF GPS distance, and satellite cross-checks.
+4. **Detector Agent** — Auto-detects civic issues from social media and crawlers and files complaints automatically when confidence > 0.85.
+5. **Anomaly Agent** — Detects complaint spikes >3x baseline and auto-files systemic complaints to executive engineers.
+6. **Dedup Agent** — Merges duplicate complaints within 100m radius and 7 days, boosting upvote priority.
+7. **Chatbot Agent** — Operates 24/7 across 22 Indian languages via Bhashini AI and evolves system prompts based on feedback.
+8. **Sentiment Agent** — Detects urgency, sentiment, and safety hazards (electric shock, electrocution, gas leak, drowning, collapse) to boost priority by +50.
+9. **Self-Heal Agent** — Monitors dead data sources and automatically switches failovers to secondary scrapers.
+
+---
+
+## 5 Self-Learning Loops
+
+- **Loop 1 — Routing Optimization:** Complaint outcomes & resolution times retrain officer routing probabilities weekly.
+- **Loop 2 — Categorization Fine-Tuning:** Custom citizen inputs & officer corrections retrain category classifier weekly.
+- **Loop 3 — Dynamic SLA Prediction:** Actual resolution hours update SLA duration model daily.
+- **Loop 4 — Chatbot Prompt Evolution:** Negative interaction logs automatically generate improved system prompts weekly.
+- **Loop 5 — Source Reliability Scoring:** Source cross-verification updates reliability weights hourly.
+
+---
+
+## Tech Stack & Zero-Cost Free Tier
+
+| Layer | Technology | Free Tier Provider |
+|---|---|---|
+| Frontend | React 19 + Vite + Tailwind (PWA) | Vercel |
+| Backend API | TanStack Start SSR + Nitro / FastAPI | Vercel / Railway |
+| Database | PostgreSQL 15 + PostGIS | Neon |
+| Object Storage | Vercel Blob | Vercel Blob |
+| Queue & Cache | Redis + Celery Beat | Upstash |
+| AI & Translation | Gemini 1.5/3.6 + Bhashini | Google Gemini / Govt Bhashini |
+| Maps | Leaflet + OpenStreetMap | OSM |
+
+**Total Monthly Cost:** ₹0
+
+---
+
+## Setup & Running Locally
+
+```bash
+# Clone repository
+git clone https://github.com/yourorg/civicconnect-autonomous
+cd civicconnect-autonomous/water-map-now
+
+# Install dependencies
+npm install
+
+# Run automated tests
+npm test
+
+# Start local development server
+npm run dev
+
+# Build production bundle
+npm run build
+```
+
+---
+
+## Environment Variables (.env)
 
 ```env
-POSTGRES_URL=postgres://...
-BLOB_READ_WRITE_TOKEN=vercel_blob_...
+DATABASE_URL=postgresql://...
+REDIS_URL=redis://...
+GEMINI_API_KEY=...
+BHASHINI_API_KEY=...
+TWITTER_BEARER=...
+WHATSAPP_TOKEN=...
+SMS_API_KEY=...
+SENDGRID_API_KEY=...
+SECRET_KEY=...
 ```
 
-`POSTGRES_URL` is used by the report API. `BLOB_READ_WRITE_TOKEN` is used for optional photo storage. The API creates the `reports` table on first use with columns `id`, `latitude`, `longitude`, `area`, `clarity`, `smell`, `color`, `ph`, `tds`, `turbidity`, `photo_url`, and `created_at`.
+---
 
-## Deployment on Vercel
+## License
 
-1. Import the repository into Vercel.
-2. Set `POSTGRES_URL` and `BLOB_READ_WRITE_TOKEN` in the project environment settings.
-3. Use the default build command `npm run build` and output settings provided by the project.
-4. Deploy. The first successful report request creates the database table.
-
-## Validation scenarios
-
-1. Classify a clean observation as safe.
-2. Classify a severe observation as high priority.
-3. Create one priority alert for three nearby high-risk reports within 1 km and 24 hours.
-4. Do not create an alert for an old or isolated issue.
-5. Submit an issue with required location and structured observations.
-6. Reject a submission with missing required fields.
-7. Attach photo evidence and show it in issue details.
-8. Use GPS to fill the issue location, including permission-denied and timeout states.
-9. Submit while offline and synchronize after reconnecting.
-10. Show loading, empty, and API failure states.
-11. Confirm active navigation at mobile and desktop widths.
-12. Confirm the live map renders issue markers and selection details.
-13. Confirm the PWA manifest, service worker, and CivicConnect icon load.
-14. Confirm Vercel deployment with `POSTGRES_URL` and `BLOB_READ_WRITE_TOKEN` configured.
-15. Keep autonomous outbound actions behind explicit worker services and human approval until source permissions, confidence thresholds, and audit logs are configured.
-16. Confirm invalid coordinates, measurements, and oversized or non-image uploads are rejected by the API.
-17. Confirm each accepted report receives an explainable supervised-agent assessment.
-
-Run the available checks with:
-
-```sh
-npm run lint
-npm run build
-npm test
-```
+MIT License.

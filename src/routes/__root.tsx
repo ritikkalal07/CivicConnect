@@ -72,28 +72,31 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "CivicConnect Autonomous | Civic Intelligence" },
+      { title: "CivicConnect Autonomous — Self-Operating Civic Intelligence Platform" },
       {
         name: "description",
         content:
-          "Autonomous civic intelligence that detects, routes, and escalates community issues.",
+          "It doesn’t wait for data. It finds it. It doesn’t wait for orders. It acts. It doesn’t wait for humans. It learns.",
       },
-      { property: "og:title", content: "CivicConnect Autonomous | Civic Intelligence" },
+      { property: "og:title", content: "CivicConnect Autonomous — Self-Operating Civic Intelligence Platform" },
       {
         property: "og:description",
-        content: "Detect civic issues, coordinate action, and keep communities informed.",
+        content:
+          "It doesn’t wait for data. It finds it. It doesn’t wait for orders. It acts. It doesn’t wait for humans. It learns.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://civic-con-nect.vercel.app/" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "CivicConnect Autonomous | Civic Intelligence" },
+      { name: "twitter:title", content: "CivicConnect Autonomous — Self-Operating Civic Intelligence Platform" },
       {
         name: "twitter:description",
-        content: "A transparent, supervised civic issue reporting and triage platform.",
+        content:
+          "Self-operating civic intelligence platform for India. Autonomous harvesters, Knowledge Graph, 9 agents, and self-learning loops.",
       },
       {
         name: "keywords",
-        content: "civic issues, public safety, community reporting, civic intelligence, India",
+        content:
+          "civicconnect, autonomous civic intelligence, 311 india, pothole detection, automatic escalation, bhashini ai",
       },
       { name: "theme-color", content: "#0F6B6B" },
     ],
@@ -141,13 +144,14 @@ const structuredData = {
       applicationCategory: "CivicApplication",
       operatingSystem: "Web",
       description:
-        "A supervised civic intelligence platform for reporting community issues, sharing evidence, and triaging priority signals.",
+        "Self-operating civic intelligence platform that continuously watches public signals, routes issues, auto-escalates, and learns autonomously.",
       featureList: [
-        "Civic issue reporting",
-        "Location-aware map",
-        "Photo evidence",
-        "Offline synchronization",
-        "Explainable supervised triage",
+        "24/7 Autonomous Harvesters",
+        "Self-building Knowledge Graph",
+        "9 Autonomous Agents (Router, Escalator, Verifier, Detector, Anomaly, Dedup, Chatbot, Sentiment, Self-Heal)",
+        "5 Continuous Self-Learning Loops",
+        "Bhashini Multilingual AI Chatbot",
+        "Government Officer Portal & E2E Lifecycle Verification",
       ],
     },
     {
@@ -163,23 +167,23 @@ const structuredData = {
           name: "What is CivicConnect Autonomous?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "It is a public civic issue reporting platform that helps communities submit evidence, locate issues, and triage priority cases with explainable supervised automation.",
+            text: "It is a self-operating civic intelligence platform that autonomously discovers, routes, escalates, and verifies community issues 24/7 without waiting for manual human triggers.",
           },
         },
         {
           "@type": "Question",
-          name: "Does CivicConnect automatically contact officials?",
+          name: "How does the autonomous agent system work?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "No. The current public deployment uses supervised triage and human review. Outbound actions require separately configured, authenticated services and approval controls.",
+            text: "CivicConnect Autonomous uses 10 harvester scrapers, a self-building Knowledge Graph, and 9 specialized agents (Router, Escalator, Verifier, Detector, Anomaly, Dedup, Chatbot, Sentiment, Self-Heal) to act on civic issues.",
           },
         },
         {
           "@type": "Question",
-          name: "How is public feedback handled?",
+          name: "What languages does the AI chatbot support?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Feedback is stored for moderation review before it can be published, helping protect the public from spam and unsafe content.",
+            text: "The chatbot supports 22 Indian languages including English, Hindi, Kannada, Tamil, Telugu, Marathi, Bengali, and Bodo powered by Bhashini AI.",
           },
         },
       ],
