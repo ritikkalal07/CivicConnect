@@ -632,7 +632,7 @@ export function t(key: string, lang = "en"): string {
   return dict[key] || UI_TRANSLATIONS.en[key] || key;
 }
 
-type Screen = "home" | "track" | "harvesters" | "agents" | "officers" | "e2e" | "report" | "map" | "alerts";
+type Screen = "home" | "track" | "officers" | "e2e" | "report" | "map" | "alerts";
 
 function CivicConnectApp() {
   const [screen, setScreen] = useState<Screen>("home");
@@ -740,12 +740,26 @@ function CivicConnectApp() {
               label={t("navOfficers", activeLang)}
               compact
             />
+            <NavItem
+              active={screen === "harvesters"}
+              onClick={() => setScreen("harvesters")}
+              icon={<Radio />}
+              label={t("navHarvesters", activeLang)}
+              compact
+            />
+            <NavItem
+              active={screen === "agents"}
+              onClick={() => setScreen("agents")}
+              icon={<Bot />}
+              label={t("navWorkers", activeLang)}
+              compact
+            />
             <Button
               onClick={() => setScreen("report")}
               size="sm"
               variant={screen === "report" ? "default" : "outline"}
               aria-current={screen === "report" ? "page" : undefined}
-              className="ml-2 shadow-sm whitespace-nowrap"
+              className="ml-1 shadow-sm whitespace-nowrap"
             >
               <Send className="size-3.5" />
               {t("navReport", activeLang)}
@@ -843,18 +857,6 @@ function CivicConnectApp() {
             onMessage={setMessage}
           />
         )}
-        {screen === "harvesters" && (
-          <HarvestersScreen harvesters={agentSnapshot.harvesters} lang={activeLang} onBack={() => setScreen("home")} />
-        )}
-        {screen === "agents" && (
-          <AgentsScreen
-            agents={agentSnapshot.agents}
-            reports={reports}
-            lang={activeLang}
-            onBack={() => setScreen("home")}
-            onMessage={setMessage}
-          />
-        )}
         {screen === "report" && (
           <ReportScreen
             online={online}
@@ -882,7 +884,6 @@ function CivicConnectApp() {
       {/* Floating Assistant Button for Mobile / Tablet */}
       <button
         onClick={() => setIsChatOpen(!isChatOpen)}
-        className="fixed bottom-20 right-4 z-30 flex size-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform hover:scale-105 sm:bottom-6 sm:right-6 lg:hidden"
         className="fixed bottom-20 right-4 z-30 flex size-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-xl transition-transform hover:scale-105 lg:hidden"
         aria-label="Open Citizen Assistant"
       >
@@ -1022,8 +1023,8 @@ function HomeScreen({
               </p>
               <h2 className="text-lg font-semibold">{t("liveFeedTitle", lang)}</h2>
             </div>
-            <Button variant="ghost" size="sm" onClick={() => onNavigate("e2e")}>
-              View Live E2E Flow <ArrowUpRight className="size-4" />
+            <Button variant="ghost" size="sm" onClick={() => onNavigate("harvesters")}>
+              {t("harvesterDetails", lang)} <ArrowUpRight className="size-4" />
             </Button>
           </div>
           <div className="mt-4 space-y-3">

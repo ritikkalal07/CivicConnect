@@ -1,16 +1,10 @@
 {
-  "name": "CivicConnect Autonomous",
-  "name": "CivicConnect Autonomous — Self-Operating Civic Intelligence Platform",
   "name": "CivicConnect Autonomous: Self-Operating Civic Intelligence Platform",
   "short_name": "CivicConnect",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#F7F9FA",
   "background_color": "#0F172A",
   "theme_color": "#0F6B6B",
-  "description": "Autonomous civic intelligence for detecting and routing community issues.",
-  "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
-  "description": "It doesn’t wait for data. It finds it. It doesn’t wait for orders. It acts. It doesn’t wait for humans. It learns.",
   "description": "It doesn't wait for data. It finds it. It doesn't wait for orders. It acts. It doesn't wait for humans. It learns.",
   "icons": [
     {
