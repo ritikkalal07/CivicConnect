@@ -31,8 +31,11 @@ export function useReports() {
 }
 
 export function useOnlineStatus() {
-  const [online, setOnline] = useState(() => typeof navigator === "undefined" || navigator.onLine);
+  const [online, setOnline] = useState(true);
   useEffect(() => {
+    if (typeof navigator !== "undefined") {
+      setOnline(navigator.onLine);
+    }
     const up = () => {
       setOnline(true);
       void syncPending();
