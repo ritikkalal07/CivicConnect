@@ -20,8 +20,8 @@ export type ReportInput = Omit<WaterReport, "id" | "createdAt" | "status" | "pho
   photo?: File;
 };
 
-const REPORTS_KEY = "aquaalert.reports.v1";
-const QUEUE_KEY = "aquaalert.queue.v1";
+const REPORTS_KEY = "jaldarpan.reports.v1";
+const QUEUE_KEY = "jaldarpan.queue.v1";
 
 export function riskOf(report: Pick<WaterReport, "clarity" | "smell" | "color">) {
   const score =

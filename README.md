@@ -1,10 +1,10 @@
-# AquaAlert
+# JalDarpan
 
-AquaAlert is a community water safety application. Residents can report water quality observations, attach evidence, share their location, and see nearby reports and safety alerts.
+JalDarpan is a community water safety application. Residents can report water quality observations, attach evidence, share their location, and see nearby reports and safety alerts.
 
 ## Problem and solution
 
-Water concerns are often noticed locally before they are formally recorded. AquaAlert creates a simple reporting path and a shared map so communities can identify patterns quickly while keeping reports available during connectivity loss.
+Water concerns are often noticed locally before they are formally recorded. JalDarpan creates a simple reporting path and a shared map so communities can identify patterns quickly while keeping reports available during connectivity loss.
 
 ## Features
 

@@ -7,7 +7,7 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { type ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 
@@ -72,12 +72,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "AquaAlert | Community Water Safety" },
+      { title: "JalDarpan | Community Water Safety" },
       {
         name: "description",
         content: "Report water quality concerns and help your community respond quickly.",
       },
-      { property: "og:title", content: "AquaAlert | Community Water Safety" },
+      { property: "og:title", content: "JalDarpan | Community Water Safety" },
       {
         property: "og:description",
         content: "Report water quality concerns and view community safety alerts.",

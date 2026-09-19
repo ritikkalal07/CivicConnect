@@ -41,18 +41,18 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "AquaAlert | Community Water Safety" },
+      { title: "JalDarpan | Community Water Safety" },
       {
         name: "description",
         content: "Report water quality concerns and help your community respond quickly.",
       },
     ],
   }),
-  component: AquaAlertApp,
+  component: JalDarpanApp,
 });
 type Screen = "home" | "report" | "map" | "alerts";
 
-function AquaAlertApp() {
+function JalDarpanApp() {
   const [screen, setScreen] = useState<Screen>("home");
   const { reports, loading, error, refresh } = useReports();
   const online = useOnlineStatus();
@@ -101,7 +101,7 @@ function AquaAlertApp() {
               <Droplets className="size-5" />
             </span>
             <span>
-              <strong className="block text-base font-semibold">AquaAlert</strong>
+              <strong className="block text-base font-semibold">JalDarpan</strong>
               <span className="block text-xs text-text-secondary">Community water safety</span>
             </span>
           </button>

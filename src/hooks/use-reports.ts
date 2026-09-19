@@ -11,7 +11,7 @@ export function useReports() {
       const response = await fetch("/api/reports");
       if (!response.ok) throw new Error("Reports unavailable");
       const remote = (await response.json()) as WaterReport[];
-      localStorage.setItem("aquaalert.reports.v1", JSON.stringify(remote));
+      localStorage.setItem("jaldarpan.reports.v1", JSON.stringify(remote));
       setReports(remote);
       setError(false);
     } catch {

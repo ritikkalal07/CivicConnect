@@ -1,4 +1,4 @@
-const CACHE_NAME = "aquaalert-v1";
+const CACHE_NAME = "jaldarpan-v1";
 const APP_SHELL = ["/", "/manifest.webmanifest", "/favicon.ico"];
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)));
