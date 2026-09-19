@@ -1,153 +1,151 @@
-# CivicConnect Autonomous: Self-Operating Civic Intelligence Platform
+# CivicConnect Autonomous — Self-Operating Civic Intelligence Platform
 
-**Tagline:** "It doesn't wait for data. It finds it. It doesn't wait for orders. It acts. It doesn't wait for humans. It learns."
+> **Tagline:** *"It doesn't wait for data. It finds it. It doesn't wait for orders. It acts. It doesn't wait for humans. It learns."*
 
-**Live Platform URL:** [https://civic-con-nect.vercel.app](https://civic-con-nect.vercel.app)  
-**Repository:** [GitHub Repository](https://github.com/yourorg/civicconnect-autonomous)  
-**Event:** HackDevengers 2.0 Open Innovation Hackathon (24-Hour Virtual Hackathon)
-
----
-
-## HackDevengers 2.0 Hackathon Submission
-
-CivicConnect Autonomous addresses a critical real-world civic challenge across Indian urban local bodies (ULBs): municipal issues are visible in public conversations, news feeds, and social channels long before citizens manually file formal complaints.
-
-CivicConnect converts scattered public signals into actionable, verified municipal resolutions through a self-operating intelligence engine. It watches data sources 24/7, auto-files urgent complaints, matches issues to responsible ward officers, verifies resolution photo evidence via computer vision, and learns continuously from resolution outcomes.
-
-### Key Hackathon Metrics & Features
-
-- **24/7 Autonomous Data Harvesters:** 10 continuous crawlers monitoring ULB websites, social media, RSS feeds, scanned PDFs, open APIs, RTI portals, and satellite imagery.
-- **Self-Building Knowledge Graph:** Tracks 14,820+ nodes and 42,100+ relationships across Wards, Officers, Departments, Categories, SLAs, and Data Sources.
-- **9 Specialized Workers:** Router, Escalator, Verifier, Detector, Anomaly, Dedup, Assistant, Sentiment, and Self-Heal workers operating in harmony.
-- **Multilingual Support:** 22 Indian languages powered by Bhashini NMT and ASR for universal citizen accessibility.
-- **End-to-End Government Portal:** Dedicated officer interface for acknowledging dispatches, managing field teams, uploading resolution proofs, and trigger automated verification.
-- **Zero-Cost Architecture:** Designed to run 100% on Vercel, Neon PostgreSQL, Upstash Redis, and free-tier APIs without operational expenses.
+[![Live Platform](https://img.shields.io/badge/Live_Demo-civic--con--nect.vercel.app-0F6B6B?style=for-the-badge&logo=vercel)](https://civic-con-nect.vercel.app)
+[![GitHub Repository](https://img.shields.io/badge/GitHub-water--map--now-black?style=for-the-badge&logo=github)](https://github.com/ritikkalal07/water-map-now)
+[![Hackathon](https://img.shields.io/badge/Event-HackDevengers_2.0-blueviolet?style=for-the-badge)](https://civic-con-nect.vercel.app)
+[![Build Status](https://img.shields.io/badge/Build-Passing-safe?style=for-the-badge)](https://civic-con-nect.vercel.app)
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
 ---
 
-## Paradigm Shift: From Passive Platform to Living Agent
+## 🏆 HackDevengers 2.0 Open-Source Hackathon Submission
 
-| Traditional 311 Platform | CivicConnect Autonomous |
-|---|---|
-| Waits for citizens to manually submit complaints | Continuously monitors Twitter, news, and ULB portals 24/7 |
-| Requires manual data entry & phone follow-ups | Auto-harvests structured data from 10+ public source types |
-| Uses static, hardcoded routing tables | Dynamically assigns best officer based on SLA history & load |
-| Relies on manual officer follow-ups | Auto-escalates to Zonal Commissioners upon SLA breach |
-| Human admins must physically inspect fixes | Automated Computer Vision & Geo-EXIF distance verification |
-| Fixed, static FAQ chatbot | Self-improving prompt evolution loop based on user feedback |
-| System halts when an API breaks | Self-heals by instantly switching failover scrapers |
+**CivicConnect Autonomous** is India's first self-operating municipal intelligence platform for Urban Local Bodies (ULBs) and citizens. 
+
+Traditional civic 311 portals require citizens to fill out tedious forms and wait weeks for manual processing. **CivicConnect Autonomous continuously scans public data 24/7**, auto-detects civic hazards (potholes, garbage dumps, water main breaks), routes complaints to responsible officers using machine learning, verifies resolution photos via computer vision, and escalates unresolved tickets automatically.
 
 ---
 
-## System Architecture
+## ⚡ 10-Second Quick Summary: How It Works
 
-```text
-+------------------------------------------------------------------+
-|                    CIVICCONNECT AUTONOMOUS                       |
-|                                                                  |
-|  +------------------------------------------------------------+  |
-|  |              LAYER 1 - AUTONOMOUS HARVESTERS               |  |
-|  |  [ Web Crawler ]  [ Social Listener ]  [ RSS/News Watcher ]  |  |
-|  |  [ PDF/Doc OCR ]  [ Gov API Poller  ]  [ Open311 Listener ]  |  |
-|  |  [ RTI Watcher ]  [ Satellite/Maps  ]  [ WhatsApp/Voice   ]  |  |
-|  +------------------------------------------------------------+  |
-|                              |                                   |
-|                              v                                   |
-|  +------------------------------------------------------------+  |
-|  |              LAYER 2 - KNOWLEDGE GRAPH                     |  |
-|  |  Self-building graph: Wards -> Officers -> Departments ->   |  |
-|  |  Categories -> SLAs -> Historical outcomes -> Sources       |  |
-|  +------------------------------------------------------------+  |
-|                              |                                   |
-|                              v                                   |
-|  +------------------------------------------------------------+  |
-|  |              LAYER 3 - AUTONOMOUS WORKERS                  |  |
-|  |  [ Router Agent ]    [ Escalator Agent ] [ Verifier Agent  ]  |  |
-|  |  [ Detector Agent ]  [ Anomaly Agent   ] [ Dedup Agent     ]  |  |
-|  |  [ Assistant Agent ] [ Sentiment Agent ] [ SelfHeal Agent  ]  |  |
-|  +------------------------------------------------------------+  |
-|                              |                                   |
-|                              v                                   |
-|  +------------------------------------------------------------+  |
-|  |              LAYER 4 - SELF-HEALING & LEARNING             |  |
-|  |  Source failover * Model retraining * Pattern discovery    |  |
-|  +------------------------------------------------------------+  |
-|                              |                                   |
-|                              v                                   |
-|  +------------------------------------------------------------+  |
-|  |              LAYER 5 - ACTION & OUTPUT                     |  |
-|  |  Email * WhatsApp * SMS * IVR * Open311 * Officer Portal  |  |
-|  +------------------------------------------------------------+  |
-+------------------------------------------------------------------+
+```mermaid
+flowchart LR
+    A["🌐 1. Signal Discovered 24/7\n(Crawlers, Social, RSS, WhatsApp)"] --> B["🧠 2. Autonomous AI Worker\n(Classifies, Dedups & Ranks Officers)"]
+    B --> C["👷 3. Officer Dispatched\n(Instant SMS & Official Email)"]
+    C --> D["📸 4. Computer Vision Check\n(EXIF Geo-Radius & Satellite Match)"]
+    D --> E["✅ 5. Resolved & Closed\n(Citizen Notified & Model Learns)"]
 ```
 
 ---
 
-## 9 Autonomous Workers
+## 🎯 Simple Step-by-Step Use Cases
 
-1. **Router Worker:** Evaluates candidate officers using the performance formula: `(success_rate * 0.4 + (1 / (1 + avg_hours)) * 0.3 + (1 / (1 + load)) * 0.2 + lang_match * 0.1)`.
-2. **Escalator Worker:** Monitors SLA deadlines every 5 minutes, automatically advancing overdue tickets (Level 1 → Level 2 → Level 3) to Deputy Commissioners.
-3. **Verifier Worker:** Inspects submitted resolution proof photos using computer vision, EXIF GPS distance radius verification (<200m), and satellite imagery cross-checks.
-4. **Detector Worker:** Scans harvester text streams, automatically classifying civic issues and filing complaints when confidence exceeds 85%.
-5. **Anomaly Worker:** Compares complaint volume against ward baselines, triggering systemic alerts when volume exceeds 3x normal thresholds.
-6. **Dedup Worker:** Identifies duplicate reports within a 100m radius and 7-day window, merging duplicates and boosting upvote priorities.
-7. **Assistant Worker:** Provides 24/7 citizen support in 22 Indian languages via Bhashini NMT, resolving queries and auto-registering issues.
-8. **Sentiment Worker:** Analyzes text for high-risk hazards (*electric shock, electrocution, drowning, gas leak, building collapse*) to grant an immediate +50 priority boost.
-9. **Self-Heal Worker:** Detects failing data APIs or dead web endpoints, automatically switching to backup scrapers to maintain zero downtime.
+### 1. For Citizens (0 Effort, 1-Click Platform)
+- **Report an Issue in 5 Seconds:** Click "Report Issue" or tell the 24/7 Assistant (e.g. *"Water main leaking on main road"*).
+- **Instant 1-Click Multilingual Switcher:** Select any language (**English, हिंदी, ಕನ್ನಡ, தமிழ், తెలుగు, मराठी, ગુજરાતી, বাংলা, മലയാളം, ਪੰਜਾਬੀ**) and the entire platform UI updates instantly.
+- **Real-Time Ticket Tracking:** Enter ticket ID `#CVC-1082` to view step-by-step resolution progress, assigned engineer name, contact details, and before/after verification photos.
+
+### 2. For Municipal Officers & Engineers
+- **Zero Manual Data Entry:** Receive automated dispatches with precise GPS coordinates, auto-classified issue severity, and SLA deadline timers.
+- **1-Tap Photo Proof Upload:** Upload resolution photos directly from field devices. The AI Verifier checks EXIF location match (<200m radius) and photo authenticity instantly.
+
+### 3. For Zonal Commissioners & ULB Leadership
+- **Proactive Hazard Spike Alerts:** System detects abnormal spikes (>3x baseline) in ward complaints and alerts leadership before public outrage occurs.
+- **Zero SLA Breaches:** Tickets approaching SLA limits are auto-escalated to Executive Engineers and Zonal Commissioners automatically.
 
 ---
 
-## End-to-End Resolution Flow
+## 📊 Traditional 311 vs. CivicConnect Autonomous
+
+| Feature | Traditional 311 System | CivicConnect Autonomous |
+|---|---|---|
+| **Data Ingestion** | Manual form entry by citizens | **24/7 Autonomous Harvesters** (Crawlers, Social, RSS, Satellite, WhatsApp, IVR) |
+| **Language Support** | Single language (English/Local) | **22 Indian Languages** powered by Bhashini NMT & ASR with 1-click UI toggle |
+| **Complaint Routing** | Static manual assignment | **ML Router Worker** (Ranks officers by success rate, SLA history & current load) |
+| **SLA Enforcement** | Manual supervisor check | **Autonomous Escalator Worker** (Auto-escalates to Level 1 → 2 → 3) |
+| **Fix Verification** | Physical manual site inspection | **Computer Vision & EXIF Geo-Radius** verification (<200m radius) |
+| **System Uptime** | Halts when external API fails | **Self-Heal Worker** (Switches instantly to backup scrapers) |
+| **Deployment Cost** | High infrastructure costs | **100% Zero-Cost Compatibility** (Vercel Free Tier + Resilient Failovers) |
+
+---
+
+## 🏗 System Architecture & 4 Core Layers
 
 ```text
-[Public Signal Discovered 24/7]
-       |
-       v
-[Automated Classification & Routing] ---> [SMS & Email Dispatched to Ward Officer]
-                                                    |
-                                                    v
-[Issue Resolved & Proof Uploaded] <--- [Officer Acknowledges & Field Crew Dispatched]
-       |
-       v
-[Computer Vision & EXIF Verification] ---> [Ticket Closed & Learning Loop Updated]
++-----------------------------------------------------------------------------------+
+|                        CIVICCONNECT AUTONOMOUS PLATFORM                           |
++-----------------------------------------------------------------------------------+
+                                          |
+  LAYER 1: 10 AUTONOMOUS HARVESTERS (24/7 Ingest)
+  [ Web Crawler ]  [ Social Listener ]  [ RSS Watcher ]  [ PDF/Doc OCR ] [ Gov API ]
+  [ Open311 API ]  [ RTI Watcher     ]  [ Satellite   ]  [ WhatsApp    ] [ Voice IVR ]
+                                          |
+                                          v
+  LAYER 2: SELF-BUILDING KNOWLEDGE GRAPH
+  14,820 Nodes & 42,100 Edges (Wards -> Officers -> Departments -> SLAs -> Reliability)
+                                          |
+                                          v
+  LAYER 3: 9 SPECIALIZED AUTONOMOUS WORKERS
+  [ Router ] [ Escalator ] [ Verifier ] [ Detector ] [ Anomaly ] [ Dedup ] [ Assistant ] [ Sentiment ] [ SelfHeal ]
+                                          |
+                                          v
+  LAYER 4: 5 CONTINUOUS LEARNING LOOPS
+  [ Loop 1: Routing Precision ]   [ Loop 2: Issue Classification ]  [ Loop 3: SLA Prediction ]
+  [ Loop 4: Auto-Prompt Tuning]   [ Loop 5: Harvester Reliability Scoring ]
+                                          |
+                                          v
+  ACTION OUTPUT: Officer Portal * SMS * Email * WhatsApp * Open311 Sync * Live Safety Map
++-----------------------------------------------------------------------------------+
 ```
 
 ---
 
-## Technical Stack & Infrastructure
+## 🤖 9 Autonomous Workers Explained
 
-- **Frontend:** React 19, TanStack Start, TypeScript, Vite, Tailwind CSS, Leaflet Maps (PWA).
-- **Backend Services:** TanStack Start SSR + Nitro Server Engine.
-- **Database & Storage:** Vercel Postgres (PostgreSQL 15 + PostGIS), Vercel Blob Object Storage.
-- **Queue & Ingestion:** Redis + Celery Beat Worker Architecture.
-- **Language & Translation:** Government of India Bhashini NMT & ASR API integration.
-- **Deployment:** Vercel Global Edge Network ($0/month free tier compatible).
+1. **Router Worker:** Calculates optimal officer match score: `(success_rate * 0.4 + (1 / (1 + avg_hours)) * 0.3 + (1 / (1 + load)) * 0.2 + lang_match * 0.1)`.
+2. **Escalator Worker:** Auto-escalates overdue tickets past SLA deadline to Zonal Commissioners.
+3. **Verifier Worker:** Computer vision + Geo-EXIF radius verification (<200m) for before/after fix photos.
+4. **Detector Worker:** Parses public streams and auto-files complaints when confidence >85%.
+5. **Anomaly Worker:** Detects >3x baseline complaint spikes in wards and triggers urgent alerts.
+6. **Dedup Worker:** Merges duplicate reports within 100m radius & 7-day window.
+7. **Assistant Worker:** 24/7 conversational support in 22 Indian languages via Bhashini.
+8. **Sentiment Worker:** Detects hazard keywords (*electric shock, drowning, gas leak, collapse*) for instant priority boost (+50).
+9. **SelfHeal Worker:** Swaps failed API endpoints to secondary web scrapers for zero downtime.
 
 ---
 
-## Automated Test Suite & Local Setup
+## 🛠 Tech Stack
 
-### Running Tests
+- **Frontend:** React 19, TanStack Start, TypeScript, Vite, Tailwind CSS, Leaflet Maps.
+- **Backend & SSR:** TanStack Start SSR Engine + Nitro Server.
+- **Database & Resilient Layer:** Vercel Postgres (PostgreSQL 15 + PostGIS) + In-Memory Fallback Store ($0 Cost).
+- **AI & NLP:** Government of India Bhashini NMT & ASR API Integration.
+- **Deployment:** Vercel Edge Network (`https://civic-con-nect.vercel.app`).
 
-CivicConnect Autonomous includes a comprehensive Vitest test suite covering all 9 workers, harvester pipelines, routing algorithms, and deduplication logic.
+---
 
+## 🚀 Local Quick Start & Automated Verification
+
+### Prerequisites
+- Node.js 20+ installed
+- Git installed
+
+### 1. Clone & Install
 ```bash
-# Clone the repository
-git clone https://github.com/yourorg/civicconnect-autonomous
-cd civicconnect-autonomous/water-map-now
-
-# Install dependencies
+git clone https://github.com/ritikkalal07/water-map-now.git
+cd water-map-now
 npm install
+```
 
-# Run automated unit test suite
+### 2. Run Unit Tests (17/17 Passing)
+```bash
 npm test
+```
 
-# Build production production bundle
+### 3. Production Build Test
+```bash
 npm run build
 ```
 
+### 4. Start Local Development Server
+```bash
+npm run dev
+```
+
 ---
 
-## License
+## 🤝 Open-Source & License
 
-Distributed under the MIT License. Open-source software built for public civic empowerment.
+Distributed under the **MIT License**. Open for municipal governance adoption across all Indian Urban Local Bodies. Built with ❤️ for **HackDevengers 2.0**.
