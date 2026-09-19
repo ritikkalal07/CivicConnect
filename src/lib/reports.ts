@@ -93,7 +93,7 @@ export function getReports(): WaterReport[] {
   return read().sort((a, b) => b.createdAt - a.createdAt);
 }
 
-export function addReport(input: Omit<WaterReport, "id" | "createdAt" | "status">) {
+export function addReport(input: Omit<WaterReport, "id" | "createdAt" | "status" | "photo"> & { photo?: string }) {
   const online = typeof navigator === "undefined" ? true : navigator.onLine;
   const report: WaterReport = {
     ...input,
