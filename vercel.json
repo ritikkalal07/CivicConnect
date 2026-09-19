@@ -1,7 +1,4 @@
 {
-  "rewrites": [
-    { "source": "/favicon.ico", "destination": "/client/favicon.ico" },
-    { "source": "/manifest.webmanifest", "destination": "/client/manifest.webmanifest" },
-    { "source": "/sw.js", "destination": "/client/sw.js" }
-  ]
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "tanstack-start"
 }
