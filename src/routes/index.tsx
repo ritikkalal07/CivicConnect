@@ -896,15 +896,15 @@ function CivicConnectApp() {
       {/* Floating Assistant Button for Mobile / Tablet */}
       <button
         onClick={() => setIsChatOpen(!isChatOpen)}
-        className="fixed bottom-20 right-4 z-30 flex size-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform hover:scale-105 sm:bottom-6 sm:right-6 lg:hidden"
+        className="fixed bottom-20 right-4 z-30 flex size-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-xl transition-transform hover:scale-105 lg:hidden"
         aria-label="Open Citizen Assistant"
       >
         <Sparkles className="size-6" />
       </button>
 
-      {/* Bottom Mobile / Tablet Navigation Bar - ONLY visible on screens smaller than lg */}
+      {/* Bottom Mobile / Tablet Navigation Bar - Fixed 5-Tab Native App Layout */}
       <nav aria-label="Mobile navigation" className="fixed inset-x-0 bottom-0 z-20 border-t border-border/80 bg-card/95 pb-[env(safe-area-inset-bottom)] shadow-lg backdrop-blur lg:hidden">
-        <div className="mx-auto flex max-w-lg items-center justify-between px-3 py-1.5 overflow-x-auto scrollbar-none">
+        <div className="mx-auto flex max-w-md items-center justify-around px-2 py-2">
           <NavItem
             active={screen === "home"}
             onClick={() => setScreen("home")}
@@ -917,44 +917,26 @@ function CivicConnectApp() {
             icon={<Search />}
             label={t("navTrack", activeLang)}
           />
+          <Button
+            onClick={() => setScreen("report")}
+            size="icon"
+            aria-label="Report issue"
+            aria-current={screen === "report" ? "page" : undefined}
+            className={`size-11 shrink-0 rounded-full shadow-md ${screen === "report" ? "ring-2 ring-primary/30 ring-offset-2" : ""}`}
+          >
+            <Send className="size-5" />
+          </Button>
           <NavItem
             active={screen === "map"}
             onClick={() => setScreen("map")}
             icon={<Map />}
             label={t("navMap", activeLang)}
           />
-          <Button
-            onClick={() => setScreen("report")}
-            size="icon"
-            aria-label="Report issue"
-            aria-current={screen === "report" ? "page" : undefined}
-            className={`size-10 shrink-0 rounded-full ${screen === "report" ? "ring-2 ring-primary/30 ring-offset-2" : ""}`}
-          >
-            <Send className="size-4" />
-          </Button>
           <NavItem
             active={screen === "officers"}
             onClick={() => setScreen("officers")}
             icon={<Building2 />}
             label={t("navOfficers", activeLang)}
-          />
-          <NavItem
-            active={screen === "e2e"}
-            onClick={() => setScreen("e2e")}
-            icon={<Play />}
-            label={t("navE2e", activeLang)}
-          />
-          <NavItem
-            active={screen === "harvesters"}
-            onClick={() => setScreen("harvesters")}
-            icon={<Radio />}
-            label={t("navHarvesters", activeLang)}
-          />
-          <NavItem
-            active={screen === "agents"}
-            onClick={() => setScreen("agents")}
-            icon={<Bot />}
-            label={t("navWorkers", activeLang)}
           />
         </div>
       </nav>
