@@ -1,10 +1,10 @@
-# JalDarpan
+# CivicConnect Autonomous
 
-JalDarpan is a community water safety application. Residents can report water quality observations, attach evidence, share their location, and see nearby reports and safety alerts.
+CivicConnect Autonomous is a civic-intelligence application for detecting, routing, and escalating community issues. It combines public-signal monitoring concepts with citizen reports, location-aware mapping, risk classification, and operational alerts.
 
 ## Problem and solution
 
-Water concerns are often noticed locally before they are formally recorded. JalDarpan creates a simple reporting path and a shared map so communities can identify patterns quickly while keeping reports available during connectivity loss.
+Community issues are often visible in scattered signals before they reach the right department. CivicConnect creates a shared operational view so issues can be detected, reviewed, routed, and tracked while reports remain available during connectivity loss.
 
 ## HackDevengers 2.0
 
@@ -20,17 +20,17 @@ HackDevengers 2.0 is a 24-hour fully virtual Open Innovation Hackathon powered b
 - **Participation:** Developers, students, creators, designers, innovators, and technology enthusiasts
 - **Prize pool:** INR 50,000 cash prize plus additional rewards
 
-### JalDarpan submission
+### CivicConnect submission
 
-JalDarpan addresses a real-world community safety problem: water quality concerns are often discovered locally but are difficult to report, verify, and share quickly. The app combines structured reporting, location-aware mapping, risk classification, community alerts, photo evidence, and offline synchronization in one installable web application.
+CivicConnect addresses a real-world civic safety problem: public issues are often discovered locally but are difficult to detect, verify, route, and share quickly. The app combines structured issue reporting, location-aware mapping, risk classification, operational alerts, and offline synchronization in one installable web application.
 
-**Project title:** JalDarpan - Community Water Safety
+**Project title:** CivicConnect Autonomous - Civic Intelligence Platform
 
-**Project description:** A responsive PWA that helps residents report water quality observations, attach evidence, share their location, view nearby safety reports, and identify clusters of dangerous observations. Reports remain available offline and synchronize automatically when connectivity returns.
+**Project description:** A responsive PWA that helps residents report civic issues, attach evidence, share their location, view nearby signals, and identify priority clusters. Reports remain available offline and synchronize automatically when connectivity returns.
 
 **Repository:** This GitHub repository contains the complete project source code, setup instructions, deployment configuration, and validation scenarios.
 
-**Live deployment:** [JalDarpan on Vercel](https://jal-d-arpan.vercel.app/)
+**Live deployment:** [CivicConnect on Vercel](https://jal-d-arpan.vercel.app/)
 
 ### Submission requirements
 

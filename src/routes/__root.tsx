@@ -72,15 +72,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "JalDarpan | Community Water Safety" },
+      { title: "CivicConnect Autonomous | Civic Intelligence" },
       {
         name: "description",
-        content: "Report water quality concerns and help your community respond quickly.",
+        content:
+          "Autonomous civic intelligence that detects, routes, and escalates community issues.",
       },
-      { property: "og:title", content: "JalDarpan | Community Water Safety" },
+      { property: "og:title", content: "CivicConnect Autonomous | Civic Intelligence" },
       {
         property: "og:description",
-        content: "Report water quality concerns and view community safety alerts.",
+        content: "Detect civic issues, coordinate action, and keep communities informed.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

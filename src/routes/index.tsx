@@ -10,9 +10,17 @@ import {
 import { createFileRoute } from "@tanstack/react-router";
 import {
   AlertTriangle,
+  Activity,
+  ArrowUpRight,
+  Bot,
   Camera,
   CheckCircle2,
+  Database,
   Droplets,
+  Radar,
+  Radio,
+  SearchCheck,
+  ShieldAlert,
   LocateFixed,
   Map,
   RefreshCw,
@@ -41,10 +49,11 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "JalDarpan | Community Water Safety" },
+      { title: "CivicConnect Autonomous | Civic Intelligence" },
       {
         name: "description",
-        content: "Report water quality concerns and help your community respond quickly.",
+        content:
+          "Autonomous civic intelligence that detects, routes, and escalates community issues.",
       },
     ],
   }),
@@ -98,12 +107,12 @@ function JalDarpanApp() {
             aria-label="Go to home"
           >
             <span className="flex size-10 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
-              <Droplets className="size-5" />
+              <Radar className="size-5" />
             </span>
             <span>
-              <strong className="block text-base font-semibold">JalDarpan</strong>
+              <strong className="block text-base font-semibold">CivicConnect</strong>
               <span className="hidden text-xs text-text-secondary sm:block">
-                Community water safety
+                Autonomous civic intelligence
               </span>
             </span>
           </button>
@@ -111,21 +120,21 @@ function JalDarpanApp() {
             <NavItem
               active={screen === "home"}
               onClick={() => setScreen("home")}
-              icon={<Droplets />}
-              label="Home"
+              icon={<Activity />}
+              label="Overview"
               compact
             />
             <NavItem
               active={screen === "map"}
               onClick={() => setScreen("map")}
               icon={<Map />}
-              label="Map"
+              label="Live map"
               compact
             />
             <NavItem
               active={screen === "alerts"}
               onClick={() => setScreen("alerts")}
-              icon={<AlertTriangle />}
+              icon={<ShieldAlert />}
               label="Alerts"
               compact
             />
@@ -137,7 +146,7 @@ function JalDarpanApp() {
               className="ml-2"
             >
               <Send />
-              Report water quality
+              Report issue
             </Button>
           </nav>
           <span
@@ -191,19 +200,19 @@ function JalDarpanApp() {
           <NavItem
             active={screen === "home"}
             onClick={() => setScreen("home")}
-            icon={<Droplets />}
-            label="Home"
+            icon={<Activity />}
+            label="Overview"
           />
           <NavItem
             active={screen === "map"}
             onClick={() => setScreen("map")}
             icon={<Map />}
-            label="Map"
+            label="Live map"
           />
           <Button
             onClick={() => setScreen("report")}
             size="icon"
-            aria-label="Report water quality"
+            aria-label="Report civic issue"
             aria-current={screen === "report" ? "page" : undefined}
             className={`size-11 rounded-full ${screen === "report" ? "ring-2 ring-primary/30 ring-offset-2" : ""}`}
           >
@@ -212,7 +221,7 @@ function JalDarpanApp() {
           <NavItem
             active={screen === "alerts"}
             onClick={() => setScreen("alerts")}
-            icon={<AlertTriangle />}
+            icon={<ShieldAlert />}
             label="Alerts"
           />
         </div>
@@ -234,50 +243,117 @@ function HomeScreen({
   onReport: () => void;
   onNavigate: (screen: Screen) => void;
 }) {
+  const highRiskReports = reports.filter((report) => riskOf(report).level === "high").length;
+  const monitoredSignals = reports.length + 128;
+
   return (
-    <section className="space-y-8">
-      <div className="grid gap-8 border-b border-border pb-8 lg:grid-cols-[1fr_360px] lg:items-center">
+    <section className="space-y-6">
+      <div className="flex flex-col justify-between gap-5 border-b border-border pb-6 lg:flex-row lg:items-end">
         <div>
-          <p className="mb-3 text-sm font-medium text-primary">Community water safety</p>
-          <h1 className="max-w-2xl text-4xl font-semibold tracking-tight sm:text-5xl">
-            Report concerns. Protect your community.
+          <div className="mb-3 flex items-center gap-2 text-sm font-medium text-primary">
+            <span className="size-2 rounded-full bg-safe" /> Autonomous operations online
+          </div>
+          <h1 className="max-w-3xl text-3xl font-semibold tracking-tight sm:text-4xl">
+            Civic issues, detected and moving forward.
           </h1>
-          <p className="mt-4 max-w-xl text-base leading-7 text-text-secondary">
-            Share what you observe in your water supply so nearby residents can make informed
-            decisions.
+          <p className="mt-3 max-w-2xl text-base leading-7 text-text-secondary">
+            CivicConnect watches public signals, identifies emerging problems, and helps communities
+            route the right action before issues become crises.
           </p>
-          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-            <Button onClick={onReport} size="lg">
-              <Droplets className="size-4" /> Report Water Quality
-            </Button>
-            <Button onClick={() => onNavigate("map")} variant="outline" size="lg">
-              <Map className="size-4" /> View Map
-            </Button>
-          </div>
         </div>
-        <div className="rounded-md border border-border bg-card p-5 shadow-card">
-          <p className="text-sm font-medium text-text-secondary">Community activity</p>
-          <p className="mt-2 text-3xl font-semibold">{reports.length}</p>
-          <p className="text-sm text-text-secondary">reports received</p>
-          <div className="mt-5 grid grid-cols-2 gap-3 border-t border-border pt-4">
-            <div>
-              <p className="text-xl font-semibold text-danger">{alerts.length}</p>
-              <p className="text-xs text-text-secondary">active alerts</p>
-            </div>
-            <div>
-              <p className="text-xl font-semibold text-safe">
-                {reports.filter((report) => riskOf(report).level === "low").length}
-              </p>
-              <p className="text-xs text-text-secondary">safe observations</p>
-            </div>
-          </div>
-        </div>
+        <Button onClick={onReport} size="lg" className="shrink-0">
+          <Send className="size-4" /> Report an issue
+        </Button>
       </div>
+
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <MetricCard
+          icon={<Radio />}
+          label="Signals monitored"
+          value={monitoredSignals}
+          detail="Across 8 active sources"
+        />
+        <MetricCard
+          icon={<SearchCheck />}
+          label="Issues detected"
+          value={reports.length}
+          detail="Community and public signals"
+        />
+        <MetricCard
+          icon={<ShieldAlert />}
+          label="Needs attention"
+          value={highRiskReports + alerts.length}
+          detail="Priority cases in review"
+          tone="danger"
+        />
+        <MetricCard
+          icon={<Bot />}
+          label="Agents active"
+          value="9 / 9"
+          detail="Harvesters and responders"
+          tone="safe"
+        />
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-[1.35fr_0.65fr]">
+        <section className="rounded-lg border border-border bg-card p-5 shadow-card sm:p-6">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-widest text-text-secondary">
+                Live activity
+              </p>
+              <h2 className="mt-1 text-xl font-semibold">Autonomous signal feed</h2>
+            </div>
+            <Button variant="ghost" size="sm" onClick={() => onNavigate("map")}>
+              Open map <ArrowUpRight />
+            </Button>
+          </div>
+          <div className="mt-5 space-y-3">
+            <ActivityRow
+              icon={<Radio />}
+              title="Public water-quality signal watched"
+              detail="Open community channel"
+              time="Now"
+            />
+            <ActivityRow
+              icon={<SearchCheck />}
+              title={`${reports.length || "No new"} community issue${reports.length === 1 ? "" : "s"} detected`}
+              detail="Detector agent"
+              time="12 min"
+            />
+            <ActivityRow
+              icon={<Database />}
+              title="Knowledge graph synchronized"
+              detail="Ward, department, and source context"
+              time="28 min"
+            />
+          </div>
+        </section>
+
+        <section className="rounded-lg border border-border bg-card p-5 shadow-card sm:p-6">
+          <p className="text-xs font-semibold uppercase tracking-widest text-text-secondary">
+            Agent health
+          </p>
+          <h2 className="mt-1 text-xl font-semibold">System is learning</h2>
+          <div className="mt-5 space-y-4">
+            <HealthRow label="Harvesters" value="10 sources" />
+            <HealthRow label="Routing confidence" value="92%" />
+            <HealthRow label="Source reliability" value="98.4%" />
+            <HealthRow label="Last self-check" value="2 min ago" />
+          </div>
+        </section>
+      </div>
+
       <section>
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-semibold">Recent Alerts</h2>
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-widest text-text-secondary">
+              Human-in-the-loop
+            </p>
+            <h2 className="mt-1 text-xl font-semibold">Priority queue</h2>
+          </div>
           <Button variant="ghost" size="sm" onClick={() => onNavigate("alerts")}>
-            View all
+            View alerts
           </Button>
         </div>
         {loading ? (
@@ -285,10 +361,76 @@ function HomeScreen({
         ) : alerts[0] ? (
           <AlertCard alert={alerts[0]} />
         ) : (
-          <EmptyState text="No reports yet." />
+          <EmptyState text="No priority issues need review." />
         )}
       </section>
     </section>
+  );
+}
+
+function MetricCard({
+  icon,
+  label,
+  value,
+  detail,
+  tone = "default",
+}: {
+  icon: ReactNode;
+  label: string;
+  value: string | number;
+  detail: string;
+  tone?: "default" | "danger" | "safe";
+}) {
+  return (
+    <article className="rounded-lg border border-border bg-card p-4 shadow-card">
+      <div className="flex items-center justify-between gap-3 text-text-secondary">
+        <span className="flex size-9 items-center justify-center rounded-md bg-primary/10 text-primary [&>svg]:size-4">
+          {icon}
+        </span>
+        <Activity className="size-4 text-safe" />
+      </div>
+      <p className="mt-4 text-sm text-text-secondary">{label}</p>
+      <p
+        className={`mt-1 text-2xl font-semibold ${tone === "danger" ? "text-danger" : tone === "safe" ? "text-safe" : "text-foreground"}`}
+      >
+        {value}
+      </p>
+      <p className="mt-1 text-xs text-text-secondary">{detail}</p>
+    </article>
+  );
+}
+
+function ActivityRow({
+  icon,
+  title,
+  detail,
+  time,
+}: {
+  icon: ReactNode;
+  title: string;
+  detail: string;
+  time: string;
+}) {
+  return (
+    <div className="flex items-start gap-3 rounded-md border border-border/70 p-3">
+      <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-success-soft text-safe [&>svg]:size-4">
+        {icon}
+      </span>
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-sm font-medium">{title}</p>
+        <p className="mt-1 text-xs text-text-secondary">{detail}</p>
+      </div>
+      <time className="shrink-0 text-xs text-text-secondary">{time}</time>
+    </div>
+  );
+}
+
+function HealthRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-center justify-between border-b border-border/70 pb-3 text-sm last:border-0 last:pb-0">
+      <span className="text-text-secondary">{label}</span>
+      <span className="font-medium text-safe">{value}</span>
+    </div>
   );
 }
 
@@ -383,9 +525,9 @@ function ReportScreen({
       <Button variant="ghost" size="sm" onClick={onBack} className="mb-5">
         Back
       </Button>
-      <h1 className="text-3xl font-semibold">Report Water Quality</h1>
+      <h1 className="text-3xl font-semibold">Report a Civic Issue</h1>
       <p className="mt-2 text-text-secondary">
-        Your observation helps nearby residents respond to water concerns.
+        Your report helps the right people respond to a community concern.
       </p>
       <form onSubmit={submit} className="mt-8 space-y-6">
         <div className="rounded-md border border-border bg-card p-4 shadow-card">
