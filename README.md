@@ -1,4 +1,4 @@
-# CivicConnect Autonomous — Self-Operating Civic Intelligence Platform
+# CivicConnect Autonomous - Self-Operating Civic Intelligence Platform
 
 > **Tagline:** *"It doesn't wait for data. It finds it. It doesn't wait for orders. It acts. It doesn't wait for humans. It learns."*
 
