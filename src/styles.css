@@ -46,6 +46,12 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-ring-offset-background: var(--background);
+  --color-safe: var(--safe);
+  --color-safe-foreground: var(--safe-foreground);
+  --color-caution: var(--caution);
+  --color-caution-foreground: var(--caution-foreground);
+  --color-danger: var(--danger);
+  --color-danger-foreground: var(--danger-foreground);
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
@@ -63,25 +69,38 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.129 0.042 264.695);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.129 0.042 264.695);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: oklch(0.208 0.042 265.755);
-  --primary-foreground: oklch(0.984 0.003 247.858);
-  --secondary: oklch(0.968 0.007 247.896);
-  --secondary-foreground: oklch(0.208 0.042 265.755);
-  --muted: oklch(0.968 0.007 247.896);
-  --muted-foreground: oklch(0.554 0.046 257.417);
-  --accent: oklch(0.968 0.007 247.896);
-  --accent-foreground: oklch(0.208 0.042 265.755);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(0.929 0.013 255.508);
-  --input: oklch(0.929 0.013 255.508);
-  --ring: oklch(0.704 0.04 256.788);
+  --background: oklch(0.174 0.035 235);
+  --foreground: oklch(0.965 0.012 210);
+  --card: oklch(0.223 0.04 234);
+  --card-foreground: oklch(0.965 0.012 210);
+  --popover: oklch(0.223 0.04 234);
+  --popover-foreground: oklch(0.965 0.012 210);
+  --primary: oklch(0.79 0.14 193);
+  --primary-foreground: oklch(0.17 0.04 235);
+  --secondary: oklch(0.29 0.045 233);
+  --secondary-foreground: oklch(0.95 0.015 210);
+  --muted: oklch(0.27 0.038 234);
+  --muted-foreground: oklch(0.72 0.03 220);
+  --accent: oklch(0.33 0.06 210);
+  --accent-foreground: oklch(0.96 0.012 210);
+  --destructive: oklch(0.63 0.21 22);
+  --destructive-foreground: oklch(0.98 0.01 210);
+  --border: oklch(0.34 0.045 232);
+  --input: oklch(0.34 0.045 232);
+  --ring: oklch(0.79 0.14 193);
+  --safe: oklch(0.78 0.16 158);
+  --safe-foreground: oklch(0.18 0.04 200);
+  --caution: oklch(0.83 0.16 82);
+  --caution-foreground: oklch(0.2 0.04 80);
+  --danger: oklch(0.64 0.22 22);
+  --danger-foreground: oklch(0.98 0.01 20);
+  --surface-glow: radial-gradient(
+    120% 90% at 50% -10%,
+    oklch(0.42 0.11 208 / 0.55),
+    transparent 70%
+  );
+  --gradient-depth: linear-gradient(160deg, oklch(0.26 0.06 222), oklch(0.19 0.04 238));
+  --shadow-float: 0 18px 40px -18px oklch(0.06 0.03 235 / 0.9);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -140,5 +159,40 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    min-width: 320px;
+    font-family: "DM Sans", ui-sans-serif, system-ui, sans-serif;
   }
+
+  button, input, select, textarea { font: inherit; }
+}
+
+.water-shell {
+  background-image: var(--surface-glow);
+}
+
+.map-grid {
+  background-color: oklch(0.23 0.045 229);
+  background-image: linear-gradient(oklch(0.57 0.08 195 / 0.11) 1px, transparent 1px),
+    linear-gradient(90deg, oklch(0.57 0.08 195 / 0.11) 1px, transparent 1px),
+    linear-gradient(30deg, transparent 48%, oklch(0.55 0.1 188 / 0.18) 49%, transparent 51%),
+    linear-gradient(148deg, transparent 48%, oklch(0.55 0.1 188 / 0.15) 49%, transparent 51%);
+  background-size: 48px 48px, 48px 48px, 180px 180px, 220px 220px;
+}
+
+.pin-pulse { animation: pin-pulse 2s ease-in-out infinite; }
+
+@keyframes pin-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 oklch(0.64 0.22 22 / 0.48); }
+  50% { box-shadow: 0 0 0 10px oklch(0.64 0.22 22 / 0); }
+}
+
+.float-in { animation: float-in 420ms ease-out both; }
+
+@keyframes float-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pin-pulse, .float-in { animation: none; }
 }
