@@ -1,0 +1,10 @@
+{
+  "name": "AquaAlert Community Water Safety",
+  "short_name": "AquaAlert",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F7F9FA",
+  "theme_color": "#0F6B6B",
+  "description": "Report water quality concerns and view community safety alerts.",
+  "icons": [{ "src": "/favicon.ico", "sizes": "48x48", "type": "image/x-icon" }]
+}

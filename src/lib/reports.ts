@@ -1,124 +1,175 @@
 export type Clarity = "clear" | "cloudy" | "turbid";
 export type Smell = "none" | "earthy" | "sewage" | "chemical";
-
+export type Color = "clear" | "yellow" | "brown" | "green" | "other";
 export type WaterReport = {
   id: string;
   createdAt: number;
   area: string;
-  lat: number;
-  lng: number;
+  latitude: number;
+  longitude: number;
   clarity: Clarity;
   smell: Smell;
-  note: string;
-  photo?: string;
+  color: Color;
+  ph?: number;
+  tds?: number;
+  turbidity?: number;
+  photoUrl?: string;
   status: "synced" | "pending";
 };
-
-const KEY = "jaldarpan.reports.v1";
-
-export const RISK_WEIGHT: Record<Clarity | Smell, number> = {
-  clear: 0,
-  cloudy: 1,
-  turbid: 2,
-  none: 0,
-  earthy: 1,
-  sewage: 2,
-  chemical: 3,
+export type ReportInput = Omit<WaterReport, "id" | "createdAt" | "status" | "photoUrl"> & {
+  photo?: File;
 };
 
-export function riskOf(r: Pick<WaterReport, "clarity" | "smell">) {
-  const score = RISK_WEIGHT[r.clarity] + RISK_WEIGHT[r.smell];
-  if (score >= 4) return { level: "high" as const, label: "High risk", score };
+const REPORTS_KEY = "aquaalert.reports.v1";
+const QUEUE_KEY = "aquaalert.queue.v1";
+
+export function riskOf(report: Pick<WaterReport, "clarity" | "smell" | "color">) {
+  const score =
+    (report.clarity === "turbid" ? 2 : report.clarity === "cloudy" ? 1 : 0) +
+    (report.smell === "chemical" || report.smell === "sewage"
+      ? 2
+      : report.smell === "earthy"
+        ? 1
+        : 0) +
+    (report.color === "brown" || report.color === "green"
+      ? 2
+      : report.color === "yellow" || report.color === "other"
+        ? 1
+        : 0);
+  if (score >= 4) return { level: "high" as const, label: "Danger", score };
   if (score >= 2) return { level: "medium" as const, label: "Caution", score };
-  return { level: "low" as const, label: "Looks safe", score };
+  return { level: "low" as const, label: "Safe", score };
 }
 
-const SEED: WaterReport[] = [
-  {
-    id: "seed-1",
-    createdAt: Date.now() - 1000 * 60 * 52,
-    area: "Kalyani Ward 6",
-    lat: 22.98,
-    lng: 88.43,
-    clarity: "turbid",
-    smell: "sewage",
-    note: "Handpump water brown after rain.",
-    status: "synced",
-  },
-  {
-    id: "seed-2",
-    createdAt: Date.now() - 1000 * 60 * 180,
-    area: "Riverside Colony",
-    lat: 22.96,
-    lng: 88.41,
-    clarity: "cloudy",
-    smell: "earthy",
-    note: "Slight muddy taste in tap supply.",
-    status: "synced",
-  },
-  {
-    id: "seed-3",
-    createdAt: Date.now() - 1000 * 60 * 400,
-    area: "Station Road",
-    lat: 22.99,
-    lng: 88.39,
-    clarity: "clear",
-    smell: "none",
-    note: "Community tank refilled, water fine.",
-    status: "synced",
-  },
-];
-
-function read(): WaterReport[] {
-  if (typeof window === "undefined") return SEED;
+function readReports() {
+  if (typeof window === "undefined") return [] as WaterReport[];
   try {
-    const raw = window.localStorage.getItem(KEY);
-    if (!raw) {
-      window.localStorage.setItem(KEY, JSON.stringify(SEED));
-      return SEED;
-    }
-    return JSON.parse(raw) as WaterReport[];
+    return JSON.parse(localStorage.getItem(REPORTS_KEY) ?? "[]") as WaterReport[];
   } catch {
-    return SEED;
+    return [];
   }
 }
-
-function write(reports: WaterReport[]) {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(KEY, JSON.stringify(reports));
+function writeReports(reports: WaterReport[]) {
+  localStorage.setItem(REPORTS_KEY, JSON.stringify(reports));
   window.dispatchEvent(new Event("reports:changed"));
 }
-
-export function getReports(): WaterReport[] {
-  return read().sort((a, b) => b.createdAt - a.createdAt);
+export function getReports() {
+  return readReports().sort((a, b) => b.createdAt - a.createdAt);
+}
+export function addReport(report: WaterReport) {
+  writeReports([report, ...readReports().filter((item) => item.id !== report.id)]);
 }
 
-export function addReport(input: Omit<WaterReport, "id" | "createdAt" | "status" | "photo"> & { photo?: string | undefined }) {
-  const online = typeof navigator === "undefined" ? true : navigator.onLine;
-  const { photo, ...details } = input;
-  const report: WaterReport = {
-    ...details,
-    ...(photo ? { photo } : {}),
-    id: `r-${Date.now()}`,
+function formFor(input: Record<string, unknown>) {
+  const form = new FormData();
+  Object.entries(input).forEach(([key, value]) => {
+    if (key !== "photo" && value !== undefined) form.set(key, String(value));
+  });
+  if (input.photo instanceof File) form.set("photo", input.photo);
+  return form;
+}
+
+export function queueReport(input: ReportInput) {
+  const queue = JSON.parse(localStorage.getItem(QUEUE_KEY) ?? "[]") as Array<
+    Record<string, unknown>
+  >;
+  const queued = { ...input, photo: undefined, queuedAt: Date.now() } as Record<string, unknown>;
+  if (input.photo) {
+    const reader = new FileReader();
+    reader.onload = () =>
+      localStorage.setItem(
+        QUEUE_KEY,
+        JSON.stringify([...queue, { ...queued, photoData: reader.result }]),
+      );
+    reader.readAsDataURL(input.photo);
+  } else localStorage.setItem(QUEUE_KEY, JSON.stringify([...queue, queued]));
+  return {
+    ...input,
+    id: `offline-${Date.now()}`,
     createdAt: Date.now(),
-    status: online ? "synced" : "pending",
-  };
-  write([report, ...read()]);
-  return report;
+    status: "pending" as const,
+    photoUrl: undefined,
+  } as WaterReport;
 }
 
-export function syncPending(): number {
-  const all = read();
-  const pending = all.filter((r) => r.status === "pending");
-  if (!pending.length) return 0;
-  write(all.map((r) => (r.status === "pending" ? { ...r, status: "synced" as const } : r)));
-  return pending.length;
+export async function submitReport(input: ReportInput, online: boolean) {
+  if (!online) return queueReport(input);
+  const response = await fetch("/api/reports", { method: "POST", body: formFor(input) });
+  if (!response.ok) throw new Error("The report could not be saved");
+  return (await response.json()) as WaterReport;
 }
 
-export function timeAgo(ts: number) {
-  const mins = Math.max(1, Math.round((Date.now() - ts) / 60000));
-  if (mins < 60) return `${mins} min ago`;
-  const hrs = Math.round(mins / 60);
-  if (hrs < 24) return `${hrs} hr ago`;
-  return `${Math.round(hrs / 24)} d ago`;
+export async function syncPending() {
+  if (!navigator.onLine) return 0;
+  const queue = JSON.parse(localStorage.getItem(QUEUE_KEY) ?? "[]") as Array<
+    Record<string, unknown>
+  >;
+  const remaining: Array<Record<string, unknown>> = [];
+  let synced = 0;
+  for (const item of queue) {
+    try {
+      let photo: File | undefined;
+      if (typeof item.photoData === "string")
+        photo = new File(
+          [await fetch(item.photoData).then((response) => response.blob())],
+          "water-report.jpg",
+          { type: "image/jpeg" },
+        );
+      const response = await fetch("/api/reports", {
+        method: "POST",
+        body: formFor({ ...item, photo }),
+      });
+      if (!response.ok) throw new Error("sync failed");
+      addReport({ ...(await response.json()), status: "synced" });
+      synced++;
+    } catch {
+      remaining.push(item);
+    }
+  }
+  localStorage.setItem(QUEUE_KEY, JSON.stringify(remaining));
+  return synced;
+}
+
+function distanceKm(aLat: number, aLng: number, bLat: number, bLng: number) {
+  const radians = Math.PI / 180;
+  const dLat = (bLat - aLat) * radians;
+  const dLng = (bLng - aLng) * radians;
+  const value =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(aLat * radians) * Math.cos(bLat * radians) * Math.sin(dLng / 2) ** 2;
+  return 6371 * 2 * Math.atan2(Math.sqrt(value), Math.sqrt(1 - value));
+}
+export function getAlerts(reports: WaterReport[]) {
+  const danger = reports.filter(
+    (report) => riskOf(report).level === "high" && Date.now() - report.createdAt <= 86_400_000,
+  );
+  return danger
+    .flatMap((report) => {
+      const nearby = danger.filter(
+        (candidate) =>
+          distanceKm(report.latitude, report.longitude, candidate.latitude, candidate.longitude) <=
+          1,
+      );
+      return nearby.length >= 3
+        ? [
+            {
+              id: report.id,
+              area: report.area,
+              count: nearby.length,
+              latestCreatedAt: Math.max(...nearby.map((item) => item.createdAt)),
+            },
+          ]
+        : [];
+    })
+    .filter(
+      (alert, index, all) =>
+        all.findIndex((item) => item.area === alert.area && item.count === alert.count) === index,
+    );
+}
+export function timeAgo(timestamp: number) {
+  const minutes = Math.max(1, Math.round((Date.now() - timestamp) / 60000));
+  if (minutes < 60) return `${minutes} min ago`;
+  const hours = Math.round(minutes / 60);
+  if (hours < 24) return `${hours} hr ago`;
+  return `${Math.round(hours / 24)} d ago`;
 }

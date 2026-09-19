@@ -9,9 +9,7 @@ function record(error: unknown) {
 }
 
 // h3's HTTPError serializes to {"status":500,"unhandled":true,"message":"HTTPError"} —
-// no stack, no cause — so a plain console.error(error) reaches the log pipeline with
-// the failure detail stripped. Expand Error-like args into a string that keeps the
-// message, stack, and the full cause chain.
+// Keep the message, stack, and full cause chain available to the server boundary.
 const CAUSE_DEPTH_LIMIT = 5;
 const DESCRIPTION_LENGTH_LIMIT = 8_000;
 
@@ -48,19 +46,6 @@ function safeStringify(value: unknown): string {
 function isErrorLike(value: unknown): value is Error {
   return value instanceof Error;
 }
-
-// Wrap console.error so errors logged by any layer — including h3's internal
-// unhandled-error logging, which this file cannot hook directly — are both
-// recorded for consumeLastCapturedError and expanded before serialization.
-const originalConsoleError = console.error.bind(console);
-console.error = (...args: unknown[]) => {
-  const expanded = args.map((arg) => {
-    if (!isErrorLike(arg)) return arg;
-    record(arg);
-    return describeError(arg);
-  });
-  originalConsoleError(...expanded);
-};
 
 if (typeof globalThis.addEventListener === "function") {
   globalThis.addEventListener("error", (event) => record((event as ErrorEvent).error ?? event));
