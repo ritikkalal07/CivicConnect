@@ -1,3 +1,4 @@
+
 import {
   useEffect,
   useMemo,
@@ -33,6 +34,7 @@ import {
   Radar,
   Radio,
   RefreshCw,
+  Search,
   SearchCheck,
   Send,
   ShieldAlert,
@@ -81,21 +83,560 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "CivicConnect Autonomous — Self-Operating Civic Intelligence Platform" },
+      { title: "CivicConnect Autonomous: Self-Operating Civic Intelligence Platform" },
       {
         name: "description",
         content:
-          "It doesn’t wait for data. It finds it. It doesn’t wait for orders. It acts. It doesn’t wait for humans. It learns.",
+          "It doesn't wait for data. It finds it. It doesn't wait for orders. It acts. It doesn't wait for humans. It learns.",
       },
     ],
   }),
   component: CivicConnectApp,
 });
 
-type Screen = "home" | "harvesters" | "agents" | "officers" | "e2e" | "report" | "map" | "alerts";
+export const UI_TRANSLATIONS: Record<string, Record<string, string>> = {
+  en: {
+    appTitle: "CivicConnect",
+    appSubtitle: "Public Civic Intelligence Portal",
+    navHome: "Home",
+    navTrack: "Track Status",
+    navMap: "Safety Map",
+    navE2e: "Live E2E Flow",
+    navOfficers: "Officer Portal",
+    navHarvesters: "Harvesters",
+    navWorkers: "9 Workers",
+    navReport: "Report Issue",
+    online: "Online",
+    offline: "Offline",
+    assistant: "Assistant",
+    heroTagline: "Self-Operating Civic Intelligence",
+    heroTitle: "CivicConnect Autonomous",
+    heroSub: '"It doesn\'t wait for data. It finds it. It doesn\'t wait for orders. It acts. It doesn\'t wait for humans. It learns."',
+    btnReport: "Report Issue",
+    btnTrack: "Track Status",
+    btnE2e: "Test E2E Flow",
+    statSources: "Data Sources Monitored",
+    statSourcesDetail: "10 active crawlers watching feeds 24/7",
+    statProcessed: "Civic Issues Processed",
+    statProcessedDetail: "Auto-detected & citizen reports",
+    statPriority: "Priority Escalations",
+    statPriorityDetail: "Auto-escalated to Zonal Commissioners",
+    statWorkers: "Autonomous Workers",
+    statWorkersDetail: "Router, Escalator, Verifier, Detector...",
+    liveFeedTitle: "Autonomous Operations & Dispatches",
+    harvesterDetails: "Harvester Details",
+    learningLoopsTitle: "5 Active Learning Loops",
+    officerPortalTitle: "ULB Government Officer Resolver Portal",
+    officerPortalSub: "Real-time dispatch board for Municipal Officers, Junior Engineers & Ward Commissioners.",
+    trackTitle: "Track Civic Complaint Status",
+    trackSub: "Enter your reference number (#CVC-1082) or search by keyword to see real-time officer dispatch & resolution proof.",
+    trackPlaceholder: "Enter Complaint Reference # (e.g. #CVC-1082) or Ward Name...",
+    btnSearch: "Search Status",
+    harvesterTitle: "24/7 Autonomous Data Harvester Engines",
+    harvesterSub: "Ingests public data continuously from RSS, Web Crawlers, Social Media, Open311 APIs, satellite imagery & IVR.",
+    workerTitle: "9 Autonomous Intelligence Workers",
+    workerSub: "Operating continuously without human admin overhead to route, verify, escalate, and auto-heal civic issues.",
+    e2eTitle: "5-Step End-to-End Autonomous Resolution Lifecycle",
+    e2eSub: "Simulate complete flow from public signal discovery to automated photo verification and complaint closure.",
+    reportTitle: "File a Public Civic Complaint",
+    reportSub: "Complaints filed here are processed by AI agents and routed directly to the designated ward officer.",
+    chatTitle: "Civic Assistant",
+    chatSub: "Active 24/7 in 22 Languages (Bhashini)",
+    chatPlaceholder: "Ask a question or report an issue in any language...",
+    chatPromptWater: "Water timing in Ward 47",
+    chatPromptPothole: "Report Pothole",
+    chatPromptStatus: "Status #CVC-1082",
+    langSelectLabel: "Language",
+  },
+  hi: {
+    appTitle: "सिविककनेक्ट",
+    appSubtitle: "सार्वजनिक नागरिक खुफिया पोर्टल",
+    navHome: "होम",
+    navTrack: "स्थिति ट्रैक करें",
+    navMap: "सुरक्षा मानचित्र",
+    navE2e: "लाइव प्रक्रिया",
+    navOfficers: "अधिकारी पोर्टल",
+    navHarvesters: "डेटा हार्वेस्टर",
+    navWorkers: "9 कार्यकर्ता",
+    navReport: "समस्या दर्ज करें",
+    online: "ऑनलाइन",
+    offline: "ऑफलाइन",
+    assistant: "नागरिक सहायक",
+    heroTagline: "स्वचालित नागरिक खुफिया प्रणाली",
+    heroTitle: "सिविककनेक्ट स्वायत्त",
+    heroSub: '"यह डेटा का इंतजार नहीं करता। यह खोजता है। यह आदेशों का इंतजार नहीं करता। यह कार्य करता है। यह इंसानों का इंतजार नहीं करता। यह सीखता है।"',
+    btnReport: "समस्या दर्ज करें",
+    btnTrack: "स्थिति ट्रैक करें",
+    btnE2e: "लाइव प्रक्रिया परीक्षण",
+    statSources: "निगरानी डेटा स्रोत",
+    statSourcesDetail: "10 सक्रिय क्रॉलर 24/7 फीड देख रहे हैं",
+    statProcessed: "प्रसंस्कृत नागरिक मुद्दे",
+    statProcessedDetail: "स्वचालित और नागरिक शिकायतें",
+    statPriority: "प्राथमिकता एस्केलेशन",
+    statPriorityDetail: "जोनल कमिश्नर को ऑटो-एस्केलेटेड",
+    statWorkers: "स्वायत्त कार्यकर्ता",
+    statWorkersDetail: "राउटर, एस्केलेटर, वेरिफायर...",
+    liveFeedTitle: "स्वायत्त संचालन और डिस्पैच",
+    harvesterDetails: "हार्वेस्टर विवरण",
+    learningLoopsTitle: "5 सक्रिय लर्निंग लूप्स",
+    officerPortalTitle: "नगर निगम अधिकारी समाधान पोर्टल",
+    officerPortalSub: "नगर निगम अधिकारियों और कनिष्ठ अभियंताओं के लिए वास्तविक समय का बोर्ड।",
+    trackTitle: "नागरिक शिकायत की स्थिति ट्रैक करें",
+    trackSub: "संदर्भ संख्या (#CVC-1082) दर्ज करें या खोजें।",
+    trackPlaceholder: "शिकायत संदर्भ संख्या या वार्ड दर्ज करें...",
+    btnSearch: "स्थिति खोजें",
+    harvesterTitle: "24/7 स्वायत्त डेटा हार्वेस्टर इंजन",
+    harvesterSub: "आरएसएस, वेब क्रॉलर, सोशल मीडिया और उपग्रह छवियों से डेटा एकत्र करता है।",
+    workerTitle: "9 स्वायत्त खुफिया कार्यकर्ता",
+    workerSub: "बिना किसी मानवीय हस्तक्षेप के समस्याओं का समाधान और सत्यापन करते हैं।",
+    e2eTitle: "5-चरण स्वायत्त समाधान जीवनचक्र",
+    e2eSub: "सार्वजनिक खोज से लेकर स्वचालित फोटो सत्यापन और शिकायत बंद करने की प्रक्रिया।",
+    reportTitle: "सार्वजनिक शिकायत दर्ज करें",
+    reportSub: "यहां दर्ज शिकायतों को सीधे जिम्मेदार वार्ड अधिकारी को भेजा जाता है।",
+    chatTitle: "नागरिक सहायक",
+    chatSub: "22 भारतीय भाषाओं में 24/7 सक्रिय (भाषिणी)",
+    chatPlaceholder: "किसी भी भाषा में प्रश्न पूछें या समस्या दर्ज करें...",
+    chatPromptWater: "पानी आपूर्ति का समय",
+    chatPromptPothole: "सड़क के गड्ढे की शिकायत",
+    chatPromptStatus: "स्थिति #CVC-1082",
+    langSelectLabel: "भाषा",
+  },
+  kn: {
+    appTitle: "ಸಿವಿಕ್ ಕನೆಕ್ಟ್",
+    appSubtitle: "ಸಾರ್ವಜನಿಕ ನಾಗರಿಕ ಬುದ್ಧಿವಂತಿಕೆ ಪೋರ್ಟಲ್",
+    navHome: "ಮುಖಪುಟ",
+    navTrack: "ಸ್ಥಿತಿ ಪರಿಶೀಲಿಸಿ",
+    navMap: "ಸುರಕ್ಷತಾ ನಕ್ಷೆ",
+    navE2e: "ನೇರ ಪ್ರಕ್ರಿಯೆ",
+    navOfficers: "ಅಧಿಕಾರಿ ಪೋರ್ಟಲ್",
+    navHarvesters: "ಮಾಹಿತಿ ಸಂಗ್ರಾಹಕರು",
+    navWorkers: "9 ಕಾರ್ಯಕರ್ತರು",
+    navReport: "ದೂರು ನಮೂದಿಸಿ",
+    online: "ಆನ್‌ಲೈನ್",
+    offline: "ಆಫ್‌ಲೈನ್",
+    assistant: "ನಾಗರಿಕ ಸಹಾಯಕ",
+    heroTagline: "ಸ್ವಯಂಚಾಲಿತ ನಾಗರಿಕ ಬುದ್ಧಿವಂತಿಕಾ ವ್ಯವಸ್ಥೆ",
+    heroTitle: "ಸಿವಿಕ್ ಕನೆಕ್ಟ್ ಅಟೋನಾಮಸ್",
+    heroSub: '"ಇದು ಮಾಹಿತಿಗಾಗಿ ಕಾಯುವುದಿಲ್ಲ. ಹುಡುಕುತ್ತದೆ. ಆದೇಶಕ್ಕಾಗಿ ಕಾಯುವುದಿಲ್ಲ. ಕೆಲಸ ಮಾಡುತ್ತದೆ. ಕಲಿಯುತ್ತದೆ."',
+    btnReport: "ದೂರು ನಮೂದಿಸಿ",
+    btnTrack: "ಸ್ಥಿತಿ ಪರಿಶೀಲಿಸಿ",
+    btnE2e: "ನೇರ ಪ್ರಕ್ರಿಯೆ ಪರೀಕ್ಷಿಸಿ",
+    statSources: "ಮೇಲ್ವಿಚಾರಣೆ ಮಾಡಿದ ಮೂಲಗಳು",
+    statSourcesDetail: "24/7 ಸಕ್ರಿಯವಾಗಿರುವ 10 ಸಂಗ್ರಾಹಕರು",
+    statProcessed: "ಸಂಸ್ಕರಿಸಿದ ದೂರುಗಳು",
+    statProcessedDetail: "ಸ್ವಯಂಚಾಲಿತ ಮತ್ತು ಸಾರ್ವಜನಿಕ ದೂರುಗಳು",
+    statPriority: "ಆದ್ಯತೆಯ ದೂರುಗಳು",
+    statPriorityDetail: "ಆಯುಕ್ತರಿಗೆ ಮೇಲ್ಮನವಿ ಸಲ್ಲಿಕೆ",
+    statWorkers: "ಸ್ವಯಂಚಾಲಿತ ಕಾರ್ಯಕರ್ತರು",
+    statWorkersDetail: "ರೌಟರ್, ವೆರಿಫೈಯರ್, ಡೆಟೇಕ್ಟರ್...",
+    liveFeedTitle: "ಸ್ವಯಂಚಾಲಿತ ಕಾರ್ಯಾಚರಣೆಗಳು",
+    harvesterDetails: "ಸಂಗ್ರಾಹಕರ ವಿವರಗಳು",
+    learningLoopsTitle: "5 ಸಕ್ರಿಯ ಕಲಿಕಾ ಚಕ್ರಗಳು",
+    officerPortalTitle: "ನಗರ ಪಾಲಿಕೆ ಅಧಿಕಾರಿಗಳ ಪರಿಹಾರ ಪೋರ್ಟಲ್",
+    officerPortalSub: "ನಗರ ಪಾಲಿಕೆ ಅಧಿಕಾರಿಗಳಿಗೆ ನೈಜ-ಸಮಯದ ಕಾರ್ಯಾಚರಣೆ ಬೋರ್ಡ್.",
+    trackTitle: "ದೂರಿನ ಸ್ಥಿತಿಯನ್ನು ಪರಿಶೀಲಿಸಿ",
+    trackSub: "ನಿಮ್ಮ ಉಲ್ಲೇಖ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ (#CVC-1082).",
+    trackPlaceholder: "ಉಲ್ಲೇಖ ಸಂಖ್ಯೆ ಅಥವಾ ವಾರ್ಡ್ ಹೆಸರು ನಮೂದಿಸಿ...",
+    btnSearch: "ಹುಡುಕಿ",
+    harvesterTitle: "24/7 ಸ್ವಯಂಚಾಲಿತ ಮಾಹಿತಿ ಸಂಗ್ರಾಹಕರು",
+    harvesterSub: "ಸಾಮಾಜಿಕ ಮಾಧ್ಯಮ ಮತ್ತು ಉಪಗ್ರಹ ಚಿತ್ರಗಳಿಂದ ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಮಾಹಿತಿ ಪಡೆಯುತ್ತದೆ.",
+    workerTitle: "9 ಸ್ವಯಂಚಾಲಿತ ಬುದ್ಧಿವಂತಿಕಾ ಕಾರ್ಯಕರ್ತರು",
+    workerSub: "ಮಾನವ ಸಹಾಯವಿಲ್ಲದೆ ದೂರುಗಳನ್ನು ಪರಿಶೀಲಿಸಿ ನಿರ್ವಹಿಸುತ್ತದೆ.",
+    e2eTitle: "5-ಹಂತದ ಸಂಪೂರ್ಣ ಪರಿಹಾರ ಪ್ರಕ್ರಿಯೆ",
+    e2eSub: "ದೂರು ಪತ್ತೆಯಿಂದ ಹಿಡಿದು ಫೋಟೋ ಪರಿಶೀಲನೆವರೆಗೆ ನೇರ ಪ್ರದರ್ಶನ.",
+    reportTitle: "ಸಾರ್ವಜನಿಕ ದೂರು ನಮೂದಿಸಿ",
+    reportSub: "ಇಲ್ಲಿ ಸಲ್ಲಿಸಿದ ದೂರುಗಳನ್ನು ನೇರವಾಗಿ ವಾರ್ಡ್ ಅಧಿಕಾರಿಗೆ ರವಾನಿಸಲಾಗುತ್ತದೆ.",
+    chatTitle: "ನಾಗರಿಕ ಸಹಾಯಕ",
+    chatSub: "22 ಭಾರತೀಯ ಭಾಷೆಗಳಲ್ಲಿ 24/7 ಲಭ್ಯವಿದೆ (ಭಾಷಿಣಿ)",
+    chatPlaceholder: "ಯಾವುದೇ ಭಾಷೆಯಲ್ಲಿ ಪ್ರಶ್ನೆ ಕೇಳಿ ಅಥವಾ ದೂರು ನೀಡಿ...",
+    chatPromptWater: "ನೀರು ಪೂರೈಕೆ ಸಮಯ",
+    chatPromptPothole: "ರಸ್ತೆ ಗುಂಡಿ ದೂರು",
+    chatPromptStatus: "ಸ್ಥಿತಿ #CVC-1082",
+    langSelectLabel: "ಭಾಷೆ",
+  },
+  ta: {
+    appTitle: "சிவிக் கணெக்ட்",
+    appSubtitle: "பொது மக்கள் சேவை நுண்ணறிவு போர்ட்டல்",
+    navHome: "முகப்பு",
+    navTrack: "நிலையைக் கண்காணி",
+    navMap: "பாதுகாப்பு வரைபடம்",
+    navE2e: "நேரலை செயல்முறை",
+    navOfficers: "அதிகாரி போர்டல்",
+    navHarvesters: "தரவு சேகரிப்பாளர்கள்",
+    navWorkers: "9 பணியாளர்கள்",
+    navReport: "புகார் செய்க",
+    online: "ஆன்லைன்",
+    offline: "ஆஃப்லைன்",
+    assistant: "குடிமக்கள் உதவி",
+    heroTagline: "தானியங்கி மக்கள் சேவை நுண்ணறிவு",
+    heroTitle: "சிவிக் கணெக்ட் தன்னாட்சி",
+    heroSub: '"இது தகவலுக்கு காத்திருக்காது. தேடும். உத்தரவுக்கு காத்திருக்காது. செயல்படும். மனிதர்களுக்கு காத்திருக்காது. கற்கும்."',
+    btnReport: "புகார் செய்க",
+    btnTrack: "நிலையைக் கண்காணி",
+    btnE2e: "நேரலை பரிசோதனை",
+    statSources: "கண்காணிக்கப்படும் தரவுகள்",
+    statSourcesDetail: "24/7 இயங்கும் 10 சேகரிப்பாளர்கள்",
+    statProcessed: "செயல்படுத்தப்பட்ட புகார்கள்",
+    statProcessedDetail: "தானாக கண்டறியப்பட்ட தகவல்கள்",
+    statPriority: "முன்னுரிமை புகார்கள்",
+    statPriorityDetail: "உயர் அதிகாரிகளுக்கு அனுப்பப்பட்டது",
+    statWorkers: "தானியங்கி பணியாளர்கள்",
+    statWorkersDetail: "ரவுட்டர், வேரிஃபையர்...",
+    liveFeedTitle: "தானியங்கி செயல்பாடுகள்",
+    harvesterDetails: "சேகரிப்பாளர் விவரங்கள்",
+    learningLoopsTitle: "5 செயலில் உள்ள கற்றல் சுழற்சிகள்",
+    officerPortalTitle: "மாநகராட்சி அதிகாரி தீர்வு போர்ட்டல்",
+    officerPortalSub: "அதிகாரிகளுக்கான நேரலை செயல்பாட்டு பலகை.",
+    trackTitle: "புகார் நிலையைக் கண்காணிக்கவும்",
+    trackSub: "உங்கள் குறிப்பு எண்ணை உள்ளிடவும் (#CVC-1082).",
+    trackPlaceholder: "குறிப்பு எண் அல்லது வார்டு பெயர் உள்ளிடவும்...",
+    btnSearch: "தேடுக",
+    harvesterTitle: "24/7 தானியங்கி தரவு சேகரிப்பு இயந்திரங்கள்",
+    harvesterSub: "செய்திகள், சமூக ஊடகங்கள் மற்றும் செயற்கைக்கோள் படங்களிலிருந்து தரவு சேகரிக்கிறது.",
+    workerTitle: "9 தானியங்கி நுண்ணறிவு பணியாளர்கள்",
+    workerSub: "மனித தலையீடு இன்றி புகார்களை சரிபார்த்து தீர்க்கிறது.",
+    e2eTitle: "5-படி முழுமையான தீர்வு சுழற்சி",
+    e2eSub: "புகார் கண்டறிதல் முதல் புகைப்பட சரிபார்ப்பு வரை நேரலை செயல்முறை.",
+    reportTitle: "பொது புகாரை பதிவு செய்க",
+    reportSub: "இங்கு பதிவு செய்யப்படும் புகார்கள் நேரடியாக சம்பந்தப்பட்ட வார்டு அதிகாரியிடம் ஒப்படைக்கப்படும்.",
+    chatTitle: "குடிமக்கள் உதவி",
+    chatSub: "22 இந்திய மொழிகளில் 24/7 இயங்குகிறது (பாஷினி)",
+    chatPlaceholder: "எந்த மொழியிலும் கேள்வி கேட்கலாம் அல்லது புகார் செய்யலாம்...",
+    chatPromptWater: "தண்ணீர் விநியோக நேரம்",
+    chatPromptPothole: "சாலை பள்ளம் புகார்",
+    chatPromptStatus: "நிலை #CVC-1082",
+    langSelectLabel: "மொழி",
+  },
+  te: {
+    appTitle: "సివిక్ కనెక్ట్",
+    appSubtitle: "పౌర సమస్యల పరిష్కార పోర్టల్",
+    navHome: "హోమ్",
+    navTrack: "స్థితి ట్రాక్ చేయండి",
+    navMap: "రక్షణ మ్యాప్",
+    navE2e: "లైవ్ ప్రక్రియ",
+    navOfficers: "అధికారి పోర్టల్",
+    navHarvesters: "డేటా సేకరణ",
+    navWorkers: "9 కార్మికులు",
+    navReport: "సమస్య నివేదించండి",
+    online: "ఆన్‌లైన్",
+    offline: "ఆఫ్‌లైన్",
+    assistant: "పౌర సహాయకుడు",
+    heroTagline: "స్వయంప్రతిపత్తి పౌర మేధస్సు వ్యవస్థ",
+    heroTitle: "సివిక్ కనెక్ట్ ఆటోనామస్",
+    heroSub: '"ఇది డేటా కోసం వేచి ఉండదు. వెతుకుతుంది. ఆదేశాల కోసం వేచి ఉండదు. పని చేస్తుంది. మానవుల కోసం వేచి ఉండదు. నేర్చుకుంటుంది."',
+    btnReport: "సమస్య నివేదించండి",
+    btnTrack: "స్థితి ట్రాక్ చేయండి",
+    btnE2e: "లైవ్ ప్రక్రియ పరీక్ష",
+    statSources: "పరిశీలిస్తున్న డేటా మూలాలు",
+    statSourcesDetail: "24/7 నడుస్తున్న 10 సేకరణ యంత్రాలు",
+    statProcessed: "పరిష్కరించిన సమస్యలు",
+    statProcessedDetail: "ఆటో-డిటెక్టెడ్ మరియు పౌర నివేదికలు",
+    statPriority: "ముఖ్యమైన సమస్యలు",
+    statPriorityDetail: "కమీషనర్లకు పంపబడినవి",
+    statWorkers: "స్వయంప్రతిపత్తి కార్మికులు",
+    statWorkersDetail: "రౌటర్, వేరిఫైయర్, డిటెక్టర్...",
+    liveFeedTitle: "లైవ్ ఆటోమేటెడ్ ఆపరేషన్స్",
+    harvesterDetails: "సేకరణ వివరాలు",
+    learningLoopsTitle: "5 నేర్చుకునే ప్రక్రియలు",
+    officerPortalTitle: "మునిసిపల్ అధికారుల పరిష్కార పోర్టల్",
+    officerPortalSub: "అధికారుల కోసం రియల్-టైమ్ డిస్పాచ్ బోర్డ్.",
+    trackTitle: "మీ సమస్య స్థితిని ట్రాక్ చేయండి",
+    trackSub: "మీ రెఫరెన్స్ సంఖ్యను నమోదు చేయండి (#CVC-1082).",
+    trackPlaceholder: "రెఫరెన్స్ నంబర్ లేదా వార్డ్ పేరును నమోదు చేయండి...",
+    btnSearch: "శోధించండి",
+    harvesterTitle: "24/7 ఆటోమేటెడ్ డేటా కలెక్టర్లు",
+    harvesterSub: "సామాజిక మాధ్యమాలు మరియు శాటిలైట్ డేటా నుండి సమాచారం సేకరిస్తుంది.",
+    workerTitle: "9 స్వయంప్రతిపత్తి ఇంటెలిజెన్స్ కార్మికులు",
+    workerSub: "మానవ ప్రమేయం లేకుండా సమస్యలను తనిఖీ చేసి పరిష్కరిస్తాయి.",
+    e2eTitle: "5-దశల సంపూర్ణ పరిష్కార చక్రం",
+    e2eSub: "సమస్య గుర్తింపు నుండి ఫోటో వెరిఫికేషన్ వరకు లైవ్ ఫ్లో.",
+    reportTitle: "పౌర సమస్యను నమోదు చేయండి",
+    reportSub: "ఇక్కడ సబ్మిట్ చేసిన ఫిర్యాదులు సంబంధిత వార్డు అధికారికి పంపబడతాయి.",
+    chatTitle: "పౌర సహాయకుడు",
+    chatSub: "22 భారతీయ భాషలలో 24/7 అందుబాటులో ఉంటుంది (భాషిణి)",
+    chatPlaceholder: "ఏ భాషలోనైనా ప్రశ్నించండి లేదా ఫిర్యాదు చేయండి...",
+    chatPromptWater: "నీటి సరఫరా సమయం",
+    chatPromptPothole: "గుంతల ఫిర్యాదు",
+    chatPromptStatus: "స్థితి #CVC-1082",
+    langSelectLabel: "భాష",
+  },
+  mr: {
+    appTitle: "सिव्हिककनेक्ट",
+    appSubtitle: "सार्वजनिक नागरिक माहिती पोर्टल",
+    navHome: "मुख्यपृष्ठ",
+    navTrack: "स्थिती ट्रॅक करा",
+    navMap: "सुरक्षा नकाशा",
+    navE2e: "थेट ई२ई प्रक्रिया",
+    navOfficers: "अधिकारी पोर्टल",
+    navHarvesters: "डेटा संकलक",
+    navWorkers: "९ कामगार",
+    navReport: "तक्रार नोंदवा",
+    online: "ऑनलाईन",
+    offline: "ऑफलाईन",
+    assistant: "नागरिक साहाय्यक",
+    heroTagline: "स्वयंचलित नागरिक माहिती प्रणाली",
+    heroTitle: "सिव्हिककनेक्ट स्वायत्त",
+    heroSub: '"ही प्रणाली माहितीची वाट पाहत नाही, ती शोधते. आदेशांची वाट पाहत नाही, कार्य करते. माणसांची वाट पाहत नाही, ती शिकते."',
+    btnReport: "तक्रार नोंदवा",
+    btnTrack: "स्थिती ट्रॅक करा",
+    btnE2e: "थेट प्रक्रिया चाचणी",
+    statSources: "निरीक्षण केलेले डेटा स्रोत",
+    statSourcesDetail: "२४/७ कार्यरत असणारे १० संकलक",
+    statProcessed: "प्रक्रिया केलेल्या तक्रारी",
+    statProcessedDetail: "स्वयंचलित आणि नागरिक तक्रारी",
+    statPriority: "प्राधान्य एस्कॅलेशन्स",
+    statPriorityDetail: "वरिष्ठ अधिकाऱ्यांकडे वर्ग केलेल्या तक्रारी",
+    statWorkers: "स्वयंचलित कामगार",
+    statWorkersDetail: "राऊटर, व्हेरीफायर, डिटेक्टिव्ह...",
+    liveFeedTitle: "थेट स्वयंचलित ऑपरेशन्स",
+    harvesterDetails: "संकलक तपशील",
+    learningLoopsTitle: "५ सक्रिय लर्निंग लूप्स",
+    officerPortalTitle: "महानगरपालिका अधिकारी निवारण पोर्टल",
+    officerPortalSub: "अधिकारी आणि कनिष्ठ अभियंत्यांसाठी रिअल-टाइम निवारण फलक.",
+    trackTitle: "नागरिक तक्रारीची स्थिती ट्रॅक करा",
+    trackSub: "तुमचा संदर्भ क्रमांक (#CVC-1082) प्रविष्ट करा.",
+    trackPlaceholder: "तक्रार संदर्भ क्रमांक किंवा प्रभाग नाव टाका...",
+    btnSearch: "स्थिती शोधा",
+    harvesterTitle: "२४/७ स्वयंचलित डेटा संकलन इंजिन",
+    harvesterSub: "आरएसएस, सोशल मीडिया आणि उपग्रह फोटोंमधून डेटा गोळा करतो.",
+    workerTitle: "९ स्वयंचलित बुद्धिमत्ता कामगार",
+    workerSub: "मानवी हस्तक्षेपाशिवाय तक्रारींचे निवारण करतात.",
+    e2eTitle: "५-टप्प्यांची पूर्ण निवारण प्रक्रिया",
+    e2eSub: "शोध घेण्यापासून ते फोटो पडताळणीपर्यंत थेट ई२ई प्रवाह.",
+    reportTitle: "सार्वजनिक तक्रार नोंदवा",
+    reportSub: "येथे नोंदवलेल्या तक्रारी थेट संबंधित प्रभाग अधिकाऱ्याकडे पाठवल्या जातात.",
+    chatTitle: "नागरिक साहाय्यक",
+    chatSub: "२२ भारतीय भाषांमध्ये २४/७ उपलब्ध (भाषिणी)",
+    chatPlaceholder: "कोणत्याही भाषेत प्रश्न विचारा किंवा तक्रार नोंदवा...",
+    chatPromptWater: "पाणीपुरवठा वेळ",
+    chatPromptPothole: "रस्त्यावरील खड्ड्याची तक्रार",
+    chatPromptStatus: "स्थिती #CVC-1082",
+    langSelectLabel: "भाषा",
+  },
+  gu: {
+    appTitle: "સિવિકકનેક્ટ",
+    appSubtitle: "જાહેર નાગરિક ઇન્ટેલિજન્સ પોર્ટલ",
+    navHome: "હોમ",
+    navTrack: "સ્થિતિ ટ્રેક કરો",
+    navMap: "સુરક્ષા નકશો",
+    navE2e: "લાઇવ પ્રક્રિયા",
+    navOfficers: "અધિકારી પોર્ટલ",
+    navHarvesters: "ડેટા સંગ્રહક",
+    navWorkers: "9 કાર્યકરો",
+    navReport: "ફરિયાદ દાખલ કરો",
+    online: "ઓનલાઇન",
+    offline: "ઓફલાઇન",
+    assistant: "નાગરિક સહાયક",
+    heroTagline: "સ્વચાલિત નાગરિક ઇન્ટેલિજન્સ સિસ્ટમ",
+    heroTitle: "સિવિકકનેક્ટ સ્વાયત્ત",
+    heroSub: '"આ ડેટાની રાહ જોતું નથી. શોધે છે. આદેશોની રાહ જોતું નથી. કામ કરે છે. શીખે છે."',
+    btnReport: "ફરિયાદ દાખલ કરો",
+    btnTrack: "સ્થિતિ ટ્રેક કરો",
+    btnE2e: "લાઇવ પ્રક્રિયા ટેસ્ટ",
+    statSources: "નિરીક્ષણ કરેલ ડેટા સ્ત્રોતો",
+    statSourcesDetail: "24/7 કાર્યરત 10 સંગ્રહકો",
+    statProcessed: "પ્રક્રિયા થયેલ ફરિયાદો",
+    statProcessedDetail: "ઓટો-ડીટેક્ટેડ અને જાહેર ફરિયાદો",
+    statPriority: "પ્રાથમિકતા ફરિયાદો",
+    statPriorityDetail: "ઉચ્ચ અધિકારીઓને સોંપાયેલ",
+    statWorkers: "સ્વાયત્ત કાર્યકરો",
+    statWorkersDetail: "રાઉટર, વેરિફાયર...",
+    liveFeedTitle: "ઓટોમેટેડ ઓપરેશન્સ",
+    harvesterDetails: "સંગ્રહક વિગતો",
+    learningLoopsTitle: "5 સક્રિય લર્નિંગ લૂપ્સ",
+    officerPortalTitle: "મહાનગરપાલિકા અધિકારી નિવારણ પોર્ટલ",
+    officerPortalSub: "અધિકારીઓ માટે રીઅલ-ટાઇમ નિવારણ બોર્ડ.",
+    trackTitle: "ફરિયાદની સ્થિતિ ટ્રેક કરો",
+    trackSub: "તમારો રેફરન્સ નંબર દાખલ કરો (#CVC-1082).",
+    trackPlaceholder: "રેફરન્સ નંબર અથવા વોર્ડનું નામ લખો...",
+    btnSearch: "શોધો",
+    harvesterTitle: "24/7 સ્વાયત્ત ડેટા સંગ્રહક ઇંજન",
+    harvesterSub: "સોશિયલ મીડિયા અને ઉપગ્રહ ફોટાઓમાંથી ડેટા એકત્રિત કરે છે.",
+    workerTitle: "9 સ્વાયત્ત ઇન્ટેલિજન્સ વર્કર્સ",
+    workerSub: "માનવ મદદ વિના ફરિયાદોની ચકાસણી અને નિવારણ કરે છે.",
+    e2eTitle: "5-તબક્કાની પૂર્ણ નિવારણ પ્રક્રિયા",
+    e2eSub: "શોધથી લઈને ફોટો ચકાસણી સુધીની લાઇવ પ્રક્રિયા.",
+    reportTitle: "જાહેર ફરિયાદ નોંધાવો",
+    reportSub: "અહીં નોંધાયેલી ફરિયાદો સીધી સંબંધિત વોર્ડ અધિકારીને મોકલવામાં આવે છે.",
+    chatTitle: "નાગરિક સહાયક",
+    chatSub: "22 ભારતીય ભાષાઓમાં 24/7 ઉપલબ્ધ (ભાષિણી)",
+    chatPlaceholder: "કોઈપણ ભાષામાં પ્રશ્ન પૂછો અથવા ફરિયાદ કરો...",
+    chatPromptWater: "પાણી પુરવઠાનો સમય",
+    chatPromptPothole: "ખાડાની ફરિયાદ",
+    chatPromptStatus: "સ્થિતિ #CVC-1082",
+    langSelectLabel: "ભાષા",
+  },
+  bn: {
+    appTitle: "সিভিককানেক্ট",
+    appSubtitle: "পাবলিক নাগরিক ইন্টেলিজেন্স পোর্টাল",
+    navHome: "হোম",
+    navTrack: "স্ট্যাটাস ট্র্যাক",
+    navMap: "নিরাপত্তা মানচিত্র",
+    navE2e: "লাইভ ই২ই ফ্লো",
+    navOfficers: "অফিসার পোর্টাল",
+    navHarvesters: "ডেটা সংগ্রাহক",
+    navWorkers: "৯ কর্মী",
+    navReport: "সমস্যা রিপোর্ট করুন",
+    online: "অনলাইন",
+    offline: "অফলাইন",
+    assistant: "নাগরিক সহকারী",
+    heroTagline: "স্বায়ত্তশাসিত নাগরিক ইন্টেলিজেন্স সিস্টেম",
+    heroTitle: "সিভিককানেক্ট স্বায়ত্তশাসিত",
+    heroSub: '"এটি তথ্যের জন্য অপেক্ষা করে না। খুঁজে নেয়। আদেশের জন্য অপেক্ষা করে না। কাজ করে। শেখে।"',
+    btnReport: "সমস্যা রিপোর্ট করুন",
+    btnTrack: "স্ট্যাটাস ট্র্যাক করুন",
+    btnE2e: "লাইভ ফ্লো টেস্ট",
+    statSources: "পর্যবেক্ষণ করা ডেটা উৎস",
+    statSourcesDetail: "২৪/৭ সক্রিয় ১০ সংগ্রাহক",
+    statProcessed: "প্রক্রিয়াকৃত নাগরিক সমস্যা",
+    statProcessedDetail: "স্বয়ংক্রিয় ও নাগরিক রিপোর্ট",
+    statPriority: "অগ্রাধিকার এসকেলেশন",
+    statPriorityDetail: "উচ্চ কর্মকর্তাদের কাছে পাঠানো হয়েছে",
+    statWorkers: "স্বায়ত্তশাসিত কর্মী",
+    statWorkersDetail: "রাউটার, ভেরিফায়ার...",
+    liveFeedTitle: "লাইভ স্বয়ংক্রিয় ক্রিয়াকলাপ",
+    harvesterDetails: "সংগ্রাহক বিবরণ",
+    learningLoopsTitle: "৫টি সক্রিয় লার্নিং লুপ",
+    officerPortalTitle: "পৌরসভা কর্মকর্তা সমাধান পোর্টাল",
+    officerPortalSub: "কর্মকর্তাদের জন্য রিয়েল-টাইম ড্যাশবোর্ড।",
+    trackTitle: "নাগরিক অভিযোগের স্ট্যাটাস ট্র্যাক করুন",
+    trackSub: "আপনার রেফারেন্স নম্বর লিখুন (#CVC-1082)।",
+    trackPlaceholder: "রেফারেন্স নম্বর বা ওয়ার্ডের নাম লিখুন...",
+    btnSearch: "অনুসন্ধান",
+    harvesterTitle: "২৪/৭ স্বায়ত্তশাসিত ডেটা সংগ্রাহক ইঞ্জিন",
+    harvesterSub: "সামাজিক মিডিয়া এবং স্যাটেলাইট ইমেজ থেকে ডেটা সংগ্রহ করে।",
+    workerTitle: "৯টি স্বায়ত্তশাসিত ইন্টেলিজেন্স ওয়ার্কার",
+    workerSub: "মানুষের হস্তক্ষেপ ছাড়াই সমস্যার সমাধান ও যাচাই করে।",
+    e2eTitle: "৫-ধাপের সম্পূর্ণ সমাধান প্রক্রিয়া",
+    e2eSub: "শনাক্তকরণ থেকে ফটো যাচাইকরণ পর্যন্ত লাইভ ফ্লো।",
+    reportTitle: "জনসাধারণের অভিযোগ দায়ের করুন",
+    reportSub: "এখানে জমা দেওয়া অভিযোগ সরাসরি নির্দিষ্ট ওয়ার্ড কর্মকর্তার কাছে পৌঁছাবে।",
+    chatTitle: "নাগরিক সহকারী",
+    chatSub: "২২টি ভারতীয় ভাষায় ২৪/৭ সক্রিয় (ভাষিণী)",
+    chatPlaceholder: "যেকোনো ভাষায় প্রশ্ন জিজ্ঞাসা করুন বা অভিযোগ জানান...",
+    chatPromptWater: "জল সরবরাহের সময়",
+    chatPromptPothole: "গর্তের অভিযোগ",
+    chatPromptStatus: "স্ট্যাটাস #CVC-1082",
+    langSelectLabel: "ভাষা",
+  },
+  ml: {
+    appTitle: "സിവിക് കണക്ട്",
+    appSubtitle: "പൗര സേവന ഇൻ്റലിജൻസ് പോർട്ടൽ",
+    navHome: "ഹോം",
+    navTrack: "സ്റ്റാറ്റസ് പരിശോധിക്കുക",
+    navMap: "സുരക്ഷാ മാപ്പ്",
+    navE2e: "ലൈവ് പ്രക്രിയ",
+    navOfficers: "ഓഫീസർ പോർട്ടൽ",
+    navHarvesters: "ഡാറ്റ കളക്ടർമാർ",
+    navWorkers: "9 ജീവനക്കാർ",
+    navReport: "പരാതി നൽകുക",
+    online: "ഓൺലൈൻ",
+    offline: "ഓഫ്‌ലൈൻ",
+    assistant: "പൗര സഹായി",
+    heroTagline: "സ്വയം പ്രവർത്തിക്കുന്ന പൗര സേവന സിസ്റ്റം",
+    heroTitle: "സിവിക് കണക്ട് ഓട്ടോണമസ്",
+    heroSub: '"ഇത് വിവരങ്ങൾക്കായി കാത്തിരിക്കില്ല. കണ്ടെത്തുന്നു. ഉത്തരവുകൾക്കായി കാത്തിരിക്കില്ല. പ്രവർത്തിക്കുന്നു. പഠിക്കുന്നു."',
+    btnReport: "പരാതി നൽകുക",
+    btnTrack: "സ്റ്റാറ്റസ് പരിശോധിക്കുക",
+    btnE2e: "ലൈവ് ടെസ്റ്റ് നടത്തുക",
+    statSources: "നിരീക്ഷിക്കുന്ന ഉറവിടങ്ങൾ",
+    statSourcesDetail: "24/7 പ്രവർത്തിക്കുന്ന 10 കളക്ടർമാർ",
+    statProcessed: "പരിഹരിച്ച പരാതികൾ",
+    statProcessedDetail: "സ്വയം കണ്ടെത്തിയ പരാതികൾ",
+    statPriority: "പ്രധാന പരാതികൾ",
+    statPriorityDetail: "ഉയർന്ന ഉദ്യോഗസ്ഥർക്ക് നൽകിയത്",
+    statWorkers: "ഓട്ടോമേറ്റഡ് വർക്കർമാർ",
+    statWorkersDetail: "റൂട്ടർ, വെരിഫയർ...",
+    liveFeedTitle: "ലൈവ് ഓപ്പറേഷൻസ്",
+    harvesterDetails: "വിശദാംശങ്ങൾ",
+    learningLoopsTitle: "5 പഠന പ്രക്രിയകൾ",
+    officerPortalTitle: "മുനിസിപ്പൽ ഓഫീസർ പോർട്ടൽ",
+    officerPortalSub: "ഉദ്യോഗസ്ഥർക്കായുള്ള തത്സമയ ഡാഷ്‌ബോർഡ്.",
+    trackTitle: "പരാതിയുടെ സ്റ്റാറ്റസ് പരിശോധിക്കുക",
+    trackSub: "നിങ്ങളുടെ റഫറൻസ് നമ്പർ നൽകുക (#CVC-1082).",
+    trackPlaceholder: "റഫറൻസ് നമ്പർ അല്ലെങ്കിൽ വാർഡ് പേര് നൽകുക...",
+    btnSearch: "തിരയുക",
+    harvesterTitle: "24/7 ഓട്ടോമേറ്റഡ് ഡാറ്റ എൻജിനുകൾ",
+    harvesterSub: "സോഷ്യൽ മീഡിയ, സാറ്റലൈറ്റ് എന്നിവയിൽ നിന്ന് ഡാറ്റ ശേഖരിക്കുന്നു.",
+    workerTitle: "9 സ്വയം പ്രവർത്തിക്കുന്ന ഇന്റലിജൻസ് വർക്കർമാർ",
+    workerSub: "മനുഷ്യ സഹായമില്ലാതെ പരാതികൾ പരിശോധിക്കുന്നു.",
+    e2eTitle: "5-ഘട്ട പൂർണ്ണ പരിഹാര പ്രക്രിയ",
+    e2eSub: "പരാതി കണ്ടെത്തൽ മുതൽ ഫോട്ടോ പരിശോധന വരെയുള്ള ലൈവ് ഫ്ലോ.",
+    reportTitle: "പരാതി സമർപ്പിക്കുക",
+    reportSub: "ഇവിടെ സമർപ്പിക്കുന്ന പരാതികൾ നേരിട്ട് വാർഡ് ഓഫീസർക്ക് ലഭിക്കും.",
+    chatTitle: "പൗര സഹായി",
+    chatSub: "22 ഇന്ത്യൻ ഭാഷകളിൽ 24/7 ലഭ്യമാണ് (ഭാഷിണി)",
+    chatPlaceholder: "ഏതെങ്കിലും ഭാഷയിൽ ചോദ്യങ്ങൾ ചോദിക്കുക അല്ലെങ്കിൽ പരാതി നൽകുക...",
+    chatPromptWater: "കുടിവെള്ള സമയം",
+    chatPromptPothole: "കുഴികളുടെ പരാതി",
+    chatPromptStatus: "സ്റ്റാറ്റസ് #CVC-1082",
+    langSelectLabel: "ഭാഷ",
+  },
+  pa: {
+    appTitle: "ਸਿਵਿਕ ਕਨੈਕਟ",
+    appSubtitle: "ਜਨਤਕ ਨਾਗਰਿਕ ਇੰਟੈਲੀਜੈਂਸ ਪੋਰਟਲ",
+    navHome: "ਮੁੱਖ ਪੰਨਾ",
+    navTrack: "ਸਥਿਤੀ ਟ੍ਰੈਕ ਕਰੋ",
+    navMap: "ਸੁਰੱਖਿਆ ਨਕਸ਼ਾ",
+    navE2e: "ਲਾਈਵ ਪ੍ਰਕਿਰਿਆ",
+    navOfficers: "ਅਫਸਰ ਪੋਰਟਲ",
+    navHarvesters: "ਹਾਰਵੈਸਟਰ",
+    navWorkers: "9 ਵਰਕਰ",
+    navReport: "ਸ਼ਿਕਾਇਤ ਦਰਜ ਕਰੋ",
+    online: "ਆਨਲਾਈਨ",
+    offline: "ਆਫਲਾਈਨ",
+    assistant: "ਨਾਗਰਿਕ ਸਹਾਇਕ",
+    heroTagline: "ਸਵੈ-ਚਾਲਿਤ ਨਾਗਰਿਕ ਇੰਟੈਲੀਜੈਂਸ ਸਿਸਟਮ",
+    heroTitle: "ਸਿਵਿਕ ਕਨੈਕਟ ਆਟੋਨੋਮਸ",
+    heroSub: '"ਇਹ ਜਾਣਕਾਰੀ ਦੀ ਉਡੀਕ ਨਹੀਂ ਕਰਦਾ। ਲੱਭਦਾ ਹੈ। ਹੁਕਮਾਂ ਦੀ ਉਡੀਕ ਨਹੀਂ ਕਰਦਾ। ਕੰਮ ਕਰਦਾ ਹੈ। ਸਿੱਖਦਾ ਹੈ।"',
+    btnReport: "ਸ਼ਿਕਾਇਤ ਦਰਜ ਕਰੋ",
+    btnTrack: "ਸਥਿਤੀ ਟ੍ਰੈਕ ਕਰੋ",
+    btnE2e: "ਲਾਈਵ ਟੈਸਟ ਕਰੋ",
+    statSources: "ਮੋਨੀਟਰ ਕੀਤੇ ਡਾਟਾ ਸਰੋਤ",
+    statSourcesDetail: "24/7 ਚੱਲ ਰਹੇ 10 ਹਾਰਵੈਸਟਰ",
+    statProcessed: "ਹੱਲ ਕੀਤੀਆਂ ਸ਼ਿਕਾਇਤਾਂ",
+    statProcessedDetail: "ਆਟੋ-ਡਿਟੈਕਟ ਅਤੇ ਨਾਗਰਿਕ ਰਿਪੋਰਟਾਂ",
+    statPriority: "ਤਰਜੀਹੀ ਸ਼ਿਕਾਇਤਾਂ",
+    statPriorityDetail: "ਉੱਚ ਅਧਿਕਾਰੀਆਂ ਨੂੰ ਭੇਜੀਆਂ ਗਈਆਂ",
+    statWorkers: "ਸਵੈ-ਚਾਲਿਤ ਵਰਕਰ",
+    statWorkersDetail: "ਰਾਊਟਰ, ਵੈਰੀਫਾਇਰ...",
+    liveFeedTitle: "ਲਾਈਵ ਆਟੋਮੇਟਿਡ ਆਪ੍ਰੇਸ਼ਨ",
+    harvesterDetails: "ਹਾਰਵੈਸਟਰ ਵੇਰਵੇ",
+    learningLoopsTitle: "5 ਸਰਗਰਮ ਲਰਨਿੰਗ ਲੂਪਸ",
+    officerPortalTitle: "ਨਗਰ ਨਿਗਮ ਅਧਿਕਾਰੀ ਨਿਵਾਰਨ ਪੋਰਟਲ",
+    officerPortalSub: "ਅਧਿਕਾਰੀਆਂ ਲਈ ਰੀਅਲ-ਟਾਈਮ ਬੋਰਡ।",
+    trackTitle: "ਸ਼ਿਕਾਇਤ ਦੀ ਸਥਿਤੀ ਟ੍ਰੈਕ ਕਰੋ",
+    trackSub: "ਆਪਣਾ ਰੈਫਰੈਂਸ ਨੰਬਰ ਦਰਜ ਕਰੋ (#CVC-1082)।",
+    trackPlaceholder: "ਰੈਫਰੈਂਸ ਨੰਬਰ ਜਾਂ ਵਾਰਡ ਦਾ ਨਾਮ ਲਿਖੋ...",
+    btnSearch: "ਖੋਜੋ",
+    harvesterTitle: "24/7 ਸਵੈ-ਚਾਲਿਤ ਡਾਟਾ ਹਾਰਵੈਸਟਰ",
+    harvesterSub: "ਸੋਸ਼ਲ ਮੀਡੀਆ ਅਤੇ ਸੈਟੇਲਾਈਟ ਤੋਂ ਡਾਟਾ ਇਕੱਠਾ ਕਰਦਾ ਹੈ।",
+    workerTitle: "9 ਸਵੈ-ਚਾਲਿਤ ਇੰਟੈਲੀਜੈਂਸ ਵਰਕਰ",
+    workerSub: "ਬਿਨਾਂ ਇਨਸਾਨੀ ਮਦਦ ਦੇ ਸ਼ਿਕਾਇਤਾਂ ਦੀ ਜਾਂਚ ਅਤੇ ਹੱਲ ਕਰਦੇ ਹਨ।",
+    e2eTitle: "5-ਪੜਾਵੀ ਪੂਰੀ ਨਿਵਾਰਨ ਪ੍ਰਕਿਰਿਆ",
+    e2eSub: "ਸ਼ਿਕਾਇਤ ਲੱਭਣ ਤੋਂ ਲੈ ਕੇ ਫੋਟੋ ਜਾਂਚ ਤੱਕ ਦਾ ਲਾਈਵ ਫਲੋ।",
+    reportTitle: "ਸ਼ਿਕਾਇਤ ਦਰਜ ਕਰੋ",
+    reportSub: "ਇੱਥੇ ਦਰਜ ਕੀਤੀਆਂ ਸ਼ਿਕਾਇਤਾਂ ਸਿੱਧੇ ਸਬੰਧਤ ਵਾਰਡ ਅਧਿਕਾਰੀ ਨੂੰ ਭੇਜੀਆਂ ਜਾਂਦੀਆਂ ਹਨ।",
+    chatTitle: "ਨਾਗਰਿਕ ਸਹਾਇਕ",
+    chatSub: "22 ਭਾਰਤੀ ਭਾਸ਼ਾਵਾਂ ਵਿੱਚ 24/7 ਉਪਲਬਧ (ਭਾਸ਼ਿਣੀ)",
+    chatPlaceholder: "ਕਿਸੇ ਵੀ ਭਾਸ਼ਾ ਵਿੱਚ ਸਵਾਲ ਪੁੱਛੋ ਜਾਂ ਸ਼ਿਕਾਇਤ ਕਰੋ...",
+    chatPromptWater: "ਪਾਣੀ ਦੀ ਸਪਲਾਈ ਦਾ ਸਮਾਂ",
+    chatPromptPothole: "ਖੱਡੇ ਦੀ ਸ਼ਿਕਾਇਤ",
+    chatPromptStatus: "ਸਥਿਤੀ #CVC-1082",
+    langSelectLabel: "ਭਾਸ਼ਾ",
+  },
+};
+
+export function t(key: string, lang = "en"): string {
+  const dict = UI_TRANSLATIONS[lang] || UI_TRANSLATIONS.en;
+  return dict[key] || UI_TRANSLATIONS.en[key] || key;
+}
+
+type Screen = "home" | "track" | "harvesters" | "agents" | "officers" | "e2e" | "report" | "map" | "alerts";
 
 function CivicConnectApp() {
   const [screen, setScreen] = useState<Screen>("home");
+  const [activeLang, setActiveLang] = useState("en");
   const { reports, loading, error, refresh } = useReports();
   const online = useOnlineStatus();
   const [message, setMessage] = useState<string>();
@@ -124,6 +665,12 @@ function CivicConnectApp() {
     }
   }
 
+  function handleReportFromChat(newRep: WaterReport) {
+    addReport(newRep);
+    setMessage(`Complaint ${newRep.id} filed via Assistant and added to Live Map!`);
+    void refresh();
+  }
+
   useEffect(() => {
     if (online)
       void syncPending().then((count) => {
@@ -148,9 +695,9 @@ function CivicConnectApp() {
               <Radar className="size-5 animate-pulse" />
             </span>
             <span>
-              <strong className="block text-base font-bold tracking-tight">CivicConnect</strong>
+              <strong className="block text-base font-bold tracking-tight">{t("appTitle", activeLang)}</strong>
               <span className="hidden text-xs text-text-secondary sm:block">
-                Autonomous Civic Intelligence
+                {t("appSubtitle", activeLang)}
               </span>
             </span>
           </button>
@@ -160,49 +707,49 @@ function CivicConnectApp() {
               active={screen === "home"}
               onClick={() => setScreen("home")}
               icon={<Activity />}
-              label="Overview"
+              label={t("navHome", activeLang)}
               compact
             />
             <NavItem
-              active={screen === "e2e"}
-              onClick={() => setScreen("e2e")}
-              icon={<Play />}
-              label="Live E2E Flow"
-              compact
-            />
-            <NavItem
-              active={screen === "officers"}
-              onClick={() => setScreen("officers")}
-              icon={<Building2 />}
-              label="Officer Portal"
-              compact
-            />
-            <NavItem
-              active={screen === "harvesters"}
-              onClick={() => setScreen("harvesters")}
-              icon={<Radio />}
-              label="Harvesters"
-              compact
-            />
-            <NavItem
-              active={screen === "agents"}
-              onClick={() => setScreen("agents")}
-              icon={<Bot />}
-              label="9 Agents"
+              active={screen === "track"}
+              onClick={() => setScreen("track")}
+              icon={<Search />}
+              label={t("navTrack", activeLang)}
               compact
             />
             <NavItem
               active={screen === "map"}
               onClick={() => setScreen("map")}
               icon={<Map />}
-              label="Live map"
+              label={t("navMap", activeLang)}
               compact
             />
             <NavItem
-              active={screen === "alerts"}
-              onClick={() => setScreen("alerts")}
-              icon={<ShieldAlert />}
-              label="Alerts"
+              active={screen === "e2e"}
+              onClick={() => setScreen("e2e")}
+              icon={<Play />}
+              label={t("navE2e", activeLang)}
+              compact
+            />
+            <NavItem
+              active={screen === "officers"}
+              onClick={() => setScreen("officers")}
+              icon={<Building2 />}
+              label={t("navOfficers", activeLang)}
+              compact
+            />
+            <NavItem
+              active={screen === "harvesters"}
+              onClick={() => setScreen("harvesters")}
+              icon={<Radio />}
+              label={t("navHarvesters", activeLang)}
+              compact
+            />
+            <NavItem
+              active={screen === "agents"}
+              onClick={() => setScreen("agents")}
+              icon={<Bot />}
+              label={t("navWorkers", activeLang)}
               compact
             />
             <Button
@@ -210,14 +757,36 @@ function CivicConnectApp() {
               size="sm"
               variant={screen === "report" ? "default" : "outline"}
               aria-current={screen === "report" ? "page" : undefined}
-              className="ml-2"
+              className="ml-2 shadow-sm"
             >
               <Send className="size-3.5" />
-              Report Issue
+              {t("navReport", activeLang)}
             </Button>
           </nav>
 
           <div className="flex items-center gap-2">
+            {/* Global 1-Click Language Selector */}
+            <div className="flex items-center gap-1.5 rounded-lg border border-border/80 bg-card px-2.5 py-1 text-xs font-semibold shadow-xs hover:border-primary/50 transition-colors">
+              <Globe className="size-3.5 text-primary" />
+              <select
+                aria-label="Select platform language"
+                value={activeLang}
+                onChange={(e) => setActiveLang(e.target.value)}
+                className="bg-transparent font-bold outline-none text-foreground cursor-pointer text-xs"
+              >
+                <option value="en">English (EN)</option>
+                <option value="hi">हिंदी (HI)</option>
+                <option value="kn">ಕನ್ನಡ (KN)</option>
+                <option value="ta">தமிழ் (TA)</option>
+                <option value="te">తెలుగు (TE)</option>
+                <option value="mr">मराठी (MR)</option>
+                <option value="gu">ગુજરાતી (GU)</option>
+                <option value="bn">বাংলা (BN)</option>
+                <option value="ml">മലയാളം (ML)</option>
+                <option value="pa">ਪੰਜਾਬੀ (PA)</option>
+              </select>
+            </div>
+
             <span
               className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${
                 online ? "bg-safe/10 text-safe" : "bg-caution/10 text-caution"
@@ -226,11 +795,11 @@ function CivicConnectApp() {
               <span className={`size-2 rounded-full ${online ? "bg-safe animate-pulse" : "bg-caution"}`} />
               {online ? (
                 <>
-                  <Wifi className="size-3" /> Online
+                  <Wifi className="size-3" /> {t("online", activeLang)}
                 </>
               ) : (
                 <>
-                  <WifiOff className="size-3" /> Offline
+                  <WifiOff className="size-3" /> {t("offline", activeLang)}
                 </>
               )}
             </span>
@@ -241,7 +810,7 @@ function CivicConnectApp() {
               className="hidden sm:inline-flex items-center gap-1.5 border-primary/30 text-primary hover:bg-primary/10"
             >
               <Sparkles className="size-4 text-primary" />
-              <span>AI Chatbot</span>
+              <span>{t("assistant", activeLang)}</span>
             </Button>
           </div>
         </div>
@@ -265,27 +834,31 @@ function CivicConnectApp() {
             alerts={alerts}
             loading={loading}
             snapshot={agentSnapshot}
+            lang={activeLang}
             onReport={() => setScreen("report")}
             onNavigate={setScreen}
             onMessage={setMessage}
           />
         )}
-        {screen === "e2e" && <E2EDemoScreen onBack={() => setScreen("home")} onMessage={setMessage} />}
+        {screen === "track" && <TrackStatusScreen reports={reports} lang={activeLang} onBack={() => setScreen("home")} />}
+        {screen === "e2e" && <E2EDemoScreen lang={activeLang} onBack={() => setScreen("home")} onMessage={setMessage} />}
         {screen === "officers" && (
           <OfficerPortalScreen
             officers={agentSnapshot.officers}
             reports={reports}
+            lang={activeLang}
             onBack={() => setScreen("home")}
             onMessage={setMessage}
           />
         )}
         {screen === "harvesters" && (
-          <HarvestersScreen harvesters={agentSnapshot.harvesters} onBack={() => setScreen("home")} />
+          <HarvestersScreen harvesters={agentSnapshot.harvesters} lang={activeLang} onBack={() => setScreen("home")} />
         )}
         {screen === "agents" && (
           <AgentsScreen
             agents={agentSnapshot.agents}
             reports={reports}
+            lang={activeLang}
             onBack={() => setScreen("home")}
             onMessage={setMessage}
           />
@@ -293,24 +866,32 @@ function CivicConnectApp() {
         {screen === "report" && (
           <ReportScreen
             online={online}
+            lang={activeLang}
             onBack={() => setScreen("home")}
             onSubmitted={handleSubmit}
           />
         )}
-        {screen === "map" && <MapScreen reports={reports} onBack={() => setScreen("home")} />}
+        {screen === "map" && <MapScreen reports={reports} lang={activeLang} onBack={() => setScreen("home")} />}
         {screen === "alerts" && (
-          <AlertsScreen alerts={alerts} loading={loading} onBack={() => setScreen("home")} />
+          <AlertsScreen alerts={alerts} loading={loading} lang={activeLang} onBack={() => setScreen("home")} />
         )}
       </div>
 
-      {/* Floating Multilingual AI Chatbot Drawer Widget */}
-      <ChatbotWidget isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} onNavigate={setScreen} />
+      {/* Floating Multilingual Citizen Assistant Widget */}
+      <ChatbotWidget
+        isOpen={isChatOpen}
+        lang={activeLang}
+        onLanguageChange={setActiveLang}
+        onClose={() => setIsChatOpen(false)}
+        onNavigate={setScreen}
+        onReportGenerated={handleReportFromChat}
+      />
 
-      {/* Floating Chat Button for Mobile */}
+      {/* Floating Assistant Button for Mobile */}
       <button
         onClick={() => setIsChatOpen(!isChatOpen)}
         className="fixed bottom-20 right-4 z-30 flex size-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform hover:scale-105 sm:bottom-6 sm:right-6"
-        aria-label="Open Autonomous AI Chatbot"
+        aria-label="Open Citizen Assistant"
       >
         <Sparkles className="size-6" />
       </button>
@@ -322,19 +903,13 @@ function CivicConnectApp() {
             active={screen === "home"}
             onClick={() => setScreen("home")}
             icon={<Activity />}
-            label="Overview"
+            label={t("navHome", activeLang)}
           />
           <NavItem
-            active={screen === "e2e"}
-            onClick={() => setScreen("e2e")}
-            icon={<Play />}
-            label="E2E Flow"
-          />
-          <NavItem
-            active={screen === "officers"}
-            onClick={() => setScreen("officers")}
-            icon={<Building2 />}
-            label="Gov Portal"
+            active={screen === "track"}
+            onClick={() => setScreen("track")}
+            icon={<Search />}
+            label={t("navTrack", activeLang)}
           />
           <Button
             onClick={() => setScreen("report")}
@@ -346,10 +921,16 @@ function CivicConnectApp() {
             <Send className="size-4" />
           </Button>
           <NavItem
-            active={screen === "agents"}
-            onClick={() => setScreen("agents")}
-            icon={<Bot />}
-            label="Agents"
+            active={screen === "map"}
+            onClick={() => setScreen("map")}
+            icon={<Map />}
+            label={t("navMap", activeLang)}
+          />
+          <NavItem
+            active={screen === "officers"}
+            onClick={() => setScreen("officers")}
+            icon={<Building2 />}
+            label={t("navOfficers", activeLang)}
           />
         </div>
       </nav>
@@ -364,6 +945,7 @@ function HomeScreen({
   alerts,
   loading,
   snapshot,
+  lang = "en",
   onReport,
   onNavigate,
   onMessage,
@@ -372,6 +954,7 @@ function HomeScreen({
   alerts: ReturnType<typeof getAlerts>;
   loading: boolean;
   snapshot: ReturnType<typeof buildAgentSnapshot>;
+  lang?: string;
   onReport: () => void;
   onNavigate: (screen: Screen) => void;
   onMessage: (msg: string) => void;
@@ -383,24 +966,24 @@ function HomeScreen({
         <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-center">
           <div className="space-y-3">
             <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
-              <span className="size-2 rounded-full bg-safe animate-pulse" /> Self-Operating Civic Platform
+              <span className="size-2 rounded-full bg-safe animate-pulse" /> {t("heroTagline", lang)}
             </div>
             <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-5xl">
-              CivicConnect Autonomous
+              {t("heroTitle", lang)}
             </h1>
             <p className="max-w-3xl text-base font-medium leading-relaxed text-text-secondary sm:text-lg">
-              “It doesn’t wait for data. It finds it. It doesn’t wait for orders. It acts. It doesn’t wait for humans. It learns.”
+              {t("heroSub", lang)}
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
-            <Button onClick={() => onNavigate("e2e")} size="lg" className="shadow-md">
-              <Play className="size-4 fill-current" /> Test E2E Flow
+            <Button onClick={onReport} size="lg" className="shadow-md">
+              <Send className="size-4" /> {t("btnReport", lang)}
             </Button>
-            <Button onClick={() => onNavigate("officers")} variant="outline" size="lg">
-              <Building2 className="size-4" /> Officer Portal
+            <Button onClick={() => onNavigate("track")} variant="outline" size="lg">
+              <Search className="size-4" /> {t("btnTrack", lang)}
             </Button>
-            <Button onClick={onReport} variant="secondary" size="lg">
-              <Send className="size-4" /> Report Issue
+            <Button onClick={() => onNavigate("e2e")} variant="secondary" size="lg">
+              <Play className="size-4 fill-current" /> {t("btnE2e", lang)}
             </Button>
           </div>
         </div>
@@ -410,28 +993,28 @@ function HomeScreen({
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <MetricCard
           icon={<Radio />}
-          label="Harvester Sources"
+          label={t("statSources", lang)}
           value={snapshot.sourceCount.toLocaleString()}
-          detail="10 active crawlers & listeners 24/7"
+          detail={t("statSourcesDetail", lang)}
         />
         <MetricCard
           icon={<SearchCheck />}
-          label="Issues Processed"
+          label={t("statProcessed", lang)}
           value={reports.length + 184}
-          detail="Auto-detected & citizen reports"
+          detail={t("statProcessedDetail", lang)}
         />
         <MetricCard
           icon={<ShieldAlert />}
-          label="Active Escalations"
+          label={t("statPriority", lang)}
           value={snapshot.highPriorityCount + alerts.length}
-          detail="Auto-escalated SLA breaches"
+          detail={t("statPriorityDetail", lang)}
           tone="danger"
         />
         <MetricCard
           icon={<Bot />}
-          label="Autonomous Workers"
+          label={t("statWorkers", lang)}
           value="9 / 9"
-          detail="Router, Escalator, Verifier, Detector..."
+          detail={t("statWorkersDetail", lang)}
           tone="safe"
         />
       </div>
@@ -442,30 +1025,30 @@ function HomeScreen({
           <div className="flex items-center justify-between gap-3 border-b border-border pb-4">
             <div>
               <p className="text-xs font-bold uppercase tracking-wider text-text-secondary">
-                Layer 1 & Layer 3 Operations
+                Live Signal Feed
               </p>
-              <h2 className="text-lg font-semibold">Autonomous Activity & Signal Feed</h2>
+              <h2 className="text-lg font-semibold">{t("liveFeedTitle", lang)}</h2>
             </div>
             <Button variant="ghost" size="sm" onClick={() => onNavigate("harvesters")}>
-              Harvester Details <ArrowUpRight className="size-4" />
+              {t("harvesterDetails", lang)} <ArrowUpRight className="size-4" />
             </Button>
           </div>
           <div className="mt-4 space-y-3">
             <ActivityRow
               icon={<Radio className="text-primary" />}
               title="Social Listener caught pothole tweet in Ward 47 (Jayanagar)"
-              detail="Detector Agent auto-classified issue (Confidence 0.94)"
+              detail="Detector Worker auto-classified issue (Confidence 0.94)"
               time="3 min ago"
             />
             <ActivityRow
               icon={<Bot className="text-safe" />}
-              title="Router Agent assigned #CVC-1082 to JE (Roads) Er. R. Sharma"
+              title="Router Worker assigned #CVC-1082 to JE (Roads) Er. R. Sharma"
               detail="Learned routing score: 0.89 (Success rate 95%, Ward match)"
               time="12 min ago"
             />
             <ActivityRow
               icon={<ShieldAlert className="text-danger" />}
-              title="Escalator Agent advanced SLA level 1 -> 2 for #CVC-0941"
+              title="Escalator Worker advanced SLA level 1 -> 2 for #CVC-0941"
               detail="SLA deadline breached (>24h). Email & SMS sent to Zonal Head"
               time="28 min ago"
             />
@@ -480,14 +1063,14 @@ function HomeScreen({
 
         <section className="rounded-xl border border-border bg-card p-5 shadow-card">
           <p className="text-xs font-bold uppercase tracking-wider text-text-secondary">
-            Layer 4 — Self-Learning
+            Continuous Improvement
           </p>
           <h2 className="text-lg font-semibold">5 Active Learning Loops</h2>
           <div className="mt-4 space-y-4">
             {snapshot.learningLoops.map((loop) => (
               <div key={loop.id} className="border-b border-border/60 pb-3 last:border-0 last:pb-0">
                 <div className="flex items-center justify-between text-xs font-semibold">
-                  <span>{loop.name.split(" — ")[0]}</span>
+                  <span>{loop.name.split(" - ")[0]}</span>
                   <span className="text-safe font-mono">{loop.cycle}</span>
                 </div>
                 <p className="mt-1 text-xs text-text-secondary">{loop.description}</p>
@@ -503,9 +1086,9 @@ function HomeScreen({
         <div className="flex items-center justify-between gap-3">
           <div>
             <p className="text-xs font-bold uppercase tracking-wider text-text-secondary">
-              Human-in-the-Loop Supervision
+              Supervision Queue
             </p>
-            <h2 className="text-xl font-semibold">Priority & Escalation Queue</h2>
+            <h2 className="text-xl font-semibold">Priority & Escalation Alerts</h2>
           </div>
           <Button variant="ghost" size="sm" onClick={() => onNavigate("alerts")}>
             View All Alerts
@@ -522,6 +1105,118 @@ function HomeScreen({
 
       {/* Public Trust & Review Panel */}
       <TrustPanel onSubmitted={() => onMessage("Feedback recorded. Prompts will evolve in Loop 4.")} />
+    </section>
+  );
+}
+
+// ------------------- TRACK STATUS SCREEN -------------------
+
+function TrackStatusScreen({
+  reports,
+  lang = "en",
+  onBack,
+}: {
+  reports: WaterReport[];
+  lang?: string;
+  onBack: () => void;
+}) {
+  const [searchId, setSearchId] = useState("");
+  const [selectedReport, setSelectedReport] = useState<WaterReport | undefined>(reports[0]);
+
+  function findTicket() {
+    if (!searchId.trim()) return;
+    const found = reports.find(
+      (r) => r.id.toLowerCase().includes(searchId.toLowerCase()) || r.area.toLowerCase().includes(searchId.toLowerCase()),
+    );
+    setSelectedReport(found || reports[0]);
+  }
+
+  return (
+    <section className="space-y-6 max-w-4xl mx-auto">
+      <Button variant="ghost" size="sm" onClick={onBack}>
+        Back to Overview
+      </Button>
+
+      <div>
+        <h1 className="text-3xl font-bold">{t("trackTitle", lang)}</h1>
+        <p className="mt-1 text-sm text-text-secondary">
+          {t("trackSub", lang)}
+        </p>
+      </div>
+
+      {/* Search Input */}
+      <div className="flex gap-2">
+        <div className="relative flex-1">
+          <Search className="absolute left-3.5 top-3 size-4 text-text-secondary" />
+          <input
+            value={searchId}
+            onChange={(e) => setSearchId(e.target.value)}
+            placeholder={t("trackPlaceholder", lang)}
+            className="w-full rounded-xl border border-border bg-card py-2.5 pl-10 pr-4 text-sm outline-none focus:ring-2 focus:ring-primary shadow-sm"
+          />
+        </div>
+        <Button onClick={findTicket} className="shadow-sm">
+          {t("btnSearch", lang)}
+        </Button>
+      </div>
+
+      {selectedReport ? (
+        <div className="rounded-2xl border border-border bg-card p-6 shadow-card space-y-6">
+          <div className="flex flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <span className="text-xs font-bold uppercase text-primary tracking-wider">Ticket Reference</span>
+              <h2 className="text-2xl font-bold mt-0.5">{selectedReport.id}</h2>
+              <p className="text-xs text-text-secondary mt-1">{selectedReport.area} • {selectedReport.category || "Water / Pothole Issue"}</p>
+            </div>
+            <span className="rounded-full bg-primary/10 px-3.5 py-1 text-xs font-bold text-primary self-start sm:self-auto">
+              Status: {selectedReport.status.toUpperCase()}
+            </span>
+          </div>
+
+          {/* Progress Tracker Bar */}
+          <div className="space-y-4">
+            <h3 className="font-bold text-sm text-foreground">Step-by-Step Progress</h3>
+            <div className="grid gap-3 sm:grid-cols-4">
+              <div className="rounded-xl border border-safe bg-safe/10 p-3 text-center space-y-1">
+                <CheckCircle2 className="mx-auto size-5 text-safe" />
+                <p className="text-xs font-bold text-safe">1. Registered</p>
+                <p className="text-[10px] text-text-secondary">Signal Discovered</p>
+              </div>
+              <div className="rounded-xl border border-safe bg-safe/10 p-3 text-center space-y-1">
+                <UserCheck className="mx-auto size-5 text-safe" />
+                <p className="text-xs font-bold text-safe">2. Officer Routed</p>
+                <p className="text-[10px] text-text-secondary">{selectedReport.assignedOfficer || "Er. R. Sharma"}</p>
+              </div>
+              <div className="rounded-xl border border-primary bg-primary/10 p-3 text-center space-y-1 animate-pulse">
+                <Clock className="mx-auto size-5 text-primary" />
+                <p className="text-xs font-bold text-primary">3. In Progress</p>
+                <p className="text-[10px] text-text-secondary">Field Crew Patching</p>
+              </div>
+              <div className="rounded-xl border border-border bg-muted/20 p-3 text-center space-y-1 opacity-60">
+                <ShieldCheck className="mx-auto size-5 text-text-secondary" />
+                <p className="text-xs font-semibold text-text-secondary">4. Verified Fix</p>
+                <p className="text-[10px] text-text-secondary">Computer Vision Check</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Ticket Details */}
+          <div className="grid gap-4 sm:grid-cols-2 text-xs border-t border-border/60 pt-4 text-text-secondary">
+            <div>
+              <span className="font-bold text-foreground block">Assigned Ward Officer:</span>
+              <p className="mt-1 font-medium">{selectedReport.assignedOfficer || "Er. R. Sharma (JE Roads & Infrastructure)"}</p>
+              <p className="text-primary mt-0.5">Phone: +91-98765-43210</p>
+            </div>
+            <div>
+              <span className="font-bold text-foreground block">Observation Details:</span>
+              <p className="mt-1">{selectedReport.description || "Civic issue observation reported via public portal."}</p>
+              <p className="mt-0.5">Reported: {timeAgo(selectedReport.createdAt)}</p>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <EmptyState text="No complaint found with that reference ID. Try searching 'Ward 47' or '#CVC-1082'." />
+      )}
     </section>
   );
 }
@@ -555,7 +1250,7 @@ function E2EDemoScreen({
         if (curr >= 5) {
           clearInterval(interval);
           setIsSimulating(false);
-          onMessage("Full E2E Lifecycle completed! Signal -> Officer -> AI Verification -> Closed");
+          onMessage("Full E2E Lifecycle completed! Signal -> Officer -> Verification -> Closed");
           return 5;
         }
         const next = curr + 1;
@@ -582,7 +1277,7 @@ function E2EDemoScreen({
           </div>
           <h1 className="mt-1 text-3xl font-bold">5-Step Automated Public & Officer Flow</h1>
           <p className="mt-1 max-w-3xl text-sm text-text-secondary">
-            Demonstrates how CivicConnect Autonomous discovers public signals 24/7, routes to the responsible government officer, monitors dispatch, verifies resolution proof with AI vision, and closes the ticket independently.
+            Demonstrates how CivicConnect Autonomous discovers public signals 24/7, routes to the responsible government officer, monitors dispatch, verifies resolution proof with computer vision, and closes the ticket independently.
           </p>
         </div>
 
@@ -675,7 +1370,7 @@ function OfficerPortalScreen({
     setTimeout(() => {
       setTicketStatus("RESOLVED");
       setVerifying(false);
-      onMessage(`Verifier Agent ran AI Vision & EXIF check: Fix Verified! Ticket #CVC-1082 Closed.`);
+      onMessage(`Verifier Worker ran Computer Vision & EXIF check: Fix Verified! Ticket #CVC-1082 Closed.`);
     }, 1200);
   }
 
@@ -690,7 +1385,7 @@ function OfficerPortalScreen({
         </div>
         <h1 className="mt-1 text-3xl font-bold">Government & Department Portal</h1>
         <p className="mt-1 max-w-3xl text-sm text-text-secondary">
-          Responsible municipal officers receive auto-routed civic issues, acknowledge dispatches, upload resolution proof photos, and submit to Verifier Agent for automatic AI verification & ticket closure.
+          Responsible municipal officers receive auto-routed civic issues, acknowledge dispatches, upload resolution proof photos, and submit to Verifier Worker for automatic verification & ticket closure.
         </p>
       </div>
 
@@ -729,7 +1424,7 @@ function OfficerPortalScreen({
             <span className="text-xs font-bold uppercase text-primary tracking-wider">Assigned Ticket #CVC-1082</span>
             <h2 className="text-xl font-bold mt-0.5">Dangerous Road Pothole at Ward 47 Cross Road</h2>
             <p className="text-xs text-text-secondary mt-1">
-              Auto-detected by Social Listener • Routed by Router Agent to {selectedOfficer.name} ({selectedOfficer.department})
+              Auto-detected by Social Listener • Routed by Router Worker to {selectedOfficer.name} ({selectedOfficer.department})
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -817,14 +1512,14 @@ function OfficerPortalScreen({
                 disabled={ticketStatus !== "IN_PROGRESS" || verifying}
               >
                 {verifying ? <RefreshCw className="size-4 animate-spin mr-2" /> : <Camera className="size-4 mr-2" />}
-                3. Upload Proof Photo & Trigger AI Verifier Agent
+                3. Upload Proof Photo & Trigger Verifier Worker
               </Button>
             </div>
 
             {proofPhoto && (
               <div className="mt-3 space-y-2">
                 <span className="text-xs font-semibold text-safe flex items-center gap-1">
-                  <CheckCircle2 className="size-3.5" /> Resolution Proof Verified by AI Vision & EXIF GPS
+                  <CheckCircle2 className="size-3.5" /> Resolution Proof Verified by Computer Vision & EXIF GPS
                 </span>
                 <img src={proofPhoto} alt="Resolution proof" className="h-36 w-full rounded-lg object-cover border border-safe/40" />
               </div>
@@ -938,7 +1633,7 @@ function HarvestersScreen({
   );
 }
 
-// ------------------- 9 AUTONOMOUS AGENTS SCREEN -------------------
+// ------------------- 9 AUTONOMOUS WORKERS SCREEN -------------------
 
 function AgentsScreen({
   agents,
@@ -962,47 +1657,47 @@ function AgentsScreen({
         ],
         "en",
       );
-      const entry = `[Router Agent] Assigned complaint to ${best.name} (Ward: ${best.ward}, Score: ${best.score.toFixed(2)})`;
+      const entry = `[Router Worker] Assigned complaint to ${best.name} (Ward: ${best.ward}, Score: ${best.score.toFixed(2)})`;
       setLog((prev) => [entry, ...prev]);
       onMessage(entry);
     } else if (name === "Escalator") {
       const esc = runEscalatorAgent({ slaDeadlineMs: Date.now() - 100, currentEscalationLevel: 1, sentimentScore: -0.8 });
-      const entry = `[Escalator Agent] Advanced SLA level 1 -> ${esc.nextLevel}. Target: ${esc.targetRole}`;
+      const entry = `[Escalator Worker] Advanced SLA level 1 -> ${esc.nextLevel}. Target: ${esc.targetRole}`;
       setLog((prev) => [entry, ...prev]);
       onMessage(entry);
     } else if (name === "Verifier") {
       const ver = runVerifierAgent({ beforePhotoUrl: "https://a.com/1.jpg", afterPhotoUrl: "https://a.com/2.jpg", category: "Pothole", exifDistanceMeters: 15 });
-      const entry = `[Verifier Agent] ${ver.reason}`;
+      const entry = `[Verifier Worker] ${ver.reason}`;
       setLog((prev) => [entry, ...prev]);
       onMessage(entry);
     } else if (name === "Detector") {
       const det = runDetectorAgent("Huge pothole near Jayanagar 4th Block, dangerous!", { lat: 12.925, lng: 77.593 });
-      const entry = `[Detector Agent] Auto-filed issue: ${det.category} (Confidence: ${det.confidence})`;
+      const entry = `[Detector Worker] Auto-filed issue: ${det.category} (Confidence: ${det.confidence})`;
       setLog((prev) => [entry, ...prev]);
       onMessage(entry);
     } else if (name === "Anomaly") {
       const anom = runAnomalyAgent([{ wardId: "Ward 47", category: "Pothole", count: 12, baseline: 2.0 }]);
-      const entry = `[Anomaly Agent] ${anom.alerts[0] || "No anomaly detected"}`;
+      const entry = `[Anomaly Worker] ${anom.alerts[0] || "No anomaly detected"}`;
       setLog((prev) => [entry, ...prev]);
       onMessage(entry);
     } else if (name === "Dedup") {
       const ded = runDedupAgent({ lat: 12.9716, lng: 77.5946, category: "Pothole", description: "Pothole" }, reports);
-      const entry = `[Dedup Agent] ${ded.isDuplicate ? "Merged with existing ID: " + ded.matchedId : "No duplicate found. Clean unique complaint."}`;
+      const entry = `[Dedup Worker] ${ded.isDuplicate ? "Merged with existing ID: " + ded.matchedId : "No duplicate found. Clean unique complaint."}`;
       setLog((prev) => [entry, ...prev]);
       onMessage(entry);
     } else if (name === "Sentiment") {
       const sent = runSentimentAgent("Open live electric wire drowning hazard near hospital");
-      const entry = `[Sentiment Agent] Detected ${sent.urgency} priority boost +${sent.priorityBoost}`;
+      const entry = `[Sentiment Worker] Detected ${sent.urgency} priority boost +${sent.priorityBoost}`;
       setLog((prev) => [entry, ...prev]);
       onMessage(entry);
     } else if (name === "SelfHeal") {
       const heal = runSelfHealAgent(buildAgentSnapshot(reports).harvesters);
-      const entry = `[SelfHeal Agent] ${heal.sourceActions[0]?.action || "All data sources healthy"}`;
+      const entry = `[SelfHeal Worker] ${heal.sourceActions[0]?.action || "All data sources healthy"}`;
       setLog((prev) => [entry, ...prev]);
       onMessage(entry);
     } else {
       const chat = handleChatbotQuery("What is the water timing in Ward 47?");
-      const entry = `[Chatbot Agent] ${chat.response}`;
+      const entry = `[Assistant Worker] ${chat.response}`;
       setLog((prev) => [entry, ...prev]);
       onMessage(entry);
     }
@@ -1015,11 +1710,11 @@ function AgentsScreen({
       </Button>
       <div>
         <div className="flex items-center gap-2 text-sm font-semibold text-primary">
-          <Bot className="size-4" /> Layer 3 Autonomous Agents
+          <Bot className="size-4" /> Layer 3 Autonomous Workers
         </div>
         <h1 className="mt-1 text-3xl font-bold">9 Autonomous Workers</h1>
         <p className="mt-2 max-w-3xl text-sm text-text-secondary">
-          Each agent is an independent worker with its own logic, memory, and triggers. They handle routing, escalations, vision verification, anomaly detection, and self-healing.
+          Each worker is an independent process with its own logic, memory, and triggers. They handle routing, escalations, computer vision verification, anomaly detection, and self-healing.
         </p>
       </div>
 
@@ -1028,7 +1723,7 @@ function AgentsScreen({
           <div key={agent.name} className="rounded-xl border border-border bg-card p-5 shadow-card space-y-3">
             <div className="flex items-start justify-between">
               <div>
-                <h3 className="font-bold text-lg">{agent.name} Agent</h3>
+                <h3 className="font-bold text-lg">{agent.name} Worker</h3>
                 <p className="text-xs font-semibold text-primary">{agent.role}</p>
               </div>
               <span className="rounded-full bg-safe/10 px-2 py-0.5 text-[11px] font-bold text-safe">
@@ -1054,7 +1749,7 @@ function AgentsScreen({
               className="w-full text-xs"
               onClick={() => triggerAgent(agent.name)}
             >
-              <Zap className="size-3 text-primary" /> Trigger {agent.name} Agent
+              <Zap className="size-3 text-primary" /> Trigger {agent.name} Worker
             </Button>
           </div>
         ))}
@@ -1172,7 +1867,7 @@ function ReportScreen({
       <div>
         <h1 className="text-3xl font-bold">Report a Civic Issue</h1>
         <p className="mt-1 text-sm text-text-secondary">
-          Your report will be classified by AI Detector Agent and routed automatically to the ward officer.
+          Your report will be classified by Detector Worker and routed automatically to the responsible ward officer.
         </p>
       </div>
 
@@ -1331,7 +2026,7 @@ function MapScreen({ reports, onBack }: { reports: WaterReport[]; onBack: () => 
         {selected ? (
           <div className="rounded-xl border border-border bg-card p-5 shadow-card space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="font-bold text-base">Issue #CVC-{selected.id.slice(0, 6)}</h2>
+              <h2 className="font-bold text-base">Issue #{selected.id}</h2>
               <button onClick={() => setSelected(undefined)} aria-label="Close details">
                 <X className="size-4" />
               </button>
@@ -1389,7 +2084,7 @@ function AlertsScreen({
       <div>
         <h1 className="text-3xl font-bold">Proactive Anomaly & SLA Alerts</h1>
         <p className="mt-1 text-sm text-text-secondary">
-          Generated automatically when Detector Agent or Anomaly Agent identifies cluster spikes (&gt;3x baseline) or SLA breaches.
+          Generated automatically when Detector Worker or Anomaly Worker identifies cluster spikes (&gt;3x baseline) or SLA breaches.
         </p>
       </div>
 
@@ -1425,16 +2120,22 @@ function AlertCard({ alert }: { alert: ReturnType<typeof getAlerts>[number] }) {
   );
 }
 
-// ------------------- MULTILINGUAL AI CHATBOT WIDGET -------------------
+// ------------------- MULTILINGUAL CITIZEN ASSISTANT WIDGET -------------------
 
 function ChatbotWidget({
   isOpen,
+  lang = "en",
+  onLanguageChange,
   onClose,
   onNavigate,
+  onReportGenerated,
 }: {
   isOpen: boolean;
+  lang?: string;
+  onLanguageChange?: (newLang: string) => void;
   onClose: () => void;
   onNavigate: (s: Screen) => void;
+  onReportGenerated?: (report: WaterReport) => void;
 }) {
   const [messages, setMessages] = useState<
     { id: string; sender: "user" | "bot"; text: string; intent?: string }[]
@@ -1442,11 +2143,10 @@ function ChatbotWidget({
     {
       id: "1",
       sender: "bot",
-      text: "Namaste! I am the CivicConnect Autonomous AI Chatbot. I can assist you 24/7 in 22 Indian languages. How can I help you today?",
+      text: "Namaste! I am the CivicConnect Assistant. I can assist you in 22 Indian languages. Tell me your civic issue (e.g. 'Pothole on main road') and I will register it directly for you!",
     },
   ]);
   const [input, setInput] = useState("");
-  const [language, setLanguage] = useState("en");
 
   if (!isOpen) return null;
 
@@ -1457,14 +2157,18 @@ function ChatbotWidget({
     setInput("");
 
     setTimeout(() => {
-      const res = handleChatbotQuery(text, language);
+      const res = handleChatbotQuery(text, lang);
       const botMsg = { id: (Date.now() + 1).toString(), sender: "bot" as const, text: res.response, intent: res.intent };
       setMessages((prev) => [...prev, botMsg]);
+
+      if (res.autoFiledComplaint && res.generatedReport && onReportGenerated) {
+        onReportGenerated(res.generatedReport);
+      }
     }, 400);
   }
 
   return (
-    <div className="fixed bottom-20 right-4 z-40 flex h-[500px] w-[360px] flex-col rounded-2xl border border-border bg-card shadow-2xl backdrop-blur sm:bottom-24 sm:right-6 sm:w-[400px]">
+    <div className="fixed bottom-20 right-4 z-40 flex h-[520px] w-[360px] flex-col rounded-2xl border border-border bg-card shadow-2xl backdrop-blur sm:bottom-24 sm:right-6 sm:w-[400px]">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-border p-4 bg-primary/5 rounded-t-2xl">
         <div className="flex items-center gap-2.5">
@@ -1472,9 +2176,9 @@ function ChatbotWidget({
             <Sparkles className="size-4" />
           </span>
           <div>
-            <h3 className="font-bold text-sm">CivicConnect AI Chatbot</h3>
+            <h3 className="font-bold text-sm">{t("chatTitle", lang)}</h3>
             <p className="text-[11px] text-text-secondary flex items-center gap-1">
-              <span className="size-1.5 rounded-full bg-safe animate-pulse" /> 22 Indian Languages (Bhashini)
+              <span className="size-1.5 rounded-full bg-safe animate-pulse" /> {t("chatSub", lang)}
             </p>
           </div>
         </div>
@@ -1486,12 +2190,12 @@ function ChatbotWidget({
       {/* Language Bar */}
       <div className="flex items-center justify-between border-b border-border/60 bg-muted/30 px-4 py-2 text-xs">
         <span className="text-text-secondary flex items-center gap-1">
-          <Globe className="size-3.5 text-primary" /> Language:
+          <Globe className="size-3.5 text-primary" /> {t("langSelectLabel", lang)}:
         </span>
         <select
-          value={language}
-          onChange={(e) => setLanguage(e.target.value)}
-          className="bg-transparent font-medium outline-none text-foreground"
+          value={lang}
+          onChange={(e) => onLanguageChange?.(e.target.value)}
+          className="bg-transparent font-medium outline-none text-foreground cursor-pointer"
         >
           <option value="en">English</option>
           <option value="hi">हिंदी (Hindi)</option>
@@ -1499,7 +2203,10 @@ function ChatbotWidget({
           <option value="ta">தமிழ் (Tamil)</option>
           <option value="te">తెలుగు (Telugu)</option>
           <option value="mr">मराठी (Marathi)</option>
-          <option value="bo">बोडो (Bodo)</option>
+          <option value="gu">ગુજરાતી (Gujarati)</option>
+          <option value="bn">বাংলা (Bengali)</option>
+          <option value="ml">മലയാളം (Malayalam)</option>
+          <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
         </select>
       </div>
 
@@ -1531,22 +2238,22 @@ function ChatbotWidget({
       {/* Quick Pills */}
       <div className="flex flex-wrap gap-1.5 p-2 border-t border-border/40 bg-muted/20">
         <button
-          onClick={() => sendQuery("Water timing in Ward 47")}
+          onClick={() => sendQuery(lang === "hi" ? "पानी का समय क्या है?" : lang === "kn" ? "ನೀರಿನ ಸಮಯ ಏನು?" : "Water timing in Ward 47")}
           className="rounded-full border border-border bg-card px-2.5 py-1 text-[11px] text-text-secondary hover:border-primary"
         >
-          Water timing?
+          {t("chatPromptWater", lang)}
         </button>
         <button
-          onClick={() => sendQuery("Pothole issue on main road Jayanagar")}
+          onClick={() => sendQuery(lang === "hi" ? "सड़क पर बड़ा गड्ढा है" : lang === "kn" ? "ರಸ್ತೆಯಲ್ಲಿ ಗುಂಡಿ ಇದೆ" : "Dangerous pothole on main road")}
           className="rounded-full border border-border bg-card px-2.5 py-1 text-[11px] text-text-secondary hover:border-primary"
         >
-          Report Pothole
+          {t("chatPromptPothole", lang)}
         </button>
         <button
           onClick={() => sendQuery("Check status complaint #CVC-1082")}
           className="rounded-full border border-border bg-card px-2.5 py-1 text-[11px] text-text-secondary hover:border-primary"
         >
-          Status #CVC-1082
+          {t("chatPromptStatus", lang)}
         </button>
       </div>
 
@@ -1561,7 +2268,7 @@ function ChatbotWidget({
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask a question or report an issue..."
+          placeholder={t("chatPlaceholder", lang)}
           className="flex-1 bg-transparent text-xs outline-none text-foreground placeholder:text-text-secondary"
         />
         <Button type="submit" size="icon" className="size-7 rounded-lg">
@@ -1610,15 +2317,15 @@ function TrustPanel({ onSubmitted }: { onSubmitted: () => void }) {
         <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-primary">
           <ShieldCheck className="size-4" /> Public Trust & Self-Learning
         </p>
-        <h2 className="mt-2 text-xl font-bold">Accountable Autonomous Operations</h2>
+        <h2 className="mt-2 text-xl font-bold">Accountable Operations</h2>
         <p className="mt-2 text-sm leading-relaxed text-text-secondary">
-          Every citizen interaction and rating feeds back into Loop 4 to continuously improve AI Chatbot prompts and routing precision.
+          Every citizen interaction and rating feeds back into Loop 4 to continuously improve Assistant prompts and routing precision.
         </p>
       </div>
       <form onSubmit={submitFeedback} className="rounded-xl border border-border bg-card p-4 shadow-card">
         <div className="flex items-center gap-2">
           <MessageSquare className="size-4 text-primary" />
-          <h3 className="font-semibold text-sm">Leave a public review for AI learning</h3>
+          <h3 className="font-semibold text-sm">Leave a public review for system learning</h3>
         </div>
         <div className="mt-3 grid gap-3 sm:grid-cols-[1fr_auto]">
           <input
@@ -1650,7 +2357,7 @@ function TrustPanel({ onSubmitted }: { onSubmitted: () => void }) {
           minLength={10}
           required
           rows={2}
-          placeholder="Share feedback to help the autonomous agents improve..."
+          placeholder="Share feedback to help the system improve..."
           className="mt-3 w-full resize-none rounded-md border border-border bg-card p-2.5 text-xs outline-none focus:ring-2 focus:ring-primary"
         />
         <div className="mt-3 flex items-center justify-between gap-3">

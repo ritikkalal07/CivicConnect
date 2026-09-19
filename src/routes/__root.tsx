@@ -72,31 +72,31 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "CivicConnect Autonomous — Self-Operating Civic Intelligence Platform" },
+      { title: "CivicConnect Autonomous: Self-Operating Civic Intelligence Platform" },
       {
         name: "description",
         content:
-          "It doesn’t wait for data. It finds it. It doesn’t wait for orders. It acts. It doesn’t wait for humans. It learns.",
+          "It doesn't wait for data. It finds it. It doesn't wait for orders. It acts. It doesn't wait for humans. It learns.",
       },
-      { property: "og:title", content: "CivicConnect Autonomous — Self-Operating Civic Intelligence Platform" },
+      { property: "og:title", content: "CivicConnect Autonomous: Self-Operating Civic Intelligence Platform" },
       {
         property: "og:description",
         content:
-          "It doesn’t wait for data. It finds it. It doesn’t wait for orders. It acts. It doesn’t wait for humans. It learns.",
+          "It doesn't wait for data. It finds it. It doesn't wait for orders. It acts. It doesn't wait for humans. It learns.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://civic-con-nect.vercel.app/" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "CivicConnect Autonomous — Self-Operating Civic Intelligence Platform" },
+      { name: "twitter:title", content: "CivicConnect Autonomous: Self-Operating Civic Intelligence Platform" },
       {
         name: "twitter:description",
         content:
-          "Self-operating civic intelligence platform for India. Autonomous harvesters, Knowledge Graph, 9 agents, and self-learning loops.",
+          "Self-operating civic intelligence platform for India. Autonomous harvesters, Knowledge Graph, 9 workers, and self-learning loops.",
       },
       {
         name: "keywords",
         content:
-          "civicconnect, autonomous civic intelligence, 311 india, pothole detection, automatic escalation, bhashini ai",
+          "civicconnect, autonomous civic intelligence, 311 india, pothole detection, automatic escalation, bhashini nmt",
       },
       { name: "theme-color", content: "#0F6B6B" },
     ],
@@ -149,8 +149,10 @@ const structuredData = {
         "24/7 Autonomous Harvesters",
         "Self-building Knowledge Graph",
         "9 Autonomous Agents (Router, Escalator, Verifier, Detector, Anomaly, Dedup, Chatbot, Sentiment, Self-Heal)",
+        "9 Autonomous Workers (Router, Escalator, Verifier, Detector, Anomaly, Dedup, Assistant, Sentiment, SelfHeal)",
         "5 Continuous Self-Learning Loops",
         "Bhashini Multilingual AI Chatbot",
+        "Bhashini Multilingual Assistant",
         "Government Officer Portal & E2E Lifecycle Verification",
       ],
     },
@@ -173,17 +175,21 @@ const structuredData = {
         {
           "@type": "Question",
           name: "How does the autonomous agent system work?",
+          name: "How does the autonomous worker system work?",
           acceptedAnswer: {
             "@type": "Answer",
             text: "CivicConnect Autonomous uses 10 harvester scrapers, a self-building Knowledge Graph, and 9 specialized agents (Router, Escalator, Verifier, Detector, Anomaly, Dedup, Chatbot, Sentiment, Self-Heal) to act on civic issues.",
+            text: "CivicConnect Autonomous uses 10 harvester scrapers, a self-building Knowledge Graph, and 9 specialized workers (Router, Escalator, Verifier, Detector, Anomaly, Dedup, Assistant, Sentiment, SelfHeal) to resolve civic issues.",
           },
         },
         {
           "@type": "Question",
           name: "What languages does the AI chatbot support?",
+          name: "What languages does the assistant support?",
           acceptedAnswer: {
             "@type": "Answer",
             text: "The chatbot supports 22 Indian languages including English, Hindi, Kannada, Tamil, Telugu, Marathi, Bengali, and Bodo powered by Bhashini AI.",
+            text: "The assistant supports 22 Indian languages including English, Hindi, Kannada, Tamil, Telugu, Marathi, Bengali, and Bodo powered by Bhashini NMT.",
           },
         },
       ],

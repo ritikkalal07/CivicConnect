@@ -57,7 +57,7 @@ export type AgentName =
   | "Detector"
   | "Anomaly"
   | "Dedup"
-  | "Chatbot"
+  | "Assistant"
   | "Sentiment"
   | "SelfHeal";
 
@@ -88,6 +88,7 @@ export type ChatbotMessage = {
   intent?: string;
   timestamp: number;
   actionTaken?: string;
+  generatedReport?: WaterReport;
 };
 
 export type GovernmentOfficer = {
@@ -203,7 +204,7 @@ export function countRelatedClusters(reports: WaterReport[], windowMs = 86_400_0
   return clusters;
 }
 
-// ------------------- 9 AUTONOMOUS AGENTS LOGIC -------------------
+// ------------------- 9 AUTONOMOUS WORKERS LOGIC -------------------
 
 export interface OfficerCandidate {
   id: string;
@@ -287,12 +288,12 @@ export function runVerifierAgent(input: {
     return { verified: false, reason: "No resolution photo uploaded" };
   }
   if (input.beforePhotoUrl && input.beforePhotoUrl === input.afterPhotoUrl) {
-    return { verified: false, reason: "Photos are identical — duplicate upload suspected" };
+    return { verified: false, reason: "Photos are identical. Duplicate upload suspected." };
   }
   if (input.exifDistanceMeters && input.exifDistanceMeters > 200) {
     return { verified: false, reason: `Photo EXIF distance (${input.exifDistanceMeters}m) exceeds 200m radius` };
   }
-  return { verified: true, reason: "AI vision, geo-EXIF, and satellite cross-check verified fix" };
+  return { verified: true, reason: "Computer vision, geo-EXIF, and satellite cross-check verified fix" };
 }
 
 export function runDetectorAgent(harvestedText: string, location?: { lat: number; lng: number }) {
@@ -434,6 +435,139 @@ export function runSelfHealAgent(sources: HarvesterItem[]): {
   return { healedCount: healed, sourceActions: actions };
 }
 
+// Multilingual Assistant Response Dictionary
+const MULTILINGUAL_RESPONSES: Record<
+  string,
+  {
+    registered: (ref: string, officer: string, phone: string) => string;
+    waterSchedule: string;
+    statusCheck: string;
+    officerContact: string;
+    help: string;
+  }
+> = {
+  hi: {
+    registered: (ref, officer, phone) =>
+      `नमस्ते! आपकी शिकायत दर्ज कर ली गई है। संदर्भ आईडी: ${ref}। जिम्मेदार अधिकारी: ${officer} (फोन: ${phone})। स्थिति: आवंटन पूर्ण।`,
+    waterSchedule:
+      "वार्ड 47 (जयानगर) में पानी की आपूर्ति प्रतिदिन सुबह 6:00 से 9:30 बजे और शाम 5:00 से 7:00 बजे तक होती है।",
+    statusCheck:
+      "शिकायत संख्या #CVC-1082 (सड़क गड्ढा) की स्थिति: कार्य प्रगति पर है (IN_PROGRESS)। कनिष्ठ अभियंता एर. शर्मा को सौंपा गया है।",
+    officerContact:
+      "वार्ड 47 जिम्मेदार अधिकारी: एर. आर. शर्मा (कनिष्ठ अभियंता सड़क, फोन: +91-98765-43210, ईमेल: zonal.w47@civicconnect.gov.in)।",
+    help:
+      "नमस्ते! सिविककनेक्ट नागरिक सहायक 24/7 आपकी सेवा में उपलब्ध है। आप शिकायत दर्ज कर सकते हैं, पानी का समय देख सकते हैं या स्थिति ट्रैक कर सकते हैं।",
+  },
+  kn: {
+    registered: (ref, officer, phone) =>
+      `ನಮಸ್ಕಾರ! ನಿಮ್ಮ ದೂರನ್ನು ಯಶಸ್ವಿಯಾಗಿ ನಮೂದಿಸಲಾಗಿದೆ. ಉಲ್ಲೇಖ ID: ${ref}. ಜವಾಬ್ದಾರಿ ಅಧಿಕಾರಿ: ${officer} (ಫೋನ್: ${phone}).`,
+    waterSchedule:
+      "ವಾರ್ಡ್ 47 (ಜಯನಗರ) ನೀರು ಸರಬರಾಜು ಪ್ರತಿದಿನ ಬೆಳಿಗ್ಗೆ 6:00 ರಿಂದ 9:30 ಮತ್ತು ಸಂಜೆ 5:00 ರಿಂದ 7:00 ರವರೆಗೆ ಲಭ್ಯವಿದೆ.",
+    statusCheck:
+      "ದೂರು #CVC-1082 (ರಸ್ತೆ ಗುಂಡಿ) ಪ್ರಗತಿಯಲ್ಲಿದೆ (IN_PROGRESS). ಕಿರಿಯ ಎಂಜಿನಿಯರ್ ಎರ್. ಶರ್ಮಾ ವಹಿಸಿಕೊಂಡಿದ್ದಾರೆ.",
+    officerContact:
+      "ವಾರ್ಡ್ 47 ಅಧಿಕಾರಿ: ಎರ್. ಆರ್. ಶರ್ಮಾ (ಫೋನ್: +91-98765-43210).",
+    help:
+      "ನಮಸ್ಕಾರ! ಸಿವಿಕ್ ಕನೆಕ್ಟ್ ಸಹಾಯವಾಣಿ 24/7 ಲಭ್ಯವಿದೆ. ದೂರು ನೀಡಲು ಅಥವಾ ಸ್ಥಿತಿ ತಿಳಿಯಲು ಸಹಾಯ ಮಾಡುತ್ತೇನೆ.",
+  },
+  ta: {
+    registered: (ref, officer, phone) =>
+      `வணக்கம்! உங்கள் புகார் வெற்றிகரமாக பதிவு செய்யப்பட்டது. குறிப்பு எண்: ${ref}. பொறுப்பு அதிகாரி: ${officer} (போன்: ${phone}).`,
+    waterSchedule:
+      "வார்டு 47 தண்ணீர் விநியோகம் தினமும் காலை 6:00 - 9:30 மற்றும் மாலை 5:00 - 7:00 மணி வரை நடைபெறும்.",
+    statusCheck:
+      "புகார் #CVC-1082 பரிசீலனையில் உள்ளது. இளநிலை பொறியாளர் ஷர்மா பொறுப்பில் உள்ளார்.",
+    officerContact:
+      "வார்டு 47 அதிகாரி: எர். ஆர். ஷர்மா (போன்: +91-98765-43210).",
+    help:
+      "வணக்கம்! சிவிக்கனெக்ட் உதவி மையம் 24/7 செயல்படுகிறது. புகார் பதிவு செய்ய உதவலாம்.",
+  },
+  te: {
+    registered: (ref, officer, phone) =>
+      `నమస్కారం! మీ ఫిర్యాదు విజయవంతంగా నమోదు చేయబడింది. రిఫరెన్స్ ID: ${ref}. బాధ్యత అధికారి: ${officer} (ఫోన్: ${phone}).`,
+    waterSchedule:
+      "వార్డు 47 నీటి సరఫరా రోజువారీ ఉదయం 6:00 నుండి 9:30 మరియు సాయంత్రం 5:00 నుండి 7:00 వరకు ఉంటుంది.",
+    statusCheck:
+      "ఫిర్యాదు #CVC-1082 పురోగతిలో ఉంది. జూనియర్ ఇంజనీర్ శర్మ కేటాయించబడ్డారు.",
+    officerContact:
+      "వార్డు 47 అధికారి: ఎర్. ఆర్. శర్మ (ఫోన్: +91-98765-43210).",
+    help:
+      "నమస్కారం! సివిక్ కనెక్ట్ సహాయకం 24/7 అందుబాటులో ఉంది.",
+  },
+  mr: {
+    registered: (ref, officer, phone) =>
+      `नमस्कार! तुमची तक्रार नोंदवली गेली आहे. संदर्भ क्रमांक: ${ref}. जबाबदार अधिकारी: ${officer} (फोन: ${phone}).`,
+    waterSchedule:
+      "वॉर्ड 47 मधील पाणीपुरवठा रोज सकाळी 6:00 ते 9:30 आणि संध्याकाळी 5:00 ते 7:00 दरम्यान असतो.",
+    statusCheck:
+      "तक्रार #CVC-1082 प्रगतीपथावर आहे. कनिष्ठ अभियंता शर्मा काम पाहत आहेत.",
+    officerContact:
+      "वॉर्ड 47 अधिकारी: एर. आर. शर्मा (फोन: +91-98765-43210).",
+    help:
+      "नमस्कार! सिव्हिककनेक्ट सहाय्यक 24/7 उपलब्ध आहे.",
+  },
+  gu: {
+    registered: (ref, officer, phone) =>
+      `નમસ્તે! તમારી ફરિયાદ સફળતાપૂર્વક નોંધાઈ ગઈ છે. સંદર્ભ નંબર: ${ref}. જવાબદાર અધિકારી: ${officer} (${phone}).`,
+    waterSchedule:
+      "વોર્ડ 47 (જયાનગર) માં દૈનિક સવારે 6:00 થી 9:30 અને સાંજે 5:00 થી 7:00 સુધી પાણી પૂરવઠો ચાલે છે.",
+    statusCheck:
+      "ફરિયાદ #CVC-1082 પ્રગતિમાં છે. જુનિયર એન્જિનિયર શર્માને સોંપાયેલ છે.",
+    officerContact:
+      "વોર્ડ 47 અધિકારી: એર. આર. શર્મા (ફોન: +91-98765-43210).",
+    help:
+      "નમસ્તે! સિવિકકનેક્ટ સહાયક 24/7 ઉપલબ્ધ છે.",
+  },
+  bn: {
+    registered: (ref, officer, phone) =>
+      `নমস্কার! আপনার অভিযোগ সফলভাবে নিবন্ধিত হয়েছে। রেফারেন্স আইডি: ${ref}। দায়িত্বপ্রাপ্ত কর্মকর্তা: ${officer} (${phone})।`,
+    waterSchedule:
+      "ওয়ার্ড ৪৭-এ প্রতিদিন সকাল ৬:০০ থেকে ৯:৩০ এবং বিকেল ৫:০০ থেকে ৭:০০ পর্যন্ত জল সরবরাহ হয়।",
+    statusCheck:
+      "অভিযোগ #CVC-1082 প্রক্রিয়াধীন রয়েছে। জুনিয়র ইঞ্জিনিয়ার শর্মাকে দায়িত্ব দেওয়া হয়েছে।",
+    officerContact:
+      "ওয়ার্ড ৪৭ কর্মকর্তা: এর. আর. শর্মা (ফোন: +91-98765-43210)।",
+    help:
+      "নমস্কার! সিভিককানেক্ট সহকারী ২৪/৭ আপনার সেবায় নিয়োজিত।",
+  },
+  ml: {
+    registered: (ref, officer, phone) =>
+      `നമസ്കാരം! നിങ്ങളുടെ പരാതി വിജയകരമായി രേഖപ്പെടുത്തി. റഫറൻസ് ID: ${ref}. ചുമതലയുള്ള ഓഫീസർ: ${officer} (${phone}).`,
+    waterSchedule:
+      "വാർഡ് 47 ൽ ദിവസവും രാവിലെ 6:00 മുതൽ 9:30 വരെയും വൈകുന്നേരം 5:00 മുതൽ 7:00 വരെയും കുടിവെള്ള വിതരണം ലഭ്യമാണ്.",
+    statusCheck:
+      "പരാതി #CVC-1082 പരിഹരിച്ചുകൊണ്ടിരിക്കുന്നു. ജൂനിയർ എഞ്ചിനീയർ ശർമ്മയ്ക്കാണ് ചുമതല.",
+    officerContact:
+      "വാർഡ് 47 ഓഫീസർ: എർ. ആർ. ശർമ്മ (ഫോൺ: +91-98765-43210).",
+    help:
+      "നമസ്കാരം! സിവിക് കണക്ട് സഹായി 24/7 ലഭ്യമാണ്.",
+  },
+  pa: {
+    registered: (ref, officer, phone) =>
+      `ਸਤਿ ਸ਼੍ਰੀ ਅਕਾਲ! ਤੁਹਾਡੀ ਸ਼ਿਕਾਇਤ ਦਰਜ ਕਰ ਲਈ ਗਈ ਹੈ। ਰੈਫਰੈਂਸ ID: ${ref}। ਜ਼ਿੰਮੇਵਾਰ ਅਧਿਕਾਰੀ: ${officer} (${phone})।`,
+    waterSchedule:
+      "ਵਾਰਡ 47 ਵਿੱਚ ਪਾਣੀ ਦੀ ਸਪਲਾਈ ਰੋਜ਼ਾਨਾ ਸਵੇਰੇ 6:00 ਤੋਂ 9:30 ਅਤੇ ਸ਼ਾਮ 5:00 ਤੋਂ 7:00 ਵਜੇ ਤੱਕ ਹੁੰਦੀ ਹੈ।",
+    statusCheck:
+      "ਸ਼ਿਕਾਇਤ #CVC-1082 'ਤੇ ਕੰਮ ਚੱਲ ਰਿਹਾ ਹੈ। ਜੂਨੀਅਰ ਇੰਜੀਨੀਅਰ ਸ਼ਰਮਾ ਤਾਇਨਾਤ ਹਨ।",
+    officerContact:
+      "ਵਾਰਡ 47 ਅਧਿਕਾਰੀ: ਐਰ. ਆਰ. ਸ਼ਰਮਾ (ਫੋਨ: +91-98765-43210) ।",
+    help:
+      "ਸਤਿ ਸ਼੍ਰੀ ਅਕਾਲ! ਸਿਵਿਕ ਕਨੈਕਟ ਸਹਾਇਕ 24/7 ਉਪਲਬਧ ਹੈ।",
+  },
+  en: {
+    registered: (ref, officer, phone) =>
+      `Complaint registered successfully! Reference ID: ${ref}. Assigned Ward Officer: ${officer} (${phone}). Status: ROUTED.`,
+    waterSchedule:
+      "Water supply in Ward 47 (Jayanagar) is scheduled daily from 6:00 AM to 9:30 AM and 5:00 PM to 7:00 PM.",
+    statusCheck:
+      "Complaint #CVC-1082 (Pothole at Ward 47) is IN_PROGRESS. Junior Engineer Er. R. Sharma assigned. SLA: Today 5:00 PM.",
+    officerContact:
+      "Responsible Ward Officer: Er. R. Sharma (JE Roads, Phone: +91-98765-43210, Email: zonal.w47@civicconnect.gov.in).",
+    help:
+      "CivicConnect Public Assistant is active 24/7. I can help you report issues, check water schedules, contact officers, or track status.",
+  },
+};
+
 export function handleChatbotQuery(
   userMessage: string,
   userLanguage = "en",
@@ -442,50 +576,76 @@ export function handleChatbotQuery(
   intent: string;
   confidence: number;
   autoFiledComplaint?: boolean;
+  generatedReport?: WaterReport;
 } {
   const msgLower = userMessage.toLowerCase();
+  const dict = MULTILINGUAL_RESPONSES[userLanguage] || MULTILINGUAL_RESPONSES.en;
 
-  if (msgLower.includes("water timing") || msgLower.includes("water schedule")) {
+  if (msgLower.includes("water timing") || msgLower.includes("water schedule") || msgLower.includes("पानी का समय") || msgLower.includes("ನೀರಿನ ಸಮಯ")) {
     return {
-      response:
-        "Water supply in Ward 47 (Jayanagar) is scheduled daily from 6:00 AM to 9:30 AM and 5:00 PM to 7:00 PM. Assigned Officer: Er. Suresh (BWSSB, +91-98765-11223).",
+      response: dict.waterSchedule,
       intent: "water_schedule",
       confidence: 0.96,
     };
   }
 
-  if (msgLower.includes("status") || msgLower.includes("complaint #") || msgLower.includes("cvc-")) {
+  if (msgLower.includes("status") || msgLower.includes("complaint #") || msgLower.includes("cvc-") || msgLower.includes("स्थिति") || msgLower.includes("ಸ್ಥಿತಿ")) {
     return {
-      response:
-        "Complaint #CVC-1082 (Pothole at 4th Block, Jayanagar) is IN_PROGRESS. Junior Engineer (Roads) Er. Sharma assigned. Work started 2h ago. SLA deadline: Today 5:00 PM.",
+      response: dict.statusCheck,
       intent: "check_status",
       confidence: 0.98,
     };
   }
 
-  if (msgLower.includes("pothole") || msgLower.includes("garbage") || msgLower.includes("leak") || msgLower.includes("broken")) {
+  if (
+    msgLower.includes("pothole") ||
+    msgLower.includes("garbage") ||
+    msgLower.includes("leak") ||
+    msgLower.includes("broken") ||
+    msgLower.includes("गड्ढा") ||
+    msgLower.includes("कचरा") ||
+    msgLower.includes("पानी") ||
+    msgLower.includes("ಗುಂಡಿ") ||
+    msgLower.includes("ಕಸ")
+  ) {
+    const refId = "#CVC-AUTO-" + Math.floor(1000 + Math.random() * 9000);
+    const officerName = "Er. R. Sharma";
+    const phone = "+91-98765-43210";
+
+    const generatedReport: WaterReport = {
+      id: refId,
+      createdAt: Date.now(),
+      area: "Ward 47 (Jayanagar)",
+      latitude: 12.925,
+      longitude: 77.5938,
+      clarity: "turbid",
+      smell: "sewage",
+      color: "brown",
+      category: msgLower.includes("pothole") || msgLower.includes("गड्ढा") || msgLower.includes("ಗುಂಡಿ") ? "Pothole (B03)" : "Civic Issue",
+      description: userMessage,
+      status: "synced",
+      assignedOfficer: officerName,
+    };
+
     return {
-      response:
-        "I've registered your civic complaint! Detector Agent has classified it (Pothole/Garbage) and routed it to Ward 47 Officer Er. R. Sharma (Phone: +91-98765-43210). Reference ID: #CVC-AUTO-" +
-        Math.floor(1000 + Math.random() * 9000),
+      response: dict.registered(refId, officerName, phone),
       intent: "file_complaint",
-      confidence: 0.94,
+      confidence: 0.95,
       autoFiledComplaint: true,
+      generatedReport,
     };
   }
 
-  if (msgLower.includes("officer") || msgLower.includes("contact") || msgLower.includes("who is responsible")) {
+  if (msgLower.includes("officer") || msgLower.includes("contact") || msgLower.includes("who is responsible") || msgLower.includes("अधिकारी")) {
     return {
-      response:
-        "Responsible Ward Officer for Ward 47 (Jayanagar Roads): Er. R. Sharma (JE Roads, Phone: +91-98765-43210, Email: zonal.w47@civicconnect.gov.in). Executive Engineer: Er. P. Deshmukh.",
+      response: dict.officerContact,
       intent: "officer_contact",
       confidence: 0.92,
     };
   }
 
   return {
-    response:
-      "CivicConnect Autonomous is active 24/7. I can help you check water schedules, report civic issues, contact responsible government officers, or track complaint statuses. How may I assist you?",
+    response: dict.help,
     intent: "general_help",
     confidence: 0.88,
   };
@@ -571,12 +731,12 @@ export function getE2ELifecycleDemo(issueTitle = "Dangerous Pothole at Ward 47 C
       action: "Twitter post detected at 3:12 AM: 'Huge dangerous pothole near Jayanagar 4th Block!'",
       status: "COMPLETED",
       timestamp: "3:15 AM",
-      details: "Detector Agent extracted GPS location (12.925, 77.593) with 0.94 confidence score. Auto-filed complaint #CVC-1082.",
+      details: "Detector Worker extracted GPS location (12.925, 77.593) with 0.94 confidence score. Auto-filed complaint #CVC-1082.",
     },
     {
       step: 2,
-      title: "Autonomous AI Routing",
-      actor: "Router Agent & Knowledge Graph",
+      title: "Autonomous Routing",
+      actor: "Router Worker & Knowledge Graph",
       action: "Matched issue to responsible officer Er. R. Sharma (JE Roads, Ward 47)",
       status: "COMPLETED",
       timestamp: "3:16 AM",
@@ -593,12 +753,12 @@ export function getE2ELifecycleDemo(issueTitle = "Dangerous Pothole at Ward 47 C
     },
     {
       step: 4,
-      title: "Fix Upload & AI Verification",
-      actor: "Verifier Agent (AI Vision & Geo-EXIF)",
-      action: "Officer uploaded after-fix photo at 2:00 PM -> Verifier Agent ran automated verification",
+      title: "Fix Upload & Automated Verification",
+      actor: "Verifier Worker (Computer Vision & Geo-EXIF)",
+      action: "Officer uploaded after-fix photo at 2:00 PM -> Verifier Worker ran automated verification",
       status: "COMPLETED",
       timestamp: "2:01 PM",
-      details: "AI Vision confirmed smooth road patch, EXIF location match (12m radius), and satellite imagery cross-check verified fix.",
+      details: "Computer vision confirmed smooth road patch, EXIF location match (12m radius), and satellite imagery cross-check verified fix.",
     },
     {
       step: 5,
@@ -763,10 +923,10 @@ export function getAutonomousAgents(): AutonomousAgentInfo[] {
       name: "Verifier",
       role: "Resolution Verification",
       status: "ACTIVE",
-      lastAction: "Verified pothole fix at Ward 47 via AI Vision & Geo-EXIF",
+      lastAction: "Verified pothole fix at Ward 47 via Computer Vision & Geo-EXIF",
       actionCount: 650,
       confidence: 0.91,
-      description: "Uses AI computer vision & EXIF distance to verify resolved photos.",
+      description: "Uses computer vision & EXIF distance to verify resolved photos.",
     },
     {
       name: "Detector",
@@ -796,8 +956,8 @@ export function getAutonomousAgents(): AutonomousAgentInfo[] {
       description: "Merges duplicate reports within 100m radius and boosts upvote counts.",
     },
     {
-      name: "Chatbot",
-      role: "Multilingual Citizen AI",
+      name: "Assistant",
+      role: "Multilingual Citizen Assistant",
       status: "ACTIVE",
       lastAction: "Answered citizen in Kannada regarding water timing in Ward 47",
       actionCount: 3840,
@@ -829,7 +989,7 @@ export function getLearningLoops(): LearningLoopInfo[] {
   return [
     {
       id: "loop-1",
-      name: "Loop 1 — Officer Routing Optimization",
+      name: "Loop 1 - Officer Routing Optimization",
       cycle: "Weekly Retraining",
       metric: "Avg Resolution Time",
       improvement: "-28% resolution delay across 4,000 ULBs",
@@ -837,7 +997,7 @@ export function getLearningLoops(): LearningLoopInfo[] {
     },
     {
       id: "loop-2",
-      name: "Loop 2 — AI Issue Classification",
+      name: "Loop 2 - Issue Classification",
       cycle: "Weekly Retraining",
       metric: "Categorization Accuracy",
       improvement: "96.4% precision on multilingual custom inputs",
@@ -845,7 +1005,7 @@ export function getLearningLoops(): LearningLoopInfo[] {
     },
     {
       id: "loop-3",
-      name: "Loop 3 — Dynamic SLA Prediction",
+      name: "Loop 3 - Dynamic SLA Prediction",
       cycle: "Daily Updates",
       metric: "SLA Prediction Error",
       improvement: "91% SLA compliance accuracy",
@@ -853,7 +1013,7 @@ export function getLearningLoops(): LearningLoopInfo[] {
     },
     {
       id: "loop-4",
-      name: "Loop 4 — Chatbot Prompt Evolution",
+      name: "Loop 4 - Assistant Prompt Evolution",
       cycle: "Weekly Auto-Prompt",
       metric: "First Contact Resolution",
       improvement: "94.2% satisfaction across 22 languages",
@@ -861,7 +1021,7 @@ export function getLearningLoops(): LearningLoopInfo[] {
     },
     {
       id: "loop-5",
-      name: "Loop 5 — Harvester Reliability Scoring",
+      name: "Loop 5 - Harvester Reliability Scoring",
       cycle: "Hourly Dynamic Weighting",
       metric: "Data Source Health",
       improvement: "99.9% uptime with instant failover",
@@ -888,10 +1048,10 @@ export function buildAgentSnapshot(reports: WaterReport[]): AgentSnapshot {
     capabilities: [
       "24/7 Harvesters (10 sources)",
       "Self-building Knowledge Graph",
-      "9 Autonomous Agents",
+      "9 Autonomous Workers",
       "5 Self-Learning Loops",
       "Self-Healing Source Failover",
-      "Bhashini Multilingual Chatbot",
+      "Bhashini Multilingual Assistant",
       "E2E Government Officer Portal & Proof Verification",
     ],
     harvesters,
