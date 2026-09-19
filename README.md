@@ -17,8 +17,7 @@ HackDevengers 2.0 is a 24-hour fully virtual Open Innovation Hackathon powered b
 - **End:** 20 September, 10:00 AM
 - **Mode:** Fully online / virtual
 - **Format:** Open innovation
-- **Participation:** Developers, students, creators, designers, innovators, and technology enthusiasts
-- **Prize pool:** INR 50,000 cash prize plus additional rewards
+
 
 ### CivicConnect submission
 
@@ -44,8 +43,8 @@ A live deployment or presentation is optional. The project title, description, a
 
 ### Evaluation alignment
 
-- **Innovation:** Converts local water observations into shared, actionable safety information.
-- **Problem-solving:** Supports structured reports, GPS capture, evidence uploads, alerts, and offline use.
+- **Innovation:** Converts scattered local signals into shared, actionable civic intelligence.
+- **Problem-solving:** Supports structured issue reports, GPS capture, evidence uploads, alerts, and offline use.
 - **Technical implementation:** Uses React, TanStack Start, TypeScript, Vite, Leaflet, Vercel Postgres, Vercel Blob, and a service worker.
 - **Functionality and UX:** Provides responsive navigation, validation, loading and error states, maps, risk indicators, and mobile-friendly reporting.
 - **Real-world impact:** Helps communities identify recurring water concerns faster and make more informed decisions.
@@ -83,9 +82,9 @@ Projects are evaluated using the submitted details and GitHub repository. Winner
 - **Additional top 10 prizes:** To be announced
 - **All valid submissions:** Certificate of achievement
 
-## Features
+## Current capabilities
 
-- Water quality reports with location, clarity, smell, color, pH, TDS, turbidity, and photo.
+- Civic issue reports with location, structured observations, and photo evidence.
 - Browser GPS capture with manual coordinate entry.
 - Leaflet and OpenStreetMap safety map with safe, caution, and danger pins.
 - Alert feed for three or more danger reports within 1 km in 24 hours.
@@ -97,6 +96,32 @@ Projects are evaluated using the submitted details and GitHub repository. Winner
 ## Tech stack
 
 React 19, TanStack Start, TypeScript, Vite, Tailwind CSS, Leaflet, OpenStreetMap, Vercel Postgres, and Vercel Blob.
+
+## Autonomous roadmap
+
+The current Vercel application is the deployable frontend and first operational slice. The full autonomous architecture requires separate worker services and credentials that cannot run inside a browser-only deployment.
+
+### Implemented in this repository
+
+- Responsive CivicConnect operations overview.
+- Human-in-the-loop issue reporting with GPS and photo evidence.
+- Risk classification, alert clustering, live map, and offline queue.
+- Supervised autonomous triage with explainable priorities and a read-only `/api/agent` status endpoint.
+- Server-side coordinate, measurement, image-type, image-size, and filename validation.
+- Vercel Postgres and Blob integration boundaries.
+- Production TanStack Start/Nitro deployment on Vercel.
+
+### Next service layer
+
+- Harvesters for RSS, government APIs, Open311, public web pages, and document feeds.
+- Redis-backed scheduled workers for crawling, deduplication, anomaly detection, and SLA checks.
+- Knowledge graph storage for wards, officers, departments, categories, sources, and outcomes.
+- Agent services for routing, escalation, verification, chatbot, sentiment, and self-healing.
+- Outbound integrations for email, SMS, WhatsApp, IVR, and government complaint systems.
+
+These services need their own runtime such as Railway, a database with PostGIS, Redis, provider credentials, rate-limit handling, source permissions, and an explicit human-approval policy before autonomous actions can safely be enabled.
+
+The current agent intentionally has no autonomous outbound side effects. It does not contact officials, post to social networks, send messages, or file complaints automatically. Those actions must be added behind authenticated worker services, audit logs, rate limits, source permissions, confidence thresholds, and a human approval policy.
 
 ## Local setup
 
@@ -127,25 +152,28 @@ BLOB_READ_WRITE_TOKEN=vercel_blob_...
 
 ## Validation scenarios
 
-1. Submit an online report with all fields and a photo.
-2. Submit an online report with only required fields.
-3. Submit while offline, reconnect, and confirm synchronization.
-4. Confirm safe, caution, and danger pin colors.
-5. Confirm an alert for three danger reports within 1 km and 24 hours.
-6. Confirm no alert for fewer than three matching reports.
-7. Confirm missing location or clarity prevents submission.
-8. Confirm uploaded photos appear in map details.
-9. Confirm GPS fills latitude and longitude.
-10. Confirm the empty state on a new installation.
-11. Confirm loading state while reports are fetched.
-12. Confirm the API error state when the database is unavailable.
-13. Confirm the browser install prompt after service worker registration.
-14. Check the layout at 375px width.
-15. Confirm Vercel deployment with both environment variables configured.
+1. Classify a clean observation as safe.
+2. Classify a severe observation as high priority.
+3. Create one priority alert for three nearby high-risk reports within 1 km and 24 hours.
+4. Do not create an alert for an old or isolated issue.
+5. Submit an issue with required location and structured observations.
+6. Reject a submission with missing required fields.
+7. Attach photo evidence and show it in issue details.
+8. Use GPS to fill the issue location, including permission-denied and timeout states.
+9. Submit while offline and synchronize after reconnecting.
+10. Show loading, empty, and API failure states.
+11. Confirm active navigation at mobile and desktop widths.
+12. Confirm the live map renders issue markers and selection details.
+13. Confirm the PWA manifest, service worker, and CivicConnect icon load.
+14. Confirm Vercel deployment with `POSTGRES_URL` and `BLOB_READ_WRITE_TOKEN` configured.
+15. Keep autonomous outbound actions behind explicit worker services and human approval until source permissions, confidence thresholds, and audit logs are configured.
+16. Confirm invalid coordinates, measurements, and oversized or non-image uploads are rejected by the API.
+17. Confirm each accepted report receives an explainable supervised-agent assessment.
 
 Run the available checks with:
 
 ```sh
 npm run lint
 npm run build
+npm test
 ```

@@ -1,10 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { put } from "@vercel/blob";
 import { sql } from "@vercel/postgres";
+import { assessReport } from "@/lib/autonomous";
 
 const allowedClarities = new Set(["clear", "cloudy", "turbid"]);
 const allowedSmells = new Set(["none", "earthy", "sewage", "chemical"]);
 const allowedColors = new Set(["clear", "yellow", "brown", "green", "other"]);
+const MAX_PHOTO_BYTES = 5_000_000;
 
 export const Route = createFileRoute("/api/reports")({
   server: {
@@ -31,6 +33,10 @@ export const Route = createFileRoute("/api/reports")({
           if (
             !Number.isFinite(latitude) ||
             !Number.isFinite(longitude) ||
+            latitude < -90 ||
+            latitude > 90 ||
+            longitude < -180 ||
+            longitude > 180 ||
             !allowedClarities.has(clarity) ||
             !allowedSmells.has(smell) ||
             !allowedColors.has(color)
@@ -39,7 +45,13 @@ export const Route = createFileRoute("/api/reports")({
           let photoUrl: string | null = null;
           const photo = form.get("photo");
           if (photo instanceof File && photo.size > 0) {
-            const blob = await put(`reports/${crypto.randomUUID()}-${photo.name}`, photo, {
+            if (!photo.type.startsWith("image/") || photo.size > MAX_PHOTO_BYTES)
+              return Response.json(
+                { error: "Photo must be an image smaller than 5 MB" },
+                { status: 400 },
+              );
+            const safeName = photo.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+            const blob = await put(`reports/${crypto.randomUUID()}-${safeName}`, photo, {
               access: "public",
             });
             photoUrl = blob.url;
@@ -50,6 +62,13 @@ export const Route = createFileRoute("/api/reports")({
           const ph = optionalNumber(form, "ph");
           const tds = optionalNumber(form, "tds");
           const turbidity = optionalNumber(form, "turbidity");
+          if (
+            (ph !== null && (!Number.isFinite(ph) || ph < 0 || ph > 14)) ||
+            (tds !== null && (!Number.isFinite(tds) || tds < 0)) ||
+            (turbidity !== null && (!Number.isFinite(turbidity) || turbidity < 0))
+          )
+            return Response.json({ error: "Invalid measurement values" }, { status: 400 });
+          const assessment = assessReport({ clarity, smell, color });
           await sql`INSERT INTO reports (id, latitude, longitude, area, clarity, smell, color, ph, tds, turbidity, photo_url, created_at) VALUES (${id}, ${latitude}, ${longitude}, ${area}, ${clarity}, ${smell}, ${color}, ${ph}, ${tds}, ${turbidity}, ${photoUrl}, ${createdAt})`;
           return Response.json({
             id,
@@ -65,6 +84,7 @@ export const Route = createFileRoute("/api/reports")({
             photoUrl: photoUrl ?? undefined,
             createdAt,
             status: "synced",
+            agent: assessment,
           });
         } catch {
           return Response.json({ error: "The report could not be saved" }, { status: 503 });

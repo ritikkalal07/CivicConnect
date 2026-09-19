@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useOnlineStatus, useReports } from "@/hooks/use-reports";
+import { buildAgentSnapshot } from "@/lib/autonomous";
 import {
   addReport,
   getAlerts,
@@ -243,8 +244,7 @@ function HomeScreen({
   onReport: () => void;
   onNavigate: (screen: Screen) => void;
 }) {
-  const highRiskReports = reports.filter((report) => riskOf(report).level === "high").length;
-  const monitoredSignals = reports.length + 128;
+  const agent = buildAgentSnapshot(reports);
 
   return (
     <section className="space-y-6">
@@ -270,8 +270,8 @@ function HomeScreen({
         <MetricCard
           icon={<Radio />}
           label="Signals monitored"
-          value={monitoredSignals}
-          detail="Across 8 active sources"
+          value={agent.sourceCount}
+          detail="Connected report sources"
         />
         <MetricCard
           icon={<SearchCheck />}
@@ -282,15 +282,15 @@ function HomeScreen({
         <MetricCard
           icon={<ShieldAlert />}
           label="Needs attention"
-          value={highRiskReports + alerts.length}
+          value={agent.highPriorityCount + agent.alertCount}
           detail="Priority cases in review"
           tone="danger"
         />
         <MetricCard
           icon={<Bot />}
           label="Agents active"
-          value="9 / 9"
-          detail="Harvesters and responders"
+          value="1 / 1"
+          detail="Supervised triage agent"
           tone="safe"
         />
       </div>
@@ -336,10 +336,10 @@ function HomeScreen({
           </p>
           <h2 className="mt-1 text-xl font-semibold">System is learning</h2>
           <div className="mt-5 space-y-4">
-            <HealthRow label="Harvesters" value="10 sources" />
-            <HealthRow label="Routing confidence" value="92%" />
-            <HealthRow label="Source reliability" value="98.4%" />
-            <HealthRow label="Last self-check" value="2 min ago" />
+            <HealthRow label="Mode" value="Supervised" />
+            <HealthRow label="Priority issues" value={`${agent.highPriorityCount}`} />
+            <HealthRow label="Related clusters" value={`${agent.clusterCount}`} />
+            <HealthRow label="Last triage" value="Just now" />
           </div>
         </section>
       </div>
