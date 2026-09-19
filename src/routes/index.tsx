@@ -695,8 +695,10 @@ function CivicConnectApp() {
               <Radar className="size-5 animate-pulse" />
             </span>
             <span>
+              <strong className="block text-base font-bold tracking-tight">CivicConnect</strong>
               <strong className="block text-base font-bold tracking-tight">{t("appTitle", activeLang)}</strong>
               <span className="hidden text-xs text-text-secondary sm:block">
+                Public Civic Intelligence Portal
                 {t("appSubtitle", activeLang)}
               </span>
             </span>
@@ -707,6 +709,7 @@ function CivicConnectApp() {
               active={screen === "home"}
               onClick={() => setScreen("home")}
               icon={<Activity />}
+              label="Home"
               label={t("navHome", activeLang)}
               compact
             />
@@ -714,6 +717,7 @@ function CivicConnectApp() {
               active={screen === "track"}
               onClick={() => setScreen("track")}
               icon={<Search />}
+              label="Track Status"
               label={t("navTrack", activeLang)}
               compact
             />
@@ -721,6 +725,7 @@ function CivicConnectApp() {
               active={screen === "map"}
               onClick={() => setScreen("map")}
               icon={<Map />}
+              label="Safety Map"
               label={t("navMap", activeLang)}
               compact
             />
@@ -728,6 +733,7 @@ function CivicConnectApp() {
               active={screen === "e2e"}
               onClick={() => setScreen("e2e")}
               icon={<Play />}
+              label="Live E2E Flow"
               label={t("navE2e", activeLang)}
               compact
             />
@@ -735,6 +741,7 @@ function CivicConnectApp() {
               active={screen === "officers"}
               onClick={() => setScreen("officers")}
               icon={<Building2 />}
+              label="Officer Portal"
               label={t("navOfficers", activeLang)}
               compact
             />
@@ -742,6 +749,7 @@ function CivicConnectApp() {
               active={screen === "harvesters"}
               onClick={() => setScreen("harvesters")}
               icon={<Radio />}
+              label="Harvesters"
               label={t("navHarvesters", activeLang)}
               compact
             />
@@ -749,6 +757,7 @@ function CivicConnectApp() {
               active={screen === "agents"}
               onClick={() => setScreen("agents")}
               icon={<Bot />}
+              label="9 Workers"
               label={t("navWorkers", activeLang)}
               compact
             />
@@ -760,6 +769,7 @@ function CivicConnectApp() {
               className="ml-2 shadow-sm"
             >
               <Send className="size-3.5" />
+              Report Issue
               {t("navReport", activeLang)}
             </Button>
           </nav>
@@ -795,10 +805,12 @@ function CivicConnectApp() {
               <span className={`size-2 rounded-full ${online ? "bg-safe animate-pulse" : "bg-caution"}`} />
               {online ? (
                 <>
+                  <Wifi className="size-3" /> Online
                   <Wifi className="size-3" /> {t("online", activeLang)}
                 </>
               ) : (
                 <>
+                  <WifiOff className="size-3" /> Offline
                   <WifiOff className="size-3" /> {t("offline", activeLang)}
                 </>
               )}
@@ -810,6 +822,7 @@ function CivicConnectApp() {
               className="hidden sm:inline-flex items-center gap-1.5 border-primary/30 text-primary hover:bg-primary/10"
             >
               <Sparkles className="size-4 text-primary" />
+              <span>Assistant</span>
               <span>{t("assistant", activeLang)}</span>
             </Button>
           </div>
@@ -840,6 +853,8 @@ function CivicConnectApp() {
             onMessage={setMessage}
           />
         )}
+        {screen === "track" && <TrackStatusScreen reports={reports} onBack={() => setScreen("home")} />}
+        {screen === "e2e" && <E2EDemoScreen onBack={() => setScreen("home")} onMessage={setMessage} />}
         {screen === "track" && <TrackStatusScreen reports={reports} lang={activeLang} onBack={() => setScreen("home")} />}
         {screen === "e2e" && <E2EDemoScreen lang={activeLang} onBack={() => setScreen("home")} onMessage={setMessage} />}
         {screen === "officers" && (
@@ -852,6 +867,7 @@ function CivicConnectApp() {
           />
         )}
         {screen === "harvesters" && (
+          <HarvestersScreen harvesters={agentSnapshot.harvesters} onBack={() => setScreen("home")} />
           <HarvestersScreen harvesters={agentSnapshot.harvesters} lang={activeLang} onBack={() => setScreen("home")} />
         )}
         {screen === "agents" && (
@@ -871,8 +887,10 @@ function CivicConnectApp() {
             onSubmitted={handleSubmit}
           />
         )}
+        {screen === "map" && <MapScreen reports={reports} onBack={() => setScreen("home")} />}
         {screen === "map" && <MapScreen reports={reports} lang={activeLang} onBack={() => setScreen("home")} />}
         {screen === "alerts" && (
+          <AlertsScreen alerts={alerts} loading={loading} onBack={() => setScreen("home")} />
           <AlertsScreen alerts={alerts} loading={loading} lang={activeLang} onBack={() => setScreen("home")} />
         )}
       </div>
@@ -903,12 +921,14 @@ function CivicConnectApp() {
             active={screen === "home"}
             onClick={() => setScreen("home")}
             icon={<Activity />}
+            label="Home"
             label={t("navHome", activeLang)}
           />
           <NavItem
             active={screen === "track"}
             onClick={() => setScreen("track")}
             icon={<Search />}
+            label="Track"
             label={t("navTrack", activeLang)}
           />
           <Button
@@ -924,12 +944,14 @@ function CivicConnectApp() {
             active={screen === "map"}
             onClick={() => setScreen("map")}
             icon={<Map />}
+            label="Map"
             label={t("navMap", activeLang)}
           />
           <NavItem
             active={screen === "officers"}
             onClick={() => setScreen("officers")}
             icon={<Building2 />}
+            label="Gov Portal"
             label={t("navOfficers", activeLang)}
           />
         </div>
@@ -966,23 +988,29 @@ function HomeScreen({
         <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-center">
           <div className="space-y-3">
             <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+              <span className="size-2 rounded-full bg-safe animate-pulse" /> Self-Operating Civic Intelligence
               <span className="size-2 rounded-full bg-safe animate-pulse" /> {t("heroTagline", lang)}
             </div>
             <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-5xl">
+              CivicConnect Autonomous
               {t("heroTitle", lang)}
             </h1>
             <p className="max-w-3xl text-base font-medium leading-relaxed text-text-secondary sm:text-lg">
+              "It doesn't wait for data. It finds it. It doesn't wait for orders. It acts. It doesn't wait for humans. It learns."
               {t("heroSub", lang)}
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
             <Button onClick={onReport} size="lg" className="shadow-md">
+              <Send className="size-4" /> Report Issue
               <Send className="size-4" /> {t("btnReport", lang)}
             </Button>
             <Button onClick={() => onNavigate("track")} variant="outline" size="lg">
+              <Search className="size-4" /> Track Status
               <Search className="size-4" /> {t("btnTrack", lang)}
             </Button>
             <Button onClick={() => onNavigate("e2e")} variant="secondary" size="lg">
+              <Play className="size-4 fill-current" /> Test E2E Flow
               <Play className="size-4 fill-current" /> {t("btnE2e", lang)}
             </Button>
           </div>
@@ -993,27 +1021,35 @@ function HomeScreen({
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <MetricCard
           icon={<Radio />}
+          label="Data Sources Monitored"
           label={t("statSources", lang)}
           value={snapshot.sourceCount.toLocaleString()}
+          detail="10 active crawlers watching feeds 24/7"
           detail={t("statSourcesDetail", lang)}
         />
         <MetricCard
           icon={<SearchCheck />}
+          label="Civic Issues Processed"
           label={t("statProcessed", lang)}
           value={reports.length + 184}
+          detail="Auto-detected & citizen reports"
           detail={t("statProcessedDetail", lang)}
         />
         <MetricCard
           icon={<ShieldAlert />}
+          label="Priority Escalations"
           label={t("statPriority", lang)}
           value={snapshot.highPriorityCount + alerts.length}
+          detail="Auto-escalated to Zonal Commissioners"
           detail={t("statPriorityDetail", lang)}
           tone="danger"
         />
         <MetricCard
           icon={<Bot />}
+          label="Autonomous Workers"
           label={t("statWorkers", lang)}
           value="9 / 9"
+          detail="Router, Escalator, Verifier, Detector..."
           detail={t("statWorkersDetail", lang)}
           tone="safe"
         />
@@ -1027,9 +1063,11 @@ function HomeScreen({
               <p className="text-xs font-bold uppercase tracking-wider text-text-secondary">
                 Live Signal Feed
               </p>
+              <h2 className="text-lg font-semibold">Autonomous Operations & Dispatches</h2>
               <h2 className="text-lg font-semibold">{t("liveFeedTitle", lang)}</h2>
             </div>
             <Button variant="ghost" size="sm" onClick={() => onNavigate("harvesters")}>
+              Harvester Details <ArrowUpRight className="size-4" />
               {t("harvesterDetails", lang)} <ArrowUpRight className="size-4" />
             </Button>
           </div>
@@ -1138,8 +1176,10 @@ function TrackStatusScreen({
       </Button>
 
       <div>
+        <h1 className="text-3xl font-bold">Track Complaint Status</h1>
         <h1 className="text-3xl font-bold">{t("trackTitle", lang)}</h1>
         <p className="mt-1 text-sm text-text-secondary">
+          Enter your reference ID or select a ticket below to view step-by-step progress, assigned government officer details, and resolution evidence.
           {t("trackSub", lang)}
         </p>
       </div>
@@ -1151,11 +1191,13 @@ function TrackStatusScreen({
           <input
             value={searchId}
             onChange={(e) => setSearchId(e.target.value)}
+            placeholder="Enter Complaint Reference ID (e.g. #CVC-1082) or Area..."
             placeholder={t("trackPlaceholder", lang)}
             className="w-full rounded-xl border border-border bg-card py-2.5 pl-10 pr-4 text-sm outline-none focus:ring-2 focus:ring-primary shadow-sm"
           />
         </div>
         <Button onClick={findTicket} className="shadow-sm">
+          Track
           {t("btnSearch", lang)}
         </Button>
       </div>
@@ -2147,6 +2189,7 @@ function ChatbotWidget({
     },
   ]);
   const [input, setInput] = useState("");
+  const [language, setLanguage] = useState("en");
 
   if (!isOpen) return null;
 
@@ -2157,6 +2200,7 @@ function ChatbotWidget({
     setInput("");
 
     setTimeout(() => {
+      const res = handleChatbotQuery(text, language);
       const res = handleChatbotQuery(text, lang);
       const botMsg = { id: (Date.now() + 1).toString(), sender: "bot" as const, text: res.response, intent: res.intent };
       setMessages((prev) => [...prev, botMsg]);
@@ -2176,8 +2220,10 @@ function ChatbotWidget({
             <Sparkles className="size-4" />
           </span>
           <div>
+            <h3 className="font-bold text-sm">Civic Assistant</h3>
             <h3 className="font-bold text-sm">{t("chatTitle", lang)}</h3>
             <p className="text-[11px] text-text-secondary flex items-center gap-1">
+              <span className="size-1.5 rounded-full bg-safe animate-pulse" /> 22 Indian Languages (Bhashini)
               <span className="size-1.5 rounded-full bg-safe animate-pulse" /> {t("chatSub", lang)}
             </p>
           </div>
@@ -2190,9 +2236,12 @@ function ChatbotWidget({
       {/* Language Bar */}
       <div className="flex items-center justify-between border-b border-border/60 bg-muted/30 px-4 py-2 text-xs">
         <span className="text-text-secondary flex items-center gap-1">
+          <Globe className="size-3.5 text-primary" /> Preferred Language:
           <Globe className="size-3.5 text-primary" /> {t("langSelectLabel", lang)}:
         </span>
         <select
+          value={language}
+          onChange={(e) => setLanguage(e.target.value)}
           value={lang}
           onChange={(e) => onLanguageChange?.(e.target.value)}
           className="bg-transparent font-medium outline-none text-foreground cursor-pointer"
@@ -2238,21 +2287,26 @@ function ChatbotWidget({
       {/* Quick Pills */}
       <div className="flex flex-wrap gap-1.5 p-2 border-t border-border/40 bg-muted/20">
         <button
+          onClick={() => sendQuery(language === "hi" ? "पानी का समय क्या है?" : language === "kn" ? "ನೀರಿನ ಸಮಯ ಏನು?" : "Water timing in Ward 47")}
           onClick={() => sendQuery(lang === "hi" ? "पानी का समय क्या है?" : lang === "kn" ? "ನೀರಿನ ಸಮಯ ಏನು?" : "Water timing in Ward 47")}
           className="rounded-full border border-border bg-card px-2.5 py-1 text-[11px] text-text-secondary hover:border-primary"
         >
+          {language === "hi" ? "पानी का समय?" : language === "kn" ? "ನೀರಿನ ಸಮಯ?" : "Water timing?"}
           {t("chatPromptWater", lang)}
         </button>
         <button
+          onClick={() => sendQuery(language === "hi" ? "सड़क पर बड़ा गड्ढा है" : language === "kn" ? "ರಸ್ತೆಯಲ್ಲಿ ಗುಂಡಿ ಇದೆ" : "Dangerous pothole on main road")}
           onClick={() => sendQuery(lang === "hi" ? "सड़क पर बड़ा गड्ढा है" : lang === "kn" ? "ರಸ್ತೆಯಲ್ಲಿ ಗುಂಡಿ ಇದೆ" : "Dangerous pothole on main road")}
           className="rounded-full border border-border bg-card px-2.5 py-1 text-[11px] text-text-secondary hover:border-primary"
         >
+          {language === "hi" ? "गड्ढे की शिकायत" : language === "kn" ? "ಗುಂಡಿ ದೂರು" : "Report Pothole"}
           {t("chatPromptPothole", lang)}
         </button>
         <button
           onClick={() => sendQuery("Check status complaint #CVC-1082")}
           className="rounded-full border border-border bg-card px-2.5 py-1 text-[11px] text-text-secondary hover:border-primary"
         >
+          Status #CVC-1082
           {t("chatPromptStatus", lang)}
         </button>
       </div>
@@ -2268,6 +2322,7 @@ function ChatbotWidget({
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
+          placeholder="Ask a question or report an issue..."
           placeholder={t("chatPlaceholder", lang)}
           className="flex-1 bg-transparent text-xs outline-none text-foreground placeholder:text-text-secondary"
         />

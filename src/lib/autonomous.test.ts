@@ -62,6 +62,7 @@ describe("autonomous civic agent suite", () => {
   it("exposes autonomous capabilities in the agent snapshot", () => {
     const snapshot = buildAgentSnapshot([report({ clarity: "turbid", smell: "chemical" })]);
     expect(snapshot.mode).toBe("autonomous");
+    expect(snapshot.capabilities).toContain("9 Autonomous Agents");
     expect(snapshot.capabilities).toContain("9 Autonomous Workers");
     expect(snapshot.capabilities).toContain("5 Self-Learning Loops");
     expect(snapshot.agents).toHaveLength(9);
@@ -176,5 +177,6 @@ describe("autonomous civic agent suite", () => {
     const fileResp = handleChatbotQuery("There is a broken streetlight and garbage overflow in Jayanagar");
     expect(fileResp.autoFiledComplaint).toBe(true);
     expect(fileResp.response).toContain("registered your civic complaint");
+    expect(fileResp.response).toContain("Complaint registered successfully");
   });
 });
