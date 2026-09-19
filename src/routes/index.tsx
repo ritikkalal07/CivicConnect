@@ -52,19 +52,9 @@ import { useOnlineStatus, useReports } from "@/hooks/use-reports";
 import {
   buildAgentSnapshot,
   getE2ELifecycleDemo,
-  getGovernmentOfficers,
   handleChatbotQuery,
-  runAnomalyAgent,
-  runDetectorAgent,
-  runEscalatorAgent,
-  runRouterAgent,
-  runSelfHealAgent,
-  runSentimentAgent,
-  runVerifierAgent,
-  type AutonomousAgentInfo,
   type E2ELifecycleStep,
   type GovernmentOfficer,
-  type HarvesterItem,
 } from "@/lib/autonomous";
 import {
   addReport,
@@ -740,20 +730,7 @@ function CivicConnectApp() {
               label={t("navOfficers", activeLang)}
               compact
             />
-            <NavItem
-              active={screen === "harvesters"}
-              onClick={() => setScreen("harvesters")}
-              icon={<Radio />}
-              label={t("navHarvesters", activeLang)}
-              compact
-            />
-            <NavItem
-              active={screen === "agents"}
-              onClick={() => setScreen("agents")}
-              icon={<Bot />}
-              label={t("navWorkers", activeLang)}
-              compact
-            />
+
             <Button
               onClick={() => setScreen("report")}
               size="sm"
@@ -986,70 +963,70 @@ function HomeScreen({
       {/* 4 Primary Metric Cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <MetricCard
-          icon={<Radio />}
-          label={t("statSources", lang)}
-          value={snapshot.sourceCount.toLocaleString()}
-          detail={t("statSourcesDetail", lang)}
+          icon={<Building2 />}
+          label="Wards Covered"
+          value="198 Wards"
+          detail="Active municipal coverage across Bengaluru"
         />
         <MetricCard
           icon={<SearchCheck />}
-          label={t("statProcessed", lang)}
+          label="Issues Resolved"
           value={reports.length + 184}
-          detail={t("statProcessedDetail", lang)}
+          detail="Auto-routed & citizen reports"
         />
         <MetricCard
           icon={<ShieldAlert />}
-          label={t("statPriority", lang)}
+          label="Urgent Alerts"
           value={snapshot.highPriorityCount + alerts.length}
-          detail={t("statPriorityDetail", lang)}
+          detail="High priority & safety alerts"
           tone="danger"
         />
         <MetricCard
-          icon={<Bot />}
-          label={t("statWorkers", lang)}
-          value="9 / 9"
-          detail={t("statWorkersDetail", lang)}
+          icon={<CheckCircle2 />}
+          label="Resolution Rate"
+          value="94.2%"
+          detail="Average SLA turnaround < 24h"
           tone="safe"
         />
       </div>
 
-      {/* Live Signal Feed & System Learning Loops */}
+      {/* Live Signal Feed & How It Works */}
       <div className="grid gap-6 lg:grid-cols-3">
         <section className="rounded-xl border border-border bg-card p-5 shadow-card lg:col-span-2">
           <div className="flex items-center justify-between gap-3 border-b border-border pb-4">
             <div>
               <p className="text-xs font-bold uppercase tracking-wider text-text-secondary">
-                Live Signal Feed
+                Ward Operations
               </p>
-              <h2 className="text-lg font-semibold">{t("liveFeedTitle", lang)}</h2>
+              <h2 className="text-lg font-semibold">Live Municipal Updates</h2>
             </div>
-            <Button variant="ghost" size="sm" onClick={() => onNavigate("harvesters")}>
-              {t("harvesterDetails", lang)} <ArrowUpRight className="size-4" />
+            <Button variant="ghost" size="sm" onClick={() => onNavigate("track")}>
+              Track Status <ArrowUpRight className="size-4" />
             </Button>
           </div>
           <div className="mt-4 space-y-3">
             <ActivityRow
-              icon={<Radio className="text-primary" />}
-              title="Social Listener caught pothole tweet in Ward 47 (Jayanagar)"
-              detail="Detector Worker auto-classified issue (Confidence 0.94)"
+              icon={<CheckCircle2 className="text-safe" />}
+              title="Pothole repair verified & completed in Ward 47 (Jayanagar)"
+              detail="Inspected with GPS proof photo by Junior Engineer"
               time="3 min ago"
             />
             <ActivityRow
-              icon={<Bot className="text-safe" />}
-              title="Router Worker assigned #CVC-1082 to JE (Roads) Er. R. Sharma"
-              detail="Learned routing score: 0.89 (Success rate 95%, Ward match)"
+              icon={<UserCheck className="text-primary" />}
+              title="Water pipeline leak ticket #CVC-1082 routed to Er. R. Sharma"
+              detail="Assigned to Ward 12 fast-response infrastructure team"
               time="12 min ago"
             />
             <ActivityRow
-              icon={<ShieldAlert className="text-danger" />}
-              title="Escalator Worker advanced SLA level 1 -> 2 for #CVC-0941"
-              detail="SLA deadline breached (>24h). Email & SMS sent to Zonal Head"
+              icon={<Clock className="text-caution" />}
+              title="Drainage cleanup work underway at 5th Main Junction"
+              detail="Field crew deployed with suction tanker equipment"
               time="28 min ago"
             />
             <ActivityRow
-              icon={<Database className="text-primary" />}
-              title="Knowledge Graph synchronized 14,820 nodes & 42,100 edges"
-              detail="Self-building graph: Wards -> Officers -> Departments -> SLAs"
+              icon={<Activity className="text-primary" />}
+              title="Daily Ward Water Quality & Pressure Check completed"
+              detail="Residual chlorine 0.4 ppm (Normal: 0.2 - 0.5 ppm) across 18 zones"
               time="45 min ago"
             />
           </div>
@@ -1057,20 +1034,37 @@ function HomeScreen({
 
         <section className="rounded-xl border border-border bg-card p-5 shadow-card">
           <p className="text-xs font-bold uppercase tracking-wider text-text-secondary">
-            Continuous Improvement
+            Citizen Guide
           </p>
-          <h2 className="text-lg font-semibold">5 Active Learning Loops</h2>
+          <h2 className="text-lg font-semibold">How CivicConnect Works</h2>
           <div className="mt-4 space-y-4">
-            {snapshot.learningLoops.map((loop) => (
-              <div key={loop.id} className="border-b border-border/60 pb-3 last:border-0 last:pb-0">
-                <div className="flex items-center justify-between text-xs font-semibold">
-                  <span>{loop.name.split(" - ")[0]}</span>
-                  <span className="text-safe font-mono">{loop.cycle}</span>
-                </div>
-                <p className="mt-1 text-xs text-text-secondary">{loop.description}</p>
-                <p className="mt-1 text-[11px] font-medium text-primary">{loop.improvement}</p>
+            <div className="border-b border-border/60 pb-3">
+              <div className="flex items-center gap-2 text-xs font-semibold text-primary">
+                <span className="flex size-5 items-center justify-center rounded-full bg-primary/10 text-xs font-bold">1</span>
+                <span>Report an Issue</span>
               </div>
-            ))}
+              <p className="mt-1 text-xs text-text-secondary">
+                Submit water leaks, potholes, or sanitation issues in 10+ languages or via voice assistant.
+              </p>
+            </div>
+            <div className="border-b border-border/60 pb-3">
+              <div className="flex items-center gap-2 text-xs font-semibold text-primary">
+                <span className="flex size-5 items-center justify-center rounded-full bg-primary/10 text-xs font-bold">2</span>
+                <span>Automatic Officer Dispatch</span>
+              </div>
+              <p className="mt-1 text-xs text-text-secondary">
+                Instant assignment to the responsible ward engineer with strict SLA turnaround deadlines.
+              </p>
+            </div>
+            <div>
+              <div className="flex items-center gap-2 text-xs font-semibold text-safe">
+                <span className="flex size-5 items-center justify-center rounded-full bg-safe/10 text-xs font-bold text-safe">3</span>
+                <span>Verified Photo Resolution</span>
+              </div>
+              <p className="mt-1 text-xs text-text-secondary">
+                Officers upload GPS-tagged proof photos before closing tickets. Citizens track every step live.
+              </p>
+            </div>
           </div>
         </section>
       </div>
@@ -1525,247 +1519,7 @@ function OfficerPortalScreen({
   );
 }
 
-// ------------------- HARVESTERS MONITOR SCREEN -------------------
 
-function HarvestersScreen({
-  harvesters,
-  onBack,
-}: {
-  harvesters: HarvesterItem[];
-  onBack: () => void;
-}) {
-  const [items, setItems] = useState(harvesters);
-  const [harvesting, setHarvesting] = useState(false);
-
-  function triggerCrawl(id: string) {
-    setHarvesting(true);
-    setTimeout(() => {
-      setItems((prev) =>
-        prev.map((h) =>
-          h.id === id
-            ? { ...h, lastRunAt: Date.now(), itemsFetched: h.itemsFetched + Math.floor(Math.random() * 20 + 5) }
-            : h,
-        ),
-      );
-      setHarvesting(false);
-    }, 1000);
-  }
-
-  return (
-    <section className="space-y-6">
-      <Button variant="ghost" size="sm" onClick={onBack}>
-        Back to Overview
-      </Button>
-      <div>
-        <div className="flex items-center gap-2 text-sm font-semibold text-primary">
-          <Radio className="size-4 animate-pulse" /> Layer 1 Harvester Engine
-        </div>
-        <h1 className="mt-1 text-3xl font-bold">10 Autonomous Harvesters</h1>
-        <p className="mt-2 max-w-3xl text-sm text-text-secondary">
-          These crawlers and listeners run 24/7 on Celery Beat schedules. They fetch government data, tweets, news, PDFs, and sensor feeds without waiting for manual human triggers.
-        </p>
-      </div>
-
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {items.map((h) => (
-          <div key={h.id} className="rounded-xl border border-border bg-card p-5 shadow-card space-y-3">
-            <div className="flex items-start justify-between gap-2">
-              <span className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                <Radio className="size-4" />
-              </span>
-              <span
-                className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${
-                  h.status === "HEALTHY"
-                    ? "bg-safe/10 text-safe"
-                    : h.status === "DEGRADED"
-                      ? "bg-caution/10 text-caution"
-                      : "bg-danger/10 text-danger"
-                }`}
-              >
-                {h.status}
-              </span>
-            </div>
-
-            <div>
-              <h3 className="font-semibold text-base">{h.name}</h3>
-              <p className="text-xs text-text-secondary mt-1">{h.description}</p>
-            </div>
-
-            <div className="border-t border-border/60 pt-3 text-xs space-y-1.5 text-text-secondary">
-              <div className="flex justify-between">
-                <span>Frequency:</span>
-                <span className="font-medium text-foreground">{h.frequency}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Sources Watched:</span>
-                <span className="font-medium text-foreground">{h.sourcesCount.toLocaleString()}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Items Fetched:</span>
-                <span className="font-medium text-foreground">{h.itemsFetched.toLocaleString()}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Reliability:</span>
-                <span className="font-medium text-safe">{(h.reliabilityScore * 100).toFixed(0)}%</span>
-              </div>
-            </div>
-
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full text-xs"
-              onClick={() => triggerCrawl(h.id)}
-              disabled={harvesting}
-            >
-              {harvesting ? <RefreshCw className="size-3 animate-spin" /> : <RefreshCw className="size-3" />}
-              Trigger Crawl Now
-            </Button>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-// ------------------- 9 AUTONOMOUS WORKERS SCREEN -------------------
-
-function AgentsScreen({
-  agents,
-  reports,
-  onBack,
-  onMessage,
-}: {
-  agents: AutonomousAgentInfo[];
-  reports: WaterReport[];
-  onBack: () => void;
-  onMessage: (msg: string) => void;
-}) {
-  const [log, setLog] = useState<string[]>([]);
-
-  function triggerAgent(name: string) {
-    if (name === "Router") {
-      const best = runRouterAgent(
-        [
-          { id: "off-1", name: "Er. R. Sharma", department: "Roads", ward: "Ward 47", successRate: 0.95, avgResolutionHours: 4, currentLoad: 2, language: "en" },
-          { id: "off-2", name: "Er. P. Deshmukh", department: "Sanitation", ward: "Ward 12", successRate: 0.82, avgResolutionHours: 12, currentLoad: 8, language: "hi" },
-        ],
-        "en",
-      );
-      const entry = `[Router Worker] Assigned complaint to ${best.name} (Ward: ${best.ward}, Score: ${best.score.toFixed(2)})`;
-      setLog((prev) => [entry, ...prev]);
-      onMessage(entry);
-    } else if (name === "Escalator") {
-      const esc = runEscalatorAgent({ slaDeadlineMs: Date.now() - 100, currentEscalationLevel: 1, sentimentScore: -0.8 });
-      const entry = `[Escalator Worker] Advanced SLA level 1 -> ${esc.nextLevel}. Target: ${esc.targetRole}`;
-      setLog((prev) => [entry, ...prev]);
-      onMessage(entry);
-    } else if (name === "Verifier") {
-      const ver = runVerifierAgent({ beforePhotoUrl: "https://a.com/1.jpg", afterPhotoUrl: "https://a.com/2.jpg", category: "Pothole", exifDistanceMeters: 15 });
-      const entry = `[Verifier Worker] ${ver.reason}`;
-      setLog((prev) => [entry, ...prev]);
-      onMessage(entry);
-    } else if (name === "Detector") {
-      const det = runDetectorAgent("Huge pothole near Jayanagar 4th Block, dangerous!", { lat: 12.925, lng: 77.593 });
-      const entry = `[Detector Worker] Auto-filed issue: ${det.category} (Confidence: ${det.confidence})`;
-      setLog((prev) => [entry, ...prev]);
-      onMessage(entry);
-    } else if (name === "Anomaly") {
-      const anom = runAnomalyAgent([{ wardId: "Ward 47", category: "Pothole", count: 12, baseline: 2.0 }]);
-      const entry = `[Anomaly Worker] ${anom.alerts[0] || "No anomaly detected"}`;
-      setLog((prev) => [entry, ...prev]);
-      onMessage(entry);
-    } else if (name === "Dedup") {
-      const ded = runDedupAgent({ lat: 12.9716, lng: 77.5946, category: "Pothole", description: "Pothole" }, reports);
-      const entry = `[Dedup Worker] ${ded.isDuplicate ? "Merged with existing ID: " + ded.matchedId : "No duplicate found. Clean unique complaint."}`;
-      setLog((prev) => [entry, ...prev]);
-      onMessage(entry);
-    } else if (name === "Sentiment") {
-      const sent = runSentimentAgent("Open live electric wire drowning hazard near hospital");
-      const entry = `[Sentiment Worker] Detected ${sent.urgency} priority boost +${sent.priorityBoost}`;
-      setLog((prev) => [entry, ...prev]);
-      onMessage(entry);
-    } else if (name === "SelfHeal") {
-      const heal = runSelfHealAgent(buildAgentSnapshot(reports).harvesters);
-      const entry = `[SelfHeal Worker] ${heal.sourceActions[0]?.action || "All data sources healthy"}`;
-      setLog((prev) => [entry, ...prev]);
-      onMessage(entry);
-    } else {
-      const chat = handleChatbotQuery("What is the water timing in Ward 47?");
-      const entry = `[Assistant Worker] ${chat.response}`;
-      setLog((prev) => [entry, ...prev]);
-      onMessage(entry);
-    }
-  }
-
-  return (
-    <section className="space-y-6">
-      <Button variant="ghost" size="sm" onClick={onBack}>
-        Back to Overview
-      </Button>
-      <div>
-        <div className="flex items-center gap-2 text-sm font-semibold text-primary">
-          <Bot className="size-4" /> Layer 3 Autonomous Workers
-        </div>
-        <h1 className="mt-1 text-3xl font-bold">9 Autonomous Workers</h1>
-        <p className="mt-2 max-w-3xl text-sm text-text-secondary">
-          Each worker is an independent process with its own logic, memory, and triggers. They handle routing, escalations, computer vision verification, anomaly detection, and self-healing.
-        </p>
-      </div>
-
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {agents.map((agent) => (
-          <div key={agent.name} className="rounded-xl border border-border bg-card p-5 shadow-card space-y-3">
-            <div className="flex items-start justify-between">
-              <div>
-                <h3 className="font-bold text-lg">{agent.name} Worker</h3>
-                <p className="text-xs font-semibold text-primary">{agent.role}</p>
-              </div>
-              <span className="rounded-full bg-safe/10 px-2 py-0.5 text-[11px] font-bold text-safe">
-                {agent.status}
-              </span>
-            </div>
-
-            <p className="text-xs text-text-secondary">{agent.description}</p>
-
-            <div className="rounded-md border border-border/60 bg-muted/30 p-2.5 text-xs">
-              <span className="font-semibold block text-foreground">Last Action:</span>
-              <p className="text-text-secondary italic mt-0.5">{agent.lastAction}</p>
-            </div>
-
-            <div className="flex justify-between text-xs text-text-secondary">
-              <span>Actions Executed: <strong>{agent.actionCount.toLocaleString()}</strong></span>
-              <span>Confidence: <strong className="text-safe">{(agent.confidence * 100).toFixed(0)}%</strong></span>
-            </div>
-
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full text-xs"
-              onClick={() => triggerAgent(agent.name)}
-            >
-              <Zap className="size-3 text-primary" /> Trigger {agent.name} Worker
-            </Button>
-          </div>
-        ))}
-      </div>
-
-      {log.length > 0 && (
-        <div className="rounded-xl border border-primary/30 bg-card p-5 shadow-card space-y-3">
-          <h3 className="font-semibold text-sm flex items-center gap-2">
-            <Activity className="size-4 text-primary" /> Real-time Execution Log
-          </h3>
-          <div className="space-y-2 font-mono text-xs max-h-48 overflow-y-auto">
-            {log.map((line, idx) => (
-              <div key={idx} className="rounded border border-border/60 bg-muted/40 p-2 text-text-primary">
-                {line}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-    </section>
-  );
-}
 
 // ------------------- REPORT ISSUE SCREEN -------------------
 
