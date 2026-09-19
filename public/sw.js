@@ -2,6 +2,7 @@ const CACHE_NAME = "jaldarpan-v1";
 const APP_SHELL = ["/", "/manifest.webmanifest", "/favicon.svg"];
 
 self.addEventListener("install", (event) => {
+  event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)));
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL))
   );
@@ -15,11 +16,16 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   const request = event.request;
   if (request.method !== "GET") return;
+  if (request.url.includes("tile.openstreetmap.org"))
 
   if (request.url.includes("tile.openstreetmap.org")) {
     event.respondWith(
       caches.open(CACHE_NAME).then(async (cache) => {
         const cached = await cache.match(request);
+        const response = await fetch(request);
+        if (response.ok) await cache.put(request, response.clone());
+        return cached ?? response;
+      }),
         if (cached) return cached;
         try {
           const response = await fetch(request);
@@ -33,10 +39,13 @@ self.addEventListener("fetch", (event) => {
         }
       })
     );
+  else if (new URL(request.url).pathname === "/api/reports")
   } else if (new URL(request.url).pathname === "/api/reports") {
     event.respondWith(
       fetch(request)
         .then(async (response) => {
+          const cache = await caches.open(CACHE_NAME);
+          await cache.put(request, response.clone());
           if (response.ok) {
             const responseToCache = response.clone();
             const cache = await caches.open(CACHE_NAME);
@@ -49,21 +58,29 @@ self.addEventListener("fetch", (event) => {
             .match(request)
             .then(
               (response) =>
+                response ?? new Response("[]", { headers: { "Content-Type": "application/json" } }),
+            ),
+        ),
                 response ?? new Response("[]", { headers: { "Content-Type": "application/json" } })
             )
         )
     );
+  else
   } else {
     event.respondWith(
       caches.match(request).then(
         (cached) =>
           cached ??
           fetch(request).then((response) => {
+            if (response.ok)
+              void caches.open(CACHE_NAME).then((cache) => cache.put(request, response.clone()));
             if (response.ok) {
               const responseToCache = response.clone();
               void caches.open(CACHE_NAME).then((cache) => cache.put(request, responseToCache));
             }
             return response;
+          }),
+      ),
           })
       )
     );

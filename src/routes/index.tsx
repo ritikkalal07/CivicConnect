@@ -686,6 +686,7 @@ function CivicConnectApp() {
       {/* Top sticky header */}
       <header className="sticky top-0 z-30 border-b border-border/80 bg-card/95 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
+          {/* Logo */}
           <button
             className="flex items-center gap-2.5 text-left shrink-0"
             onClick={() => setScreen("home")}
@@ -696,12 +697,13 @@ function CivicConnectApp() {
             </span>
             <span>
               <strong className="block text-sm sm:text-base font-bold tracking-tight">{t("appTitle", activeLang)}</strong>
-              <span className="hidden text-[11px] text-text-secondary md:block">
+              <span className="hidden text-[11px] text-text-secondary lg:block">
                 {t("appSubtitle", activeLang)}
               </span>
             </span>
           </button>
 
+          {/* Primary Header Navigation - ONLY visible on PC/Desktop (lg breakpoint and up) */}
           <nav aria-label="Primary navigation" className="hidden items-center gap-1 lg:flex">
             <NavItem
               active={screen === "home"}
@@ -764,6 +766,7 @@ function CivicConnectApp() {
             </Button>
           </nav>
 
+          {/* Right Section: Language Dropdown (always visible) + PC Only Status & Assistant */}
           <div className="flex items-center gap-2">
             {/* Global 1-Click Language Selector */}
             <div className="flex items-center gap-1.5 rounded-lg border border-border/80 bg-card px-2 py-1 text-xs font-semibold shadow-xs hover:border-primary/50 transition-colors">
@@ -787,8 +790,9 @@ function CivicConnectApp() {
               </select>
             </div>
 
+            {/* Online Status - PC Only (lg breakpoint) */}
             <span
-              className={`hidden sm:flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${
+              className={`hidden lg:flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${
                 online ? "bg-safe/10 text-safe" : "bg-caution/10 text-caution"
               }`}
             >
@@ -803,92 +807,18 @@ function CivicConnectApp() {
                 </>
               )}
             </span>
+
+            {/* Assistant Button - PC Only (lg breakpoint) */}
             <Button
               variant="outline"
               size="sm"
               onClick={() => setIsChatOpen(!isChatOpen)}
-              className="hidden sm:inline-flex items-center gap-1.5 border-primary/30 text-primary hover:bg-primary/10"
+              className="hidden lg:inline-flex items-center gap-1.5 border-primary/30 text-primary hover:bg-primary/10"
             >
               <Sparkles className="size-4 text-primary" />
               <span>{t("assistant", activeLang)}</span>
             </Button>
           </div>
-        </div>
-
-        {/* Sub-header horizontal scroll tab bar for Laptop/Tablet/Mobile viewports (< lg) */}
-        <div className="flex lg:hidden overflow-x-auto border-t border-border/60 bg-card/90 px-3 py-1.5 items-center gap-1.5 scrollbar-none">
-          <button
-            onClick={() => setScreen("home")}
-            className={`flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-bold transition-colors ${
-              screen === "home" ? "bg-primary text-primary-foreground" : "bg-muted/50 text-text-secondary"
-            }`}
-          >
-            <Activity className="size-3.5" />
-            {t("navHome", activeLang)}
-          </button>
-          <button
-            onClick={() => setScreen("track")}
-            className={`flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-bold transition-colors ${
-              screen === "track" ? "bg-primary text-primary-foreground" : "bg-muted/50 text-text-secondary"
-            }`}
-          >
-            <Search className="size-3.5" />
-            {t("navTrack", activeLang)}
-          </button>
-          <button
-            onClick={() => setScreen("map")}
-            className={`flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-bold transition-colors ${
-              screen === "map" ? "bg-primary text-primary-foreground" : "bg-muted/50 text-text-secondary"
-            }`}
-          >
-            <Map className="size-3.5" />
-            {t("navMap", activeLang)}
-          </button>
-          <button
-            onClick={() => setScreen("e2e")}
-            className={`flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-bold transition-colors ${
-              screen === "e2e" ? "bg-primary text-primary-foreground" : "bg-muted/50 text-text-secondary"
-            }`}
-          >
-            <Play className="size-3.5" />
-            {t("navE2e", activeLang)}
-          </button>
-          <button
-            onClick={() => setScreen("officers")}
-            className={`flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-bold transition-colors ${
-              screen === "officers" ? "bg-primary text-primary-foreground" : "bg-muted/50 text-text-secondary"
-            }`}
-          >
-            <Building2 className="size-3.5" />
-            {t("navOfficers", activeLang)}
-          </button>
-          <button
-            onClick={() => setScreen("harvesters")}
-            className={`flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-bold transition-colors ${
-              screen === "harvesters" ? "bg-primary text-primary-foreground" : "bg-muted/50 text-text-secondary"
-            }`}
-          >
-            <Radio className="size-3.5" />
-            {t("navHarvesters", activeLang)}
-          </button>
-          <button
-            onClick={() => setScreen("agents")}
-            className={`flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-bold transition-colors ${
-              screen === "agents" ? "bg-primary text-primary-foreground" : "bg-muted/50 text-text-secondary"
-            }`}
-          >
-            <Bot className="size-3.5" />
-            {t("navWorkers", activeLang)}
-          </button>
-          <button
-            onClick={() => setScreen("report")}
-            className={`flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-bold transition-colors ${
-              screen === "report" ? "bg-primary text-primary-foreground" : "bg-primary/10 text-primary"
-            }`}
-          >
-            <Send className="size-3.5" />
-            {t("navReport", activeLang)}
-          </button>
         </div>
       </header>
 
@@ -963,18 +893,18 @@ function CivicConnectApp() {
         onReportGenerated={handleReportFromChat}
       />
 
-      {/* Floating Assistant Button for Mobile */}
+      {/* Floating Assistant Button for Mobile / Tablet */}
       <button
         onClick={() => setIsChatOpen(!isChatOpen)}
-        className="fixed bottom-20 right-4 z-30 flex size-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform hover:scale-105 sm:bottom-6 sm:right-6"
+        className="fixed bottom-20 right-4 z-30 flex size-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform hover:scale-105 sm:bottom-6 sm:right-6 lg:hidden"
         aria-label="Open Citizen Assistant"
       >
         <Sparkles className="size-6" />
       </button>
 
-      {/* Bottom mobile navigation bar */}
-      <nav className="fixed inset-x-0 bottom-0 z-20 border-t border-border/80 bg-card/95 pb-[env(safe-area-inset-bottom)] shadow-lg backdrop-blur lg:hidden">
-        <div className="mx-auto flex max-w-md items-center justify-around px-2 py-2">
+      {/* Bottom Mobile / Tablet Navigation Bar - ONLY visible on screens smaller than lg */}
+      <nav aria-label="Mobile navigation" className="fixed inset-x-0 bottom-0 z-20 border-t border-border/80 bg-card/95 pb-[env(safe-area-inset-bottom)] shadow-lg backdrop-blur lg:hidden">
+        <div className="mx-auto flex max-w-lg items-center justify-between px-3 py-1.5 overflow-x-auto scrollbar-none">
           <NavItem
             active={screen === "home"}
             onClick={() => setScreen("home")}
@@ -987,26 +917,44 @@ function CivicConnectApp() {
             icon={<Search />}
             label={t("navTrack", activeLang)}
           />
-          <Button
-            onClick={() => setScreen("report")}
-            size="icon"
-            aria-label="Report issue"
-            aria-current={screen === "report" ? "page" : undefined}
-            className={`size-11 rounded-full ${screen === "report" ? "ring-2 ring-primary/30 ring-offset-2" : ""}`}
-          >
-            <Send className="size-4" />
-          </Button>
           <NavItem
             active={screen === "map"}
             onClick={() => setScreen("map")}
             icon={<Map />}
             label={t("navMap", activeLang)}
           />
+          <Button
+            onClick={() => setScreen("report")}
+            size="icon"
+            aria-label="Report issue"
+            aria-current={screen === "report" ? "page" : undefined}
+            className={`size-10 shrink-0 rounded-full ${screen === "report" ? "ring-2 ring-primary/30 ring-offset-2" : ""}`}
+          >
+            <Send className="size-4" />
+          </Button>
           <NavItem
             active={screen === "officers"}
             onClick={() => setScreen("officers")}
             icon={<Building2 />}
             label={t("navOfficers", activeLang)}
+          />
+          <NavItem
+            active={screen === "e2e"}
+            onClick={() => setScreen("e2e")}
+            icon={<Play />}
+            label={t("navE2e", activeLang)}
+          />
+          <NavItem
+            active={screen === "harvesters"}
+            onClick={() => setScreen("harvesters")}
+            icon={<Radio />}
+            label={t("navHarvesters", activeLang)}
+          />
+          <NavItem
+            active={screen === "agents"}
+            onClick={() => setScreen("agents")}
+            icon={<Bot />}
+            label={t("navWorkers", activeLang)}
           />
         </div>
       </nav>
