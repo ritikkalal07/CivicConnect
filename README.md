@@ -6,6 +6,83 @@ JalDarpan is a community water safety application. Residents can report water qu
 
 Water concerns are often noticed locally before they are formally recorded. JalDarpan creates a simple reporting path and a shared map so communities can identify patterns quickly while keeping reports available during connectivity loss.
 
+## HackDevengers 2.0
+
+HackDevengers 2.0 is a 24-hour fully virtual Open Innovation Hackathon powered by Unstop and sponsored by Lovable. Participants can choose their own idea, domain, and technology stack to build a practical solution during the event.
+
+### Hackathon details
+
+- **Duration:** 24 hours
+- **Start:** 19 September, 10:00 AM
+- **End:** 20 September, 10:00 AM
+- **Mode:** Fully online / virtual
+- **Format:** Open innovation
+- **Participation:** Developers, students, creators, designers, innovators, and technology enthusiasts
+- **Prize pool:** INR 50,000 cash prize plus additional rewards
+
+### JalDarpan submission
+
+JalDarpan addresses a real-world community safety problem: water quality concerns are often discovered locally but are difficult to report, verify, and share quickly. The app combines structured reporting, location-aware mapping, risk classification, community alerts, photo evidence, and offline synchronization in one installable web application.
+
+**Project title:** JalDarpan - Community Water Safety
+
+**Project description:** A responsive PWA that helps residents report water quality observations, attach evidence, share their location, view nearby safety reports, and identify clusters of dangerous observations. Reports remain available offline and synchronize automatically when connectivity returns.
+
+**Repository:** This GitHub repository contains the complete project source code, setup instructions, deployment configuration, and validation scenarios.
+
+**Live deployment:** [JalDarpan on Vercel](https://jal-d-arpan.vercel.app/)
+
+### Submission requirements
+
+- Project title
+- Project description
+- GitHub repository link
+- Live deployment or demo link, if available
+- Presentation, if available
+
+A live deployment or presentation is optional. The project title, description, and GitHub repository are sufficient for core submission and verification.
+
+### Evaluation alignment
+
+- **Innovation:** Converts local water observations into shared, actionable safety information.
+- **Problem-solving:** Supports structured reports, GPS capture, evidence uploads, alerts, and offline use.
+- **Technical implementation:** Uses React, TanStack Start, TypeScript, Vite, Leaflet, Vercel Postgres, Vercel Blob, and a service worker.
+- **Functionality and UX:** Provides responsive navigation, validation, loading and error states, maps, risk indicators, and mobile-friendly reporting.
+- **Real-world impact:** Helps communities identify recurring water concerns faster and make more informed decisions.
+- **Scalability:** The API, database schema, alert logic, and PWA architecture can support additional regions, administrators, and public-health workflows.
+
+### Eligibility
+
+The hackathon is open to anyone interested in building innovative technology solutions. Participants may choose any domain, problem statement, technology, or tech stack. Experienced developers and students are equally welcome.
+
+### How to participate
+
+1. Register for HackDevengers 2.0 on Unstop.
+2. Start building when the 24-hour event begins on 19 September at 10:00 AM.
+3. Submit the project through the Google Form shared in the WhatsApp channel. The form opens at 1:00 PM on 19 September.
+4. Include the project details and GitHub repository for evaluation.
+
+Projects are evaluated using the submitted details and GitHub repository. Winners and additional prizes are announced after evaluation.
+
+### Hackathon rules
+
+- The project must be built during the 24-hour hackathon period.
+- This is an open innovation hackathon, so any idea and domain may be selected.
+- Any programming language, framework, platform, or technology may be used.
+- Submit an original project created by you or your team.
+- The GitHub repository must contain the relevant code and information needed to understand the project.
+- Plagiarism, copied projects, or submissions that violate the hackathon guidelines may be disqualified.
+- The submission must be completed within the event timeline.
+- The organizers and jury reserve the final decision regarding evaluation and results.
+
+### Rewards
+
+- **INR 50,000:** First prize
+- **Top 5:** Exclusive Unstop goodies
+- **Top 10:** Lovable credits and `.xyz` domains
+- **Additional top 10 prizes:** To be announced
+- **All valid submissions:** Certificate of achievement
+
 ## Features
 
 - Water quality reports with location, clarity, smell, color, pH, TDS, turbidity, and photo.

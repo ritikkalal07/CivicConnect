@@ -317,6 +317,7 @@ function ReportScreen({
   const [submitting, setSubmitting] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   function findLocation() {
+    setValidation(undefined);
     if (!navigator.geolocation) {
       setValidation("Location is not available in this browser");
       return;
@@ -329,10 +330,17 @@ function ReportScreen({
         setArea("Current location");
         setLocating(false);
       },
-      () => {
-        setValidation("Unable to access your location");
+      (error) => {
+        const message =
+          error.code === error.PERMISSION_DENIED
+            ? "Location permission was denied. Allow location access or enter coordinates manually."
+            : error.code === error.TIMEOUT
+              ? "Location request timed out. Try again or enter coordinates manually."
+              : "Unable to access your location. Enter coordinates manually.";
+        setValidation(message);
         setLocating(false);
       },
+      { enableHighAccuracy: true, maximumAge: 300_000, timeout: 10_000 },
     );
   }
   function pickPhoto(event: ChangeEvent<HTMLInputElement>) {
@@ -392,9 +400,10 @@ function ReportScreen({
               size="sm"
               onClick={findLocation}
               disabled={locating}
+              title="Fill the report location using your device GPS"
             >
-              <LocateFixed className="size-4" />
-              {locating ? "Locating" : "Use GPS"}
+              <LocateFixed className={`size-4 ${locating ? "animate-pulse" : ""}`} />
+              {locating ? "Finding location..." : "Use my location"}
             </Button>
           </div>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -585,7 +594,7 @@ function MapScreen({ reports, onBack }: { reports: WaterReport[]; onBack: () => 
           <div ref={mapRef} className="leaflet-map" />
           {selected ? (
             <div className="rounded-md border border-border bg-card p-4 shadow-card">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <h2 className="font-semibold">Report details</h2>
                 <button onClick={() => setSelected(undefined)} aria-label="Close details">
                   <X className="size-4" />
