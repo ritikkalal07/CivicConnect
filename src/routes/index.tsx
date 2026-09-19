@@ -687,22 +687,22 @@ function CivicConnectApp() {
       <header className="sticky top-0 z-30 border-b border-border/80 bg-card/95 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
           <button
-            className="flex items-center gap-3 text-left"
+            className="flex items-center gap-2.5 text-left shrink-0"
             onClick={() => setScreen("home")}
             aria-label="Go to home"
           >
-            <span className="flex size-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-md">
+            <span className="flex size-9 sm:size-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-md">
               <Radar className="size-5 animate-pulse" />
             </span>
             <span>
-              <strong className="block text-base font-bold tracking-tight">{t("appTitle", activeLang)}</strong>
-              <span className="hidden text-xs text-text-secondary sm:block">
+              <strong className="block text-sm sm:text-base font-bold tracking-tight">{t("appTitle", activeLang)}</strong>
+              <span className="hidden text-[11px] text-text-secondary md:block">
                 {t("appSubtitle", activeLang)}
               </span>
             </span>
           </button>
 
-          <nav aria-label="Primary navigation" className="hidden items-center gap-1 xl:flex">
+          <nav aria-label="Primary navigation" className="hidden items-center gap-1 lg:flex">
             <NavItem
               active={screen === "home"}
               onClick={() => setScreen("home")}
@@ -757,7 +757,7 @@ function CivicConnectApp() {
               size="sm"
               variant={screen === "report" ? "default" : "outline"}
               aria-current={screen === "report" ? "page" : undefined}
-              className="ml-2 shadow-sm"
+              className="ml-1 shadow-sm whitespace-nowrap"
             >
               <Send className="size-3.5" />
               {t("navReport", activeLang)}
@@ -766,13 +766,13 @@ function CivicConnectApp() {
 
           <div className="flex items-center gap-2">
             {/* Global 1-Click Language Selector */}
-            <div className="flex items-center gap-1.5 rounded-lg border border-border/80 bg-card px-2.5 py-1 text-xs font-semibold shadow-xs hover:border-primary/50 transition-colors">
-              <Globe className="size-3.5 text-primary" />
+            <div className="flex items-center gap-1.5 rounded-lg border border-border/80 bg-card px-2 py-1 text-xs font-semibold shadow-xs hover:border-primary/50 transition-colors">
+              <Globe className="size-3.5 text-primary shrink-0" />
               <select
                 aria-label="Select platform language"
                 value={activeLang}
                 onChange={(e) => setActiveLang(e.target.value)}
-                className="bg-transparent font-bold outline-none text-foreground cursor-pointer text-xs"
+                className="bg-transparent font-bold outline-none text-foreground cursor-pointer text-xs max-w-[95px] sm:max-w-none"
               >
                 <option value="en">English (EN)</option>
                 <option value="hi">हिंदी (HI)</option>
@@ -788,7 +788,7 @@ function CivicConnectApp() {
             </div>
 
             <span
-              className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${
+              className={`hidden sm:flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${
                 online ? "bg-safe/10 text-safe" : "bg-caution/10 text-caution"
               }`}
             >
@@ -813,6 +813,82 @@ function CivicConnectApp() {
               <span>{t("assistant", activeLang)}</span>
             </Button>
           </div>
+        </div>
+
+        {/* Sub-header horizontal scroll tab bar for Laptop/Tablet/Mobile viewports (< lg) */}
+        <div className="flex lg:hidden overflow-x-auto border-t border-border/60 bg-card/90 px-3 py-1.5 items-center gap-1.5 scrollbar-none">
+          <button
+            onClick={() => setScreen("home")}
+            className={`flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-bold transition-colors ${
+              screen === "home" ? "bg-primary text-primary-foreground" : "bg-muted/50 text-text-secondary"
+            }`}
+          >
+            <Activity className="size-3.5" />
+            {t("navHome", activeLang)}
+          </button>
+          <button
+            onClick={() => setScreen("track")}
+            className={`flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-bold transition-colors ${
+              screen === "track" ? "bg-primary text-primary-foreground" : "bg-muted/50 text-text-secondary"
+            }`}
+          >
+            <Search className="size-3.5" />
+            {t("navTrack", activeLang)}
+          </button>
+          <button
+            onClick={() => setScreen("map")}
+            className={`flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-bold transition-colors ${
+              screen === "map" ? "bg-primary text-primary-foreground" : "bg-muted/50 text-text-secondary"
+            }`}
+          >
+            <Map className="size-3.5" />
+            {t("navMap", activeLang)}
+          </button>
+          <button
+            onClick={() => setScreen("e2e")}
+            className={`flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-bold transition-colors ${
+              screen === "e2e" ? "bg-primary text-primary-foreground" : "bg-muted/50 text-text-secondary"
+            }`}
+          >
+            <Play className="size-3.5" />
+            {t("navE2e", activeLang)}
+          </button>
+          <button
+            onClick={() => setScreen("officers")}
+            className={`flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-bold transition-colors ${
+              screen === "officers" ? "bg-primary text-primary-foreground" : "bg-muted/50 text-text-secondary"
+            }`}
+          >
+            <Building2 className="size-3.5" />
+            {t("navOfficers", activeLang)}
+          </button>
+          <button
+            onClick={() => setScreen("harvesters")}
+            className={`flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-bold transition-colors ${
+              screen === "harvesters" ? "bg-primary text-primary-foreground" : "bg-muted/50 text-text-secondary"
+            }`}
+          >
+            <Radio className="size-3.5" />
+            {t("navHarvesters", activeLang)}
+          </button>
+          <button
+            onClick={() => setScreen("agents")}
+            className={`flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-bold transition-colors ${
+              screen === "agents" ? "bg-primary text-primary-foreground" : "bg-muted/50 text-text-secondary"
+            }`}
+          >
+            <Bot className="size-3.5" />
+            {t("navWorkers", activeLang)}
+          </button>
+          <button
+            onClick={() => setScreen("report")}
+            className={`flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-bold transition-colors ${
+              screen === "report" ? "bg-primary text-primary-foreground" : "bg-primary/10 text-primary"
+            }`}
+          >
+            <Send className="size-3.5" />
+            {t("navReport", activeLang)}
+          </button>
         </div>
       </header>
 
@@ -897,7 +973,7 @@ function CivicConnectApp() {
       </button>
 
       {/* Bottom mobile navigation bar */}
-      <nav className="fixed inset-x-0 bottom-0 z-20 border-t border-border/80 bg-card/95 pb-[env(safe-area-inset-bottom)] shadow-lg backdrop-blur xl:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-20 border-t border-border/80 bg-card/95 pb-[env(safe-area-inset-bottom)] shadow-lg backdrop-blur lg:hidden">
         <div className="mx-auto flex max-w-md items-center justify-around px-2 py-2">
           <NavItem
             active={screen === "home"}
