@@ -44,7 +44,7 @@ BLOB_READ_WRITE_TOKEN=vercel_blob_...
 ## Deployment on Vercel
 
 1. Import the repository into Vercel.
-2. Set `DATABASE_URL` and `BLOB_READ_WRITE_TOKEN` in the project environment settings.
+2. Set `POSTGRES_URL` and `BLOB_READ_WRITE_TOKEN` in the project environment settings.
 3. Use the default build command `npm run build` and output settings provided by the project.
 4. Deploy. The first successful report request creates the database table.
 
