@@ -90,23 +90,58 @@ function JalDarpanApp() {
 
   return (
     <main className="min-h-screen bg-background text-foreground">
-      <header className="border-b border-border bg-card">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
+      <header className="sticky top-0 z-30 border-b border-border/80 bg-card/95 backdrop-blur">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
           <button
             className="flex items-center gap-3 text-left"
             onClick={() => setScreen("home")}
             aria-label="Go to home"
           >
-            <span className="flex size-9 items-center justify-center rounded-md bg-primary text-primary-foreground">
+            <span className="flex size-10 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
               <Droplets className="size-5" />
             </span>
             <span>
               <strong className="block text-base font-semibold">JalDarpan</strong>
-              <span className="block text-xs text-text-secondary">Community water safety</span>
+              <span className="hidden text-xs text-text-secondary sm:block">
+                Community water safety
+              </span>
             </span>
           </button>
+          <nav aria-label="Primary navigation" className="hidden items-center gap-1 sm:flex">
+            <NavItem
+              active={screen === "home"}
+              onClick={() => setScreen("home")}
+              icon={<Droplets />}
+              label="Home"
+              compact
+            />
+            <NavItem
+              active={screen === "map"}
+              onClick={() => setScreen("map")}
+              icon={<Map />}
+              label="Map"
+              compact
+            />
+            <NavItem
+              active={screen === "alerts"}
+              onClick={() => setScreen("alerts")}
+              icon={<AlertTriangle />}
+              label="Alerts"
+              compact
+            />
+            <Button
+              onClick={() => setScreen("report")}
+              size="sm"
+              variant={screen === "report" ? "default" : "outline"}
+              aria-current={screen === "report" ? "page" : undefined}
+              className="ml-2"
+            >
+              <Send />
+              Report water quality
+            </Button>
+          </nav>
           <span
-            className={`flex items-center gap-2 text-xs font-medium ${online ? "text-safe" : "text-caution"}`}
+            className={`flex shrink-0 items-center gap-2 text-xs font-medium ${online ? "text-safe" : "text-caution"}`}
           >
             <span className={`size-2 rounded-full ${online ? "bg-safe" : "bg-caution"}`} />
             {online ? (
@@ -127,7 +162,7 @@ function JalDarpanApp() {
         </div>
       )}
       {message && <Toast message={message} onClose={() => setMessage(undefined)} />}
-      <div className="mx-auto max-w-6xl px-4 py-8 pb-28 sm:px-6">
+      <div className="mx-auto max-w-6xl px-4 py-6 pb-24 sm:px-6 sm:py-10 sm:pb-10">
         {error && <Notice text="Unable to load reports. Check your connection and try again." />}
         {errorMessage && <Notice text={errorMessage} />}
         {screen === "home" && (
@@ -151,8 +186,8 @@ function JalDarpanApp() {
           <AlertsScreen alerts={alerts} loading={loading} onBack={() => setScreen("home")} />
         )}
       </div>
-      <nav className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-card sm:static sm:mx-auto sm:max-w-6xl sm:border-t-0">
-        <div className="mx-auto flex max-w-xl items-center justify-around px-3 py-2 sm:py-0">
+      <nav className="fixed inset-x-0 bottom-0 z-20 border-t border-border/80 bg-card/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_18px_rgb(31_41_51_/_6%)] backdrop-blur sm:hidden">
+        <div className="mx-auto flex max-w-md items-center justify-around px-2 py-2">
           <NavItem
             active={screen === "home"}
             onClick={() => setScreen("home")}
@@ -169,7 +204,8 @@ function JalDarpanApp() {
             onClick={() => setScreen("report")}
             size="icon"
             aria-label="Report water quality"
-            className="size-11 rounded-md"
+            aria-current={screen === "report" ? "page" : undefined}
+            className={`size-11 rounded-full ${screen === "report" ? "ring-2 ring-primary/30 ring-offset-2" : ""}`}
           >
             <Send className="size-4" />
           </Button>
@@ -695,19 +731,26 @@ function NavItem({
   onClick,
   icon,
   label,
+  compact = false,
 }: {
   active: boolean;
   onClick: () => void;
   icon: ReactNode;
   label: string;
+  compact?: boolean;
 }) {
   return (
     <button
+      type="button"
       onClick={onClick}
-      className={`flex flex-col items-center gap-1 px-4 py-1 text-xs ${active ? "text-primary" : "text-text-secondary"}`}
+      aria-current={active ? "page" : undefined}
+      className={`relative flex items-center justify-center gap-2 rounded-md text-xs transition-colors focus-visible:ring-2 focus-visible:ring-ring ${compact ? "px-3 py-2" : "min-w-16 flex-col gap-1 px-3 py-1.5"} ${active ? "bg-primary/10 font-semibold text-primary" : "text-text-secondary hover:bg-muted hover:text-foreground"}`}
     >
-      {icon}
+      <span className="[&>svg]:size-5">{icon}</span>
       <span>{label}</span>
+      {active && (
+        <span className="absolute inset-x-3 -bottom-1 hidden h-0.5 rounded-full bg-primary sm:block" />
+      )}
     </button>
   );
 }
