@@ -46,6 +46,12 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-ring-offset-background: var(--background);
+  --color-safe: var(--safe);
+  --color-safe-foreground: var(--safe-foreground);
+  --color-caution: var(--caution);
+  --color-caution-foreground: var(--caution-foreground);
+  --color-danger: var(--danger);
+  --color-danger-foreground: var(--danger-foreground);
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
@@ -153,5 +159,40 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    min-width: 320px;
+    font-family: "DM Sans", ui-sans-serif, system-ui, sans-serif;
   }
+
+  button, input, select, textarea { font: inherit; }
+}
+
+.water-shell {
+  background-image: var(--surface-glow);
+}
+
+.map-grid {
+  background-color: oklch(0.23 0.045 229);
+  background-image: linear-gradient(oklch(0.57 0.08 195 / 0.11) 1px, transparent 1px),
+    linear-gradient(90deg, oklch(0.57 0.08 195 / 0.11) 1px, transparent 1px),
+    linear-gradient(30deg, transparent 48%, oklch(0.55 0.1 188 / 0.18) 49%, transparent 51%),
+    linear-gradient(148deg, transparent 48%, oklch(0.55 0.1 188 / 0.15) 49%, transparent 51%);
+  background-size: 48px 48px, 48px 48px, 180px 180px, 220px 220px;
+}
+
+.pin-pulse { animation: pin-pulse 2s ease-in-out infinite; }
+
+@keyframes pin-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 oklch(0.64 0.22 22 / 0.48); }
+  50% { box-shadow: 0 0 0 10px oklch(0.64 0.22 22 / 0); }
+}
+
+.float-in { animation: float-in 420ms ease-out both; }
+
+@keyframes float-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pin-pulse, .float-in { animation: none; }
 }
