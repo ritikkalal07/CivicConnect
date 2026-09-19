@@ -35,11 +35,11 @@ Open the local URL printed by Vite.
 Create a `.env.local` file for local development:
 
 ```env
-DATABASE_URL=postgres://...
+POSTGRES_URL=postgres://...
 BLOB_READ_WRITE_TOKEN=vercel_blob_...
 ```
 
-`DATABASE_URL` is used by the report API. `BLOB_READ_WRITE_TOKEN` is used for optional photo storage. The API creates the `reports` table on first use with columns `id`, `latitude`, `longitude`, `area`, `clarity`, `smell`, `color`, `ph`, `tds`, `turbidity`, `photo_url`, and `created_at`.
+`POSTGRES_URL` is used by the report API. `BLOB_READ_WRITE_TOKEN` is used for optional photo storage. The API creates the `reports` table on first use with columns `id`, `latitude`, `longitude`, `area`, `clarity`, `smell`, `color`, `ph`, `tds`, `turbidity`, `photo_url`, and `created_at`.
 
 ## Deployment on Vercel
 
