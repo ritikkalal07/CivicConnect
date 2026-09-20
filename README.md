@@ -3,7 +3,7 @@
 > **Tagline:** *"It doesn't wait for data. It finds it. It doesn't wait for orders. It acts. It doesn't wait for humans. It learns."*
 
 [![Live Platform](https://img.shields.io/badge/Live_Demo-civic--con--nect.vercel.app-0F6B6B?style=for-the-badge&logo=vercel)](https://civic-con-nect.vercel.app)
-[![GitHub Repository](https://img.shields.io/badge/GitHub-water--map--now-black?style=for-the-badge&logo=github)](https://github.com/ritikkalal07/CivicConnect)
+[![GitHub Repository](https://img.shields.io/badge/GitHub-CivicConnect-black?style=for-the-badge&logo=github)](https://github.com/ritikkalal07/CivicConnect)
 [![Hackathon](https://img.shields.io/badge/Event-HackDevengers_2.0-blueviolet?style=for-the-badge)](https://civic-con-nect.vercel.app)
 [![Build Status](https://img.shields.io/badge/Build-Passing-safe?style=for-the-badge)](https://civic-con-nect.vercel.app)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
